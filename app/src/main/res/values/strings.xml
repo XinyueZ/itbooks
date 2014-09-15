@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">IT Books</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
-
+    <string name="lbl_pull_to_load">Pull to load data.</string>
+    <string name="lbl_search">Search keyword.</string>
+    <string name="suggestion_auth">com.itbooks</string>
 </resources>

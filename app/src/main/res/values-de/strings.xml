@@ -2,5 +2,6 @@
 <resources>
 
     <string name="app_name">IT Bücher</string>
-
+    <string name="lbl_pull_to_load">Ziehen nachrunter, Daten zu laden.</string>
+    <string name="lbl_search">Such nach einem Begriff.</string>
 </resources>
