@@ -1,6 +1,6 @@
 <resources>
 
-    <style name="AppTheme" parent="@style/Theme.Base.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="@style/Theme.Base.AppCompat.Light">
         <item name="android:actionBarStyle">@style/AbStyle</item>
         <!-- Support library compatibility -->
         <item name="actionBarStyle">@style/AbStyle</item>

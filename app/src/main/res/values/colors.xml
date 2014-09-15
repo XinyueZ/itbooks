@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="c0">#ffffff</color>
+    <color name="c1">#80ffffff</color>
+    <color name="c2">#ccffffff</color>
+    <color name="c3">#052d41</color>
+    <color name="c4">#1effffff</color>
+    <color name="c5">#40ffffff</color>
+    <color name="c6">#33000000</color>
+    <color name="c7">#CC000000</color>
+    <color name="c8">#CC14b9d2</color>
+    <color name="c9">#0f6ea5</color>
+    <color name="c10">#FF0000</color>
+
+    <color name="c12">#0096ff</color>
+    <color name="c13">#0032ff</color>
+    <color name="c14">#0000c8</color>
+    <color name="c15">#00007d</color>
+    <color name="c16">#ffff00</color>
+    <color name="c18">#c8ffff</color>
+    <color name="c19">#96ffff</color>
+    <color name="c20">#64ffff</color>
+    <color name="c21">#19ffff</color>
+    <color name="c22">#00ffff</color>
+    <color name="c23">#00c8ff</color>
+    <color name="c24">#4000c8ff</color>
+    <color name="c25">#cc0f6ea5</color>
+
+    <color name="green_1">#00FF00</color>
+    <color name="green_2">#B3FFB3</color>
+    <color name="green_3">#CCFFCC</color>
+    <color name="green_4">#E5FFE5</color>
+    <color name="text_common_black">@color/c7</color>
+    <color name="text_common_white">@color/c0</color>
+</resources>

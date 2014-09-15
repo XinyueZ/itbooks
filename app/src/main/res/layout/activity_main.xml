@@ -1,17 +1,22 @@
-<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/content_srl"
-    android:layout_gravity="top"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@id/error_content"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.itbooks.app.MainActivity">
 
-    <ExpandableListView
-        android:id="@+id/books_explv"
-        android:visibility="gone"
-        android:cacheColorHint="@android:color/transparent"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/content_srl"
+        android:layout_gravity="top"
         android:layout_width="match_parent"
-        android:groupIndicator="@null"
-        android:dividerHeight="1dp"
-        android:choiceMode="singleChoice"
-        android:layout_height="match_parent" />
-</android.support.v4.widget.SwipeRefreshLayout>
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/books_lv"
+            android:cacheColorHint="@android:color/transparent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+</FrameLayout>
 
