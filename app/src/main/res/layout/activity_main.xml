@@ -1,0 +1,17 @@
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/content_srl"
+    android:layout_gravity="top"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ExpandableListView
+        android:id="@+id/books_explv"
+        android:visibility="gone"
+        android:cacheColorHint="@android:color/transparent"
+        android:layout_width="match_parent"
+        android:groupIndicator="@null"
+        android:dividerHeight="1dp"
+        android:choiceMode="singleChoice"
+        android:layout_height="match_parent" />
+</android.support.v4.widget.SwipeRefreshLayout>
+

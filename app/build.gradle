@@ -1,0 +1,41 @@
+def buildNumber = 'bld' + (System.env.BUILD_NUMBER ?: 'SNAPSHOT')
+apply plugin: 'com.android.application'
+
+
+android {
+    compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
+    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
+
+    defaultConfig {
+        applicationId project.APP_APPLICATIONID
+        minSdkVersion Integer.parseInt(project.ANDROID_BUILD_MIN_SDK_VERSION)
+        targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
+        versionCode Integer.parseInt(project.APP_VERSIONCODE)
+        versionName project.APP_VERSIONNAME
+    }
+    buildTypes {
+        debug {
+            zipAlign true
+//            versionNameSuffix buildNumber
+        }
+        release {
+            runProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile project(':ChoppingBootstrap')
+    compile project(':volley_cz')
+}
+
+// Rename final apks
+android.applicationVariants.all { variant ->
+    def apk = variant.outputFile
+    def newName = apk.name
+            .replace("_Android", "")
+            .replace(".apk", "-${android.defaultConfig.versionName}${buildNumber}.apk")
+    variant.outputFile = new File(apk.parent, newName)
+}
