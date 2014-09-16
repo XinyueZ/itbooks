@@ -9,6 +9,7 @@ import com.chopping.application.BasicPrefs;
  *
  */
 public final class Prefs extends BasicPrefs{
+	public static final String NA = "N/A";
 	/**
 	 * Impl singleton pattern.
 	 */

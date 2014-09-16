@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:text="@string/lbl_more"
+    android:textColor="@color/text_common_black"
+    android:layout_width="match_parent"
+    android:gravity="center"
+    android:background="@drawable/selector_bg1_btn"
+    android:textAppearance="?android:attr/textAppearanceLarge"
+    android:layout_height="45dp">
+
+</TextView>

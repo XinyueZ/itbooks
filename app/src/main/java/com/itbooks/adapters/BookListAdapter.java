@@ -23,6 +23,8 @@ public final class BookListAdapter extends BaseAdapter {
 	 * Main layout for this component.
 	 */
 	private static final int ITEM_LAYOUT = R.layout.item_book_list;
+
+
 	/**
 	 * {@link java.util.List} of all books.
 	 */
@@ -68,6 +70,10 @@ public final class BookListAdapter extends BaseAdapter {
 		viewHolder.mBookSubTitleTv.setText(book.getSubTitle());
 		viewHolder.mISBNTv.setText(String.format("ISBN: %s", book.getISBN()));
 		return convertView;
+	}
+
+	public List<DSBook> getBooks() {
+		return mBooks;
 	}
 
 	/**

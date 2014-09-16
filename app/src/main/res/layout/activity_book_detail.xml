@@ -41,6 +41,14 @@
                     android:onClick="download"
                     style="@style/BookDetailStyle.Download" />
 
+                <Button
+                    android:id="@+id/download_in_browser_top_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="downloadBrowser"
+                    android:text="@string/lbl_download_in_browser"
+                    style="@style/BookDetailStyle.Download" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -124,6 +132,20 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="@string/lbl_publisher"
+                    style="@style/BookDetailStyle.Property" />
+
+                <TextView
+                    android:id="@+id/detail_publisher_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lbl_publisher"
+                    style="@style/BookDetailStyle" />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="@string/lbl_page"
                     style="@style/BookDetailStyle.Property" />
 
@@ -139,6 +161,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:onClick="download"
+                    style="@style/BookDetailStyle.Download" />
+                <Button
+                    android:id="@+id/download_in_browser_bottom_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="downloadBrowser"
                     style="@style/BookDetailStyle.Download" />
             </LinearLayout>
         </ScrollView>

@@ -12,7 +12,10 @@
     <string name="lbl_year">Jahr</string>
     <string name="lbl_page">Seite</string>
     <string name="lbl_publisher">Verleger</string>
-    <string name="lbl_download">Herunterladen</string>
+    <string name="lbl_download">Hier herunterzuladen.</string>
+    <string name="lbl_download_in_browser">Herunterladen in browser.</string>
+    <string name="lbl_more">Mehr…</string>
+    <string name="lbl_no_data">Nichts gefunden!</string>
     <string name="menu_forward">Vorwärts</string>
     <string name="menu_backward">Rückwärts</string>
 </resources>

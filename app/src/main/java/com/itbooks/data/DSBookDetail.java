@@ -1,6 +1,9 @@
 package com.itbooks.data;
 
+import android.text.TextUtils;
+
 import com.google.gson.annotations.SerializedName;
+import com.itbooks.utils.Prefs;
 
 /**
  * Details of book.
@@ -66,35 +69,35 @@ public final class DSBookDetail {
 	}
 
 	public String getTitle() {
-		return mTitle;
+		return TextUtils.isEmpty(mTitle) ? Prefs.NA : mTitle;
 	}
 
 	public String getSubTitle() {
-		return mSubTitle;
+		return TextUtils.isEmpty(mSubTitle) ? Prefs.NA : mSubTitle;
 	}
 
 	public String getDescription() {
-		return mDescription;
+		return TextUtils.isEmpty(mDescription) ? Prefs.NA : mDescription;
 	}
 
 	public String getAuthor() {
-		return mAuthor;
+		return TextUtils.isEmpty(mAuthor) ? Prefs.NA : mAuthor;
 	}
 
 	public String getISBN() {
-		return mISBN;
+		return TextUtils.isEmpty(mISBN) ? Prefs.NA : mISBN;
 	}
 
 	public String getYear() {
-		return mYear;
+		return TextUtils.isEmpty(mYear) ? Prefs.NA : mYear;
 	}
 
 	public String getPage() {
-		return mPage;
+		return TextUtils.isEmpty(mPage) ? Prefs.NA : mPage;
 	}
 
 	public String getPublisher() {
-		return mPublisher;
+		return TextUtils.isEmpty(mPublisher) ? Prefs.NA : mPublisher;
 	}
 
 	public String getImageUrl() {

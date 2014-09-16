@@ -2,8 +2,10 @@ package com.itbooks.app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -49,6 +51,7 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 	private TextView mISBNTv;
 	private TextView mYearTv;
 	private TextView mPageTv;
+	private TextView mPublisherTv;
 
 
 	private ImageLoader mImageLoader;
@@ -113,6 +116,7 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 		mISBNTv = (TextView) findViewById(R.id.detail_isbn_tv);
 		mYearTv = (TextView) findViewById(R.id.detail_year_tv);
 		mPageTv = (TextView) findViewById(R.id.detail_page_tv);
+		mPublisherTv = (TextView) findViewById(R.id.detail_publisher_tv);
 
 		mInitLl = findViewById(R.id.init_ll);
 
@@ -147,7 +151,9 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 
 	private void showBookDetail() {
 		mContent.setVisibility(View.VISIBLE);
-		mImageLoader.get(mBookDetail.getImageUrl(), this);
+		if(!TextUtils.isEmpty(mBookDetail.getImageUrl())) {
+			mImageLoader.get(mBookDetail.getImageUrl(), this);
+		}
 		mTitleTv.setText(mBookDetail.getTitle());
 		mSubTitleTv.setText(mBookDetail.getSubTitle());
 		mDescriptionTv.setText(mBookDetail.getDescription());
@@ -155,6 +161,7 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 		mISBNTv.setText(mBookDetail.getISBN());
 		mYearTv.setText(mBookDetail.getYear());
 		mPageTv.setText(mBookDetail.getPage());
+		mPublisherTv.setText(mBookDetail.getPublisher());
 	}
 
 	@Override
@@ -169,11 +176,20 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 
 	}
 
+	private void dismissContent() {
+		mContent.setVisibility(View.GONE);
+	}
+
 	public void download(View view) {
 		DownloadWebViewActivity.showInstance(this, mBookDetail.getDownloadUrl());
 	}
 
-	private void dismissContent() {
-		mContent.setVisibility(View.GONE);
+	public void downloadBrowser(View view) {
+		if (mBookDetail != null && !TextUtils.isEmpty(mBookDetail.getDownloadUrl())) {
+			Intent i = new Intent(Intent.ACTION_VIEW);
+			i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			i.setData(Uri.parse(mBookDetail.getDownloadUrl()));
+			startActivity(i);
+		}
 	}
 }

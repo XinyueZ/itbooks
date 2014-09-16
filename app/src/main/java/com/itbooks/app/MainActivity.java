@@ -10,6 +10,7 @@ import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -17,7 +18,9 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.android.volley.Request.Method;
+import com.chopping.application.LL;
 import com.chopping.net.GsonRequestTask;
+import com.chopping.utils.Utils;
 import com.itbooks.R;
 import com.itbooks.adapters.BookListAdapter;
 import com.itbooks.data.DSBook;
@@ -25,12 +28,19 @@ import com.itbooks.data.DSBookList;
 import com.itbooks.utils.Prefs;
 
 
-public class MainActivity extends BaseActivity implements  OnQueryTextListener, OnItemClickListener {
+public class MainActivity extends BaseActivity implements OnQueryTextListener, OnItemClickListener, OnClickListener {
 	/**
 	 * Main layout for this component.
 	 */
 	private static final int LAYOUT = R.layout.activity_main;
+	/**
+	 * Main menu.
+	 */
 	private static final int MAIN_MENU = R.menu.main_menu;
+	/**
+	 * Foot view for loading more.
+	 */
+	public static final int LAYOUT_LOAD_MORE = R.layout.inc_load_more;
 
 	private ListView mLv;
 	private BookListAdapter mAdp;
@@ -39,6 +49,11 @@ public class MainActivity extends BaseActivity implements  OnQueryTextListener, 
 	private String mKeyword;
 	private SearchView mSearchView;
 	private EditText mSearchKeyEt;
+
+	private int mCurrentPage = 1;
+	private int mMaxPage = 1;
+	private boolean mLoadedMore;
+	private View mMoreV;
 
 	//------------------------------------------------
 	//Subscribes, event-handlers
@@ -53,15 +68,42 @@ public class MainActivity extends BaseActivity implements  OnQueryTextListener, 
 	public void onEvent(DSBookList e) {
 		mRefreshLayout.setRefreshing(false);
 
-		if (mAdp == null) {
-			mAdp = new BookListAdapter(e.getBooks());
-			mLv.setAdapter(mAdp);
+		int total = Integer.parseInt(e.getTotal());
+		if (total == 0) {
+			mLv.setVisibility(View.GONE);
+			showInitView();
+			Utils.showShortToast(this, R.string.lbl_no_data);
 		} else {
-			mAdp.setData(e.getBooks());
-			mAdp.notifyDataSetChanged();
-		}
+			mLv.setVisibility(View.VISIBLE);
+			if (mAdp == null) {
+				mAdp = new BookListAdapter(e.getBooks());
+				mLv.setAdapter(mAdp);
+			} else {
+				if (!mLoadedMore) {
+					mAdp.setData(e.getBooks());
+				} else {
+					mAdp.getBooks().addAll(e.getBooks());
+					mLoadedMore = false;
+				}
+				mAdp.notifyDataSetChanged();
+			}
 
-		dismissInitView();
+			if (total > 10) {
+				mMaxPage = total / 10;
+				if (total % 10 > 0) {
+					mMaxPage++;
+				}
+				if (mCurrentPage < mMaxPage) {
+					mMoreV.setVisibility(View.VISIBLE);
+				} else {
+					mMoreV.setVisibility(View.GONE);
+				}
+			} else {
+				mMaxPage = 1;
+			}
+
+			dismissInitView();
+		}
 	}
 
 
@@ -83,47 +125,50 @@ public class MainActivity extends BaseActivity implements  OnQueryTextListener, 
 		mInitLl = findViewById(R.id.init_ll);
 		mLv.setOnItemClickListener(this);
 
-		mSearchKeyEt = (EditText) findViewById(R.id.search_keyword_et);
+		mMoreV = getLayoutInflater().inflate(LAYOUT_LOAD_MORE, mLv, false);
+		mLv.addFooterView(mMoreV);
+		mMoreV.setOnClickListener(this);
 
+		mSearchKeyEt = (EditText) findViewById(R.id.search_keyword_et);
 		handleIntent(getIntent());
 	}
 
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-//		getMenuInflater().inflate(MAIN_MENU, menu);
-//		final MenuItem searchMenu = menu.findItem(R.id.search);
-//		mSearchView = (SearchView) MenuItemCompat.getActionView(searchMenu);
-//		mSearchView.setOnQueryTextListener(this);
-//		/* In order to close ActionView automatically after clicking keyboard. */
-//		mSearchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
-//
-//			@Override
-//			public void onFocusChange(View _v, boolean _hasFocus) {
-//				if (!_hasFocus) {
-//					MenuItemCompat.collapseActionView(searchMenu);
-//					mSearchView.setQuery("", false);
-//				}
-//			}
-//		});
-//		mSearchView.setOnSuggestionListener(new OnSuggestionListener() {
-//			@Override
-//			public boolean onSuggestionSelect(int _pos) {
-//				return false;
-//			}
-//
-//			@Override
-//			public boolean onSuggestionClick(int _pos) {
-//				MenuItemCompat.collapseActionView(searchMenu);
-//				mSearchView.setQuery("", false);
-//				return false;
-//			}
-//		});
-//		SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
-//		if (searchManager != null) {
-//			SearchableInfo info = searchManager.getSearchableInfo(getComponentName());
-//			mSearchView.setSearchableInfo(info);
-//		}
+		//		getMenuInflater().inflate(MAIN_MENU, menu);
+		//		final MenuItem searchMenu = menu.findItem(R.id.search);
+		//		mSearchView = (SearchView) MenuItemCompat.getActionView(searchMenu);
+		//		mSearchView.setOnQueryTextListener(this);
+		//		/* In order to close ActionView automatically after clicking keyboard. */
+		//		mSearchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+		//
+		//			@Override
+		//			public void onFocusChange(View _v, boolean _hasFocus) {
+		//				if (!_hasFocus) {
+		//					MenuItemCompat.collapseActionView(searchMenu);
+		//					mSearchView.setQuery("", false);
+		//				}
+		//			}
+		//		});
+		//		mSearchView.setOnSuggestionListener(new OnSuggestionListener() {
+		//			@Override
+		//			public boolean onSuggestionSelect(int _pos) {
+		//				return false;
+		//			}
+		//
+		//			@Override
+		//			public boolean onSuggestionClick(int _pos) {
+		//				MenuItemCompat.collapseActionView(searchMenu);
+		//				mSearchView.setQuery("", false);
+		//				return false;
+		//			}
+		//		});
+		//		SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
+		//		if (searchManager != null) {
+		//			SearchableInfo info = searchManager.getSearchableInfo(getComponentName());
+		//			mSearchView.setSearchableInfo(info);
+		//		}
 		return true;
 	}
 
@@ -160,6 +205,7 @@ public class MainActivity extends BaseActivity implements  OnQueryTextListener, 
 	}
 
 	private void loadBooks() {
+		dismissInitView();
 		if (!TextUtils.isEmpty(mKeyword)) {
 			loadByKeyword();
 		} else {
@@ -171,7 +217,9 @@ public class MainActivity extends BaseActivity implements  OnQueryTextListener, 
 	 * Default page when nothing wanna be searched.
 	 */
 	private void loadDefaultPage() {
-		String url = Prefs.getInstance(getApplication()).getApiDefaultBooks();
+		String url = Prefs.getInstance(getApplication()).getApiSearchBooks();
+		url = String.format(url, Utils.encode("Android"), mCurrentPage + "");
+		LL.d("load: " + url);
 		new GsonRequestTask<DSBookList>(getApplicationContext(), Method.GET, url, DSBookList.class).execute();
 	}
 
@@ -181,7 +229,8 @@ public class MainActivity extends BaseActivity implements  OnQueryTextListener, 
 	 */
 	private void loadByKeyword() {
 		String url = Prefs.getInstance(getApplication()).getApiSearchBooks();
-		url = String.format(url, mKeyword, "1");
+		url = String.format(url, Utils.encode(mKeyword), mCurrentPage + "");
+		LL.d("load: " + url);
 		new GsonRequestTask<DSBookList>(getApplicationContext(), Method.GET, url, DSBookList.class).execute();
 	}
 
@@ -213,6 +262,8 @@ public class MainActivity extends BaseActivity implements  OnQueryTextListener, 
 	}
 
 	public void search(View view) {
+		mCurrentPage = 1;
+		mMaxPage = 1;
 		mKeyword = mSearchKeyEt.getText().toString();
 		loadBooks();
 	}
@@ -221,5 +272,19 @@ public class MainActivity extends BaseActivity implements  OnQueryTextListener, 
 	protected void onAppConfigIgnored() {
 		super.onAppConfigIgnored();
 		loadDefaultPage();
+	}
+
+	@Override
+	public void onClick(View v) {
+		mLoadedMore = true;
+		mCurrentPage++;
+		mRefreshLayout.setRefreshing(true);
+		loadBooks();
+	}
+
+	@Override
+	protected void onNetworkError() {
+		super.onNetworkError();
+		Utils.showShortToast(this, R.string.meta_load_error);
 	}
 }

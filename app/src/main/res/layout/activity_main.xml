@@ -30,38 +30,44 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/c0"
+                android:lines="1"
+                android:maxLines="1"
+                android:minLines="1"
                 android:textColor="@color/text_common_black"
                 android:hint="@string/lbl_search" />
 
             <ImageButton
                 android:id="@+id/search_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:src="@drawable/ic_loupe"
                 android:background="@drawable/selector_bg2_btn"
                 android:layout_gravity="center_vertical|right"
                 android:onClick="search" />
         </FrameLayout>
 
-
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/content_srl"
-            android:layout_gravity="top"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-
-            <ListView
-                android:id="@+id/books_lv"
-                android:cacheColorHint="@android:color/transparent"
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/content_srl"
+                android:layout_gravity="top"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent">
 
 
-        </android.support.v4.widget.SwipeRefreshLayout>
+                <ListView
+                    android:id="@+id/books_lv"
+                    android:cacheColorHint="@android:color/transparent"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
 
-        <include layout="@layout/inc_pull_to_load" />
+
+            </android.support.v4.widget.SwipeRefreshLayout>
+
+            <include layout="@layout/inc_pull_to_load" />
+        </FrameLayout>
 
     </LinearLayout>
 </FrameLayout>
