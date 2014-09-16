@@ -4,8 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -33,6 +37,10 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 	 */
 	private static final int LAYOUT = R.layout.activity_book_detail;
 	/**
+	 * Main menu.
+	 */
+	private static final int BOOK_DETAIL_MENU = R.menu.book_detail;
+	/**
 	 * Book id.
 	 */
 	public static final String EXTRAS_BOOK_ID = "com.itbooks.app.BookDetailActivity.book.id";
@@ -41,6 +49,7 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 	 * Id of book.
 	 */
 	private long mBookId;
+
 
 	private View mContent;
 	private ImageView mThumbIv;
@@ -151,7 +160,7 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 
 	private void showBookDetail() {
 		mContent.setVisibility(View.VISIBLE);
-		if(!TextUtils.isEmpty(mBookDetail.getImageUrl())) {
+		if (!TextUtils.isEmpty(mBookDetail.getImageUrl())) {
 			mImageLoader.get(mBookDetail.getImageUrl(), this);
 		}
 		mTitleTv.setText(mBookDetail.getTitle());
@@ -162,6 +171,8 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 		mYearTv.setText(mBookDetail.getYear());
 		mPageTv.setText(mBookDetail.getPage());
 		mPublisherTv.setText(mBookDetail.getPublisher());
+
+		ActivityCompat.invalidateOptionsMenu(this);
 	}
 
 	@Override
@@ -191,5 +202,28 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 			i.setData(Uri.parse(mBookDetail.getDownloadUrl()));
 			startActivity(i);
 		}
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(BOOK_DETAIL_MENU, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		MenuItem mMenuShare = menu.findItem(R.id.action_share_book);
+		if (mBookDetail != null) {
+			//Getting the actionprovider associated with the menu item whose id is share.
+			android.support.v7.widget.ShareActionProvider provider =
+					(android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(mMenuShare);
+			//Setting a share intent.
+			String subject = getString(R.string.lbl_share_book);
+			String text = getString(R.string.lbl_share_book_content, mBookDetail.getTitle(), mBookDetail.getAuthor(),
+					mBookDetail.getDownloadUrl());
+
+			provider.setShareIntent(getDefaultShareIntent(provider, subject, text));
+		}
+		return super.onPrepareOptionsMenu(menu);
 	}
 }

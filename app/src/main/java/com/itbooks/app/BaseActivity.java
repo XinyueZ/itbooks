@@ -1,6 +1,9 @@
 package com.itbooks.app;
 
 
+import java.lang.reflect.Field;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -10,6 +13,7 @@ import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewConfiguration;
 
 import com.chopping.application.BasicPrefs;
 import com.itbooks.app.fragments.AboutDialogFragment;
@@ -18,6 +22,23 @@ import com.itbooks.utils.Prefs;
 public abstract class BaseActivity extends com.chopping.activities.BaseActivity implements OnRefreshListener {
 	protected View mInitLl;
 	protected SwipeRefreshLayout mRefreshLayout;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		try {
+			ViewConfiguration config = ViewConfiguration.get(this);
+			Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
+
+			if (menuKeyField != null) {
+				menuKeyField.setAccessible(true);
+				menuKeyField.setBoolean(config, false);
+			}
+		} catch (Exception _e) {
+			_e.printStackTrace();
+		}
+	}
 
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
@@ -88,5 +109,21 @@ public abstract class BaseActivity extends com.chopping.activities.BaseActivity 
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	/**
+	 * Standard sharing app for sharing on actionbar.
+	 */
+	protected static Intent getDefaultShareIntent(android.support.v7.widget.ShareActionProvider provider,
+			String subject, String body) {
+		if (provider != null) {
+			Intent i = new Intent(Intent.ACTION_SEND);
+			i.setType("text/plain");
+			i.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
+			i.putExtra(android.content.Intent.EXTRA_TEXT, body);
+			provider.setShareIntent(i);
+			return i;
+		}
+		return null;
 	}
 }

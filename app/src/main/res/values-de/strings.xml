@@ -11,9 +11,15 @@
     <string name="btn_not_agree">Stimme nicht zu.</string>
 
     <string name="lbl_about">Über mich</string>
+    <string name="lbl_share_app">Teile</string>
+    <string name="lbl_share_book">Teile dieses Buch</string>
+    <string name="lbl_share_app_content">Hallo!\n\nsuchst du jetzt mehr IT-Bücher?\n\nDownload:
+        market://details?id=com.itbooks</string>
+    <string name="lbl_share_book_content">Hallo!\n\nich habe ein gutes IT-Buch
+        gefunden.\n\n\"%1$s\"\n\nAutor:%2$s\n\nHerunterladen: %3$s\n\nApp herunterladen:market://details?id=com.itbooks</string>
     <string name="lbl_pull_to_load">Ziehen nachrunter, Daten zu laden.</string>
-    <string name="lbl_search">Such nach einem Begriff.</string>
-    <string name="lbl_title">Name</string>
+    <string name="lbl_search">Suche nach einem Begriff.</string>
+    <string name="lbl_title">Titel</string>
     <string name="lbl_subtitle">Untertitel</string>
     <string name="lbl_description">Beschreibung</string>
     <string name="lbl_author">Autor</string>

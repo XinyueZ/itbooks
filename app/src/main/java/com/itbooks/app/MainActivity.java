@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
@@ -147,6 +148,17 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 				getMenuInflater().inflate(MAIN_MENU, menu);
+
+		MenuItem menuShare = menu.findItem(R.id.action_share_app);
+		//Getting the actionprovider associated with the menu item whose id is share.
+		android.support.v7.widget.ShareActionProvider provider =
+				(android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(menuShare);
+		//Setting a share intent.
+		String subject = getString(R.string.lbl_share_app);
+		String text = getString(R.string.lbl_share_app_content );
+		provider.setShareIntent(getDefaultShareIntent(provider, subject, text));
+
+
 		//		final MenuItem searchMenu = menu.findItem(R.id.search);
 		//		mSearchView = (SearchView) MenuItemCompat.getActionView(searchMenu);
 		//		mSearchView.setOnQueryTextListener(this);

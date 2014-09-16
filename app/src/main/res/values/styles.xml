@@ -4,12 +4,16 @@
         <item name="android:actionBarStyle">@style/AbStyle</item>
         <!-- Support library compatibility -->
         <item name="actionBarStyle">@style/AbStyle</item>
+        <!--There's a bug. The ShareActionProvider doesn't run when Theme.Base.AppCompat.Light. -->
+        <item name="actionModeShareDrawable">@drawable/ic_action_share</item>
     </style>
 
     <style name="AppThemeHomeUp" parent="@style/Theme.Base.AppCompat">
         <item name="android:actionBarStyle">@style/AbStyleHomeUp</item>
         <!-- Support library compatibility -->
         <item name="actionBarStyle">@style/AbStyleHomeUp</item>
+        <!--There's a bug. The ShareActionProvider doesn't run when Theme.Base.AppCompat.Light. -->
+        <item name="actionModeShareDrawable">@drawable/ic_action_share</item>
     </style>
 
     <style name="AbStyle" parent="@style/Widget.AppCompat.Base.ActionBar">

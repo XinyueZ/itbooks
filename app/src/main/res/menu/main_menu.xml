@@ -9,9 +9,13 @@
         <!--android:orderInCategory="2"-->
         <!--app:actionViewClass="android.support.v7.widget.SearchView"-->
         <!--app:showAsAction="always|collapseActionView" />-->
-
+    <item
+        android:id="@+id/action_share_app"
+        android:title="@string/lbl_share_app"
+        app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_about"
         android:title="@string/lbl_about"
-        app:showAsAction="never" />
+        app:showAsAction="never"  />
 </menu>
