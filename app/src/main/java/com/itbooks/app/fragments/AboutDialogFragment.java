@@ -5,8 +5,10 @@ import android.app.Application;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -97,6 +99,18 @@ public final class AboutDialogFragment extends DialogFragment {
 		}, 0, eulaLink.length(), 0);
 		aboutBody.append("\n\n");
 		aboutBody.append(eulaLink);
+
+		// Powered by.
+		SpannableString pwdLink = new SpannableString(getString(R.string.about_pwd));
+		pwdLink.setSpan(new ClickableSpan() {
+			@Override
+			public void onClick(View view) {
+				Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + getString(R.string.about_pwd) ));
+				startActivity(browserIntent);
+			}
+		}, 0, eulaLink.length(), 0);
+		aboutBody.append("\n\n");
+		aboutBody.append(pwdLink);
 
 		// Show "About" dialog.
 		LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService(
