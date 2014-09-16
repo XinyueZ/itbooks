@@ -8,28 +8,34 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
 import com.android.volley.Request.Method;
-import com.chopping.application.LL;
 import com.chopping.net.GsonRequestTask;
 import com.chopping.utils.Utils;
 import com.crashlytics.android.Crashlytics;
 import com.itbooks.R;
 import com.itbooks.adapters.BookListAdapter;
+import com.itbooks.app.fragments.AboutDialogFragment;
 import com.itbooks.data.DSBook;
 import com.itbooks.data.DSBookList;
 import com.itbooks.utils.Prefs;
 
 
-public class MainActivity extends BaseActivity implements OnQueryTextListener, OnItemClickListener, OnClickListener {
+public class MainActivity extends BaseActivity implements OnQueryTextListener, OnItemClickListener, OnClickListener,
+		OnEditorActionListener {
 	/**
 	 * Main layout for this component.
 	 */
@@ -132,13 +138,15 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		mMoreV.setOnClickListener(this);
 
 		mSearchKeyEt = (EditText) findViewById(R.id.search_keyword_et);
+		mSearchKeyEt.setOnEditorActionListener(this);
+
 		handleIntent(getIntent());
 	}
 
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		//		getMenuInflater().inflate(MAIN_MENU, menu);
+				getMenuInflater().inflate(MAIN_MENU, menu);
 		//		final MenuItem searchMenu = menu.findItem(R.id.search);
 		//		mSearchView = (SearchView) MenuItemCompat.getActionView(searchMenu);
 		//		mSearchView.setOnQueryTextListener(this);
@@ -172,6 +180,16 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		//			mSearchView.setSearchableInfo(info);
 		//		}
 		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.action_about:
+			showDialogFragment(AboutDialogFragment.newInstance(this), null);
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	protected void handleIntent(Intent _intent) {
@@ -222,7 +240,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	private void loadDefaultPage() {
 		String url = Prefs.getInstance(getApplication()).getApiSearchBooks();
 		url = String.format(url, Utils.encode("Android"), mCurrentPage + "");
-		LL.d("load: " + url);
+//		LL.d("load: " + url);
 		new GsonRequestTask<DSBookList>(getApplicationContext(), Method.GET, url, DSBookList.class).execute();
 	}
 
@@ -233,7 +251,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	private void loadByKeyword() {
 		String url = Prefs.getInstance(getApplication()).getApiSearchBooks();
 		url = String.format(url, Utils.encode(mKeyword), mCurrentPage + "");
-		LL.d("load: " + url);
+//		LL.d("load: " + url);
 		new GsonRequestTask<DSBookList>(getApplicationContext(), Method.GET, url, DSBookList.class).execute();
 	}
 
@@ -283,6 +301,10 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 
 	@Override
 	public void onClick(View v) {
+		loadMore();
+	}
+
+	private void loadMore() {
 		mLoadedMore = true;
 		mCurrentPage++;
 		mRefreshLayout.setRefreshing(true);
@@ -293,5 +315,14 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	protected void onReload() {
 		super.onReload();
 		loadBooks();
+	}
+
+	@Override
+	public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+		if (actionId == EditorInfo.IME_ACTION_GO) {
+			search(null);
+			return true;
+		}
+		return false;
 	}
 }

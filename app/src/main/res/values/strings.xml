@@ -2,7 +2,17 @@
 <resources>
 
     <string name="app_name">IT Books</string>
+
+    <string name="btn_confirm">Confirm</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_close">Close</string>
+    <string name="btn_ok">Ok</string>
+    <string name="btn_agree">I agree.</string>
+    <string name="btn_not_agree">I do not agree.</string>
+
     <string name="suggestion_auth">com.itbooks</string>
+
+    <string name="lbl_about">About</string>
     <string name="lbl_pull_to_load">Pull to load data.</string>
     <string name="lbl_search">Search keyword.</string>
     <string name="lbl_title">Title</string>
@@ -19,5 +29,23 @@
     <string name="lbl_no_data">Nothing found!</string>
     <string name="menu_forward">Forward</string>
     <string name="menu_backward">Backward</string>
+
+    <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+
+
+    <!-- Shown in the 'About' window of the app. -->
+    <string name="about_body">&lt;b&gt;SchautUp &lt;/b&gt;&lt;br&gt;Version %s &lt;br&gt;</string>
+    <!-- Shown as a link in the About screen of the app; user can click it to see the licenses. -->
+    <string name="about_licenses">Open Source Licenses</string>
+    <!-- Shown as a link in the About screen of the app; user can click to see the EULA. -->
+    <string name="about_eula">End User License Agreement</string>
+    <string name="about_eula_legal_text">Your use of this application is governed by a)Activating permissions of
+        hardware that the features of this application need and work well. b)The Google Terms of
+        Service (http://www.google.com/intl/en/policies/terms/), Google\'s Privacy
+        Policy(http://www.google.com/intl/en/policies/privacy/). c)Any applicable Google service-specific terms of service of privacy
+        policies. Google\'s terms of service and privacy policies may be updated from time to time and without
+        notice.\n\n\nBy using the application, your agree to the use of your data and permissions of your hardware in
+        accordance with Google\'s Privacy Policy and Google Terms of Service.</string>
+
     <!--"Title": "Developing Android Applications with Flex 4.5",--><!--"SubTitle": "Building Android Applications with ActionScript",--><!--"Description": "Ready to put your ActionScript 3 skills to work on mobile apps? This hands-on book walks you through the process of creating an Adobe AIR application from start to finish, using the Flex 4.5 framework. Move quickly from a basic Hello World application to complex interactions with Android APIs, and get complete code examples for working with Android device components - GPS, camera, gallery, accelerometer, multitouch display, and OS interactions. No matter how much Flex experience you have, this book is the ideal resource.",--><!--"Author": "Rich Tretola",--><!--"ISBN": "9781449305376",--><!--"Year": "2011",--><!--"Page": "112",--><!--"Publisher": "O'Reilly Media",--><!--"Image": "http://s.it-ebooks-api.info/3/developing_android_applications_with_flex_4.5.jpg",--><!--"Download": "http://filepi.com/i/8wlDiuB"-->
 </resources>

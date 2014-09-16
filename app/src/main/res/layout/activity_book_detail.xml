@@ -168,7 +168,15 @@
                     android:layout_height="wrap_content"
                     android:onClick="downloadBrowser"
                     style="@style/BookDetailStyle.Download" />
+                <fragment
+                    android:name="com.itbooks.app.fragments.AdFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:layout_gravity="top"/>
             </LinearLayout>
         </ScrollView>
     </android.support.v4.widget.SwipeRefreshLayout>
+    <fragment
+        android:name="com.itbooks.app.fragments.AdFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:layout_gravity="top"/>
 </FrameLayout>

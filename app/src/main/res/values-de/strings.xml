@@ -2,6 +2,15 @@
 <resources>
 
     <string name="app_name">IT Bücher</string>
+
+    <string name="btn_confirm">Sicher</string>
+    <string name="btn_cancel">Abbrechen</string>
+    <string name="btn_close">Schließen</string>
+    <string name="btn_ok">Ok</string>
+    <string name="btn_agree">Stimme zu.</string>
+    <string name="btn_not_agree">Stimme nicht zu.</string>
+
+    <string name="lbl_about">Über mich</string>
     <string name="lbl_pull_to_load">Ziehen nachrunter, Daten zu laden.</string>
     <string name="lbl_search">Such nach einem Begriff.</string>
     <string name="lbl_title">Name</string>

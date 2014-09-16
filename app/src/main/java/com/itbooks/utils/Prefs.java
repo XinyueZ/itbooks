@@ -8,16 +8,22 @@ import com.chopping.application.BasicPrefs;
 /**
  *
  */
-public final class Prefs extends BasicPrefs{
+public final class Prefs extends BasicPrefs {
 	public static final String NA = "N/A";
 	/**
 	 * Impl singleton pattern.
 	 */
 	private static Prefs sInstance;
 
-	private static final String API_SEARCH_BOOKS ="api_search_books";
+	private static final String API_SEARCH_BOOKS = "api_search_books";
 	private static final String API_BOOK_DETAIL = "api_book_detail";
 	private static final String API_DEFAULT_BOOKS = "api_default_books";
+	/**
+	 * Storage. Whether the "End User License Agreement" has been shown and agreed at application's first start.
+	 * <p/>
+	 * {@code true} if EULA has been shown and agreed.
+	 */
+	private static final String KEY_EULA_SHOWN = "key_eula_shown";
 
 	/**
 	 * Created a DeviceData storage.
@@ -55,4 +61,26 @@ public final class Prefs extends BasicPrefs{
 	public String getApiDefaultBooks() {
 		return getString(API_DEFAULT_BOOKS, null);
 	}
+
+	/**
+	 * Whether the "End User License Agreement" has been shown and agreed at application's first start.
+	 * <p/>
+	 *
+	 * @return {@code true} if EULA has been shown and agreed.
+	 */
+	public boolean isEULAOnceConfirmed() {
+		return getBoolean(KEY_EULA_SHOWN, false);
+	}
+
+	/**
+	 * Set whether the "End User License Agreement" has been shown and agreed at application's first start.
+	 * <p/>
+	 *
+	 * @param isConfirmed
+	 * 		{@code true} if EULA has been shown and agreed.
+	 */
+	public void setEULAOnceConfirmed(boolean isConfirmed) {
+		setBoolean(KEY_EULA_SHOWN, isConfirmed);
+	}
+
 }
