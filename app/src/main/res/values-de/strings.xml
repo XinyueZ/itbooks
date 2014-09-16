@@ -31,6 +31,8 @@
     <string name="lbl_download_in_browser">Herunterladen in browser.</string>
     <string name="lbl_more">Mehr…</string>
     <string name="lbl_no_data">Nichts gefunden!</string>
+    <string name="lbl_play_service">Diese App braucht Google Play Service, Sie müssen erst herunterladen dann
+        weiter.</string>
     <string name="menu_forward">Vorwärts</string>
     <string name="menu_backward">Rückwärts</string>
 </resources>

@@ -27,6 +27,8 @@ import com.android.volley.Request.Method;
 import com.chopping.net.GsonRequestTask;
 import com.chopping.utils.Utils;
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.itbooks.R;
 import com.itbooks.adapters.BookListAdapter;
 import com.itbooks.app.fragments.AboutDialogFragment;
@@ -122,6 +124,8 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		super.onCreate(savedInstanceState);
 		Crashlytics.start(this);
 		setContentView(LAYOUT);
+
+
 		mSuggestions = new SearchRecentSuggestions(this, SearchSuggestionProvider.AUTHORITY,
 				SearchSuggestionProvider.MODE);
 
