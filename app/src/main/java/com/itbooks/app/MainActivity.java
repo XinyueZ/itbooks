@@ -21,6 +21,7 @@ import com.android.volley.Request.Method;
 import com.chopping.application.LL;
 import com.chopping.net.GsonRequestTask;
 import com.chopping.utils.Utils;
+import com.crashlytics.android.Crashlytics;
 import com.itbooks.R;
 import com.itbooks.adapters.BookListAdapter;
 import com.itbooks.data.DSBook;
@@ -112,6 +113,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Crashlytics.start(this);
 		setContentView(LAYOUT);
 		mSuggestions = new SearchRecentSuggestions(this, SearchSuggestionProvider.AUTHORITY,
 				SearchSuggestionProvider.MODE);
@@ -201,6 +203,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 
 	@Override
 	public void onRefresh() {
+		resetPaging();
 		loadBooks();
 	}
 
@@ -262,10 +265,14 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	}
 
 	public void search(View view) {
-		mCurrentPage = 1;
-		mMaxPage = 1;
+		resetPaging();
 		mKeyword = mSearchKeyEt.getText().toString();
 		loadBooks();
+	}
+
+	private void resetPaging() {
+		mCurrentPage = 1;
+		mMaxPage = 1;
 	}
 
 	@Override
@@ -283,8 +290,8 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	}
 
 	@Override
-	protected void onNetworkError() {
-		super.onNetworkError();
-		Utils.showShortToast(this, R.string.meta_load_error);
+	protected void onReload() {
+		super.onReload();
+		loadBooks();
 	}
 }

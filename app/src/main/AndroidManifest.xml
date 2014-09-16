@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.itbooks">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -39,6 +41,7 @@
             android:name=".app.BookDetailActivity" />
         <activity
             android:name=".app.DownloadWebViewActivity" />
+        <meta-data android:name="com.crashlytics.ApiKey" android:value="0bf5835ac1569fe382ff64839c0be3d3ed9396b9"/>
     </application>
 
 </manifest>

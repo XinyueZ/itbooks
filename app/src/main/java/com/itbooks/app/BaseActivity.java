@@ -16,7 +16,7 @@ public abstract  class BaseActivity extends com.chopping.activities.BaseActivity
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
-		setErrorHandlerAvailable(false);
+		setErrorHandlerAvailable(true);
 	}
 
 	protected void dismissInitView() {
