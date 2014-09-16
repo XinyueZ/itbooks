@@ -4,4 +4,15 @@
     <string name="app_name">IT Bücher</string>
     <string name="lbl_pull_to_load">Ziehen nachrunter, Daten zu laden.</string>
     <string name="lbl_search">Such nach einem Begriff.</string>
+    <string name="lbl_title">Name</string>
+    <string name="lbl_subtitle">Untertitel</string>
+    <string name="lbl_description">Beschreibung</string>
+    <string name="lbl_author">Autor</string>
+    <string name="lbl_isbn">ISBN</string>
+    <string name="lbl_year">Jahr</string>
+    <string name="lbl_page">Seite</string>
+    <string name="lbl_publisher">Verleger</string>
+    <string name="lbl_download">Herunterladen</string>
+    <string name="menu_forward">Vorwärts</string>
+    <string name="menu_backward">Rückwärts</string>
 </resources>

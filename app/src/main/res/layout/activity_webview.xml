@@ -1,11 +1,11 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@id/error_content"
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@id/error_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.itbooks.app.MainActivity">
-
-    <include layout="@layout/inc_pull_to_load" />
+    tools:context="com.itbooks.app.DownloadWebViewActivity">
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/content_srl"
@@ -13,14 +13,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ListView
-            android:id="@+id/books_lv"
-            android:cacheColorHint="@android:color/transparent"
+        <WebView
+            android:id="@+id/download_wv"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
-
-
 </FrameLayout>
-

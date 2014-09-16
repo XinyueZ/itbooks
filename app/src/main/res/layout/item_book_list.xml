@@ -21,7 +21,7 @@
         <TextView
             android:id="@+id/book_title_tv"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/text_common_black"
+            android:textColor="@color/text_common_white"
             android:text="title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -30,7 +30,7 @@
             android:id="@+id/book_subtitle_tv"
             android:text="subtitle"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/text_common_black"
+            android:textColor="@color/text_common_white"
             android:ellipsize="end"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -38,7 +38,7 @@
         <TextView
             android:id="@+id/book_isbn_tv"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/text_common_black"
+            android:textColor="@color/text_common_white"
             android:textStyle="bold"
             android:text="ISBN: 34234234"
             android:layout_gravity="bottom"

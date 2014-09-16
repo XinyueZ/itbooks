@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.schautup.activities.HomePageWebViewActivity">
+    <item
+        android:id="@+id/action_backward"
+        android:title="@string/menu_backward"
+        android:icon="@drawable/ic_action_backward"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_forward"
+        android:title="@string/menu_forward"
+        android:icon="@drawable/ic_action_ic_forward"
+        app:showAsAction="always" />
+
+</menu>

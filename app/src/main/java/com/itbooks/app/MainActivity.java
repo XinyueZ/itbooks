@@ -1,41 +1,39 @@
 package com.itbooks.app;
 
 import android.app.SearchManager;
-import android.app.SearchableInfo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
-import android.support.v7.widget.SearchView.OnSuggestionListener;
 import android.text.TextUtils;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 import com.android.volley.Request.Method;
 import com.chopping.net.GsonRequestTask;
 import com.itbooks.R;
 import com.itbooks.adapters.BookListAdapter;
+import com.itbooks.data.DSBook;
 import com.itbooks.data.DSBookList;
 import com.itbooks.utils.Prefs;
 
 
-public class MainActivity extends BaseActivity implements OnRefreshListener, OnQueryTextListener {
+public class MainActivity extends BaseActivity implements  OnQueryTextListener, OnItemClickListener {
 	/**
 	 * Main layout for this component.
 	 */
 	private static final int LAYOUT = R.layout.activity_main;
 	private static final int MAIN_MENU = R.menu.main_menu;
-	private SwipeRefreshLayout mRefreshLayout;
+
 	private ListView mLv;
 	private BookListAdapter mAdp;
-	private View mInitLl;
+
 	private SearchRecentSuggestions mSuggestions;
 	private String mKeyword;
 	private SearchView mSearchView;
@@ -78,8 +76,11 @@ public class MainActivity extends BaseActivity implements OnRefreshListener, OnQ
 		mRefreshLayout.setColorSchemeResources(R.color.green_1, R.color.green_2, R.color.green_3, R.color.green_4);
 		mRefreshLayout.setOnRefreshListener(this);
 		mRefreshLayout.setRefreshing(true);
+
 		mLv = (ListView) findViewById(R.id.books_lv);
 		mInitLl = findViewById(R.id.init_ll);
+		mLv.setOnItemClickListener(this);
+
 
 		handleIntent(getIntent());
 	}
@@ -87,39 +88,39 @@ public class MainActivity extends BaseActivity implements OnRefreshListener, OnQ
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(MAIN_MENU, menu);
-		final MenuItem searchMenu = menu.findItem(R.id.search);
-		mSearchView = (SearchView) MenuItemCompat.getActionView(searchMenu);
-		mSearchView.setOnQueryTextListener(this);
-		/* In order to close ActionView automatically after clicking keyboard. */
-		mSearchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
-
-			@Override
-			public void onFocusChange(View _v, boolean _hasFocus) {
-				if (!_hasFocus) {
-					MenuItemCompat.collapseActionView(searchMenu);
-					mSearchView.setQuery("", false);
-				}
-			}
-		});
-		mSearchView.setOnSuggestionListener(new OnSuggestionListener() {
-			@Override
-			public boolean onSuggestionSelect(int _pos) {
-				return false;
-			}
-
-			@Override
-			public boolean onSuggestionClick(int _pos) {
-				MenuItemCompat.collapseActionView(searchMenu);
-				mSearchView.setQuery("", false);
-				return false;
-			}
-		});
-		SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
-		if (searchManager != null) {
-			SearchableInfo info = searchManager.getSearchableInfo(getComponentName());
-			mSearchView.setSearchableInfo(info);
-		}
+//		getMenuInflater().inflate(MAIN_MENU, menu);
+//		final MenuItem searchMenu = menu.findItem(R.id.search);
+//		mSearchView = (SearchView) MenuItemCompat.getActionView(searchMenu);
+//		mSearchView.setOnQueryTextListener(this);
+//		/* In order to close ActionView automatically after clicking keyboard. */
+//		mSearchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+//
+//			@Override
+//			public void onFocusChange(View _v, boolean _hasFocus) {
+//				if (!_hasFocus) {
+//					MenuItemCompat.collapseActionView(searchMenu);
+//					mSearchView.setQuery("", false);
+//				}
+//			}
+//		});
+//		mSearchView.setOnSuggestionListener(new OnSuggestionListener() {
+//			@Override
+//			public boolean onSuggestionSelect(int _pos) {
+//				return false;
+//			}
+//
+//			@Override
+//			public boolean onSuggestionClick(int _pos) {
+//				MenuItemCompat.collapseActionView(searchMenu);
+//				mSearchView.setQuery("", false);
+//				return false;
+//			}
+//		});
+//		SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
+//		if (searchManager != null) {
+//			SearchableInfo info = searchManager.getSearchableInfo(getComponentName());
+//			mSearchView.setSearchableInfo(info);
+//		}
 		return true;
 	}
 
@@ -183,13 +184,6 @@ public class MainActivity extends BaseActivity implements OnRefreshListener, OnQ
 		loadDefaultPage();
 	}
 
-	private void dismissInitView() {
-		mInitLl.setVisibility(View.GONE);
-	}
-
-	private void showInitView() {
-		mInitLl.setVisibility(View.VISIBLE);
-	}
 
 	@Override
 	public boolean onQueryTextSubmit(String s) {
@@ -203,5 +197,11 @@ public class MainActivity extends BaseActivity implements OnRefreshListener, OnQ
 	@Override
 	public boolean onQueryTextChange(String s) {
 		return false;
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		DSBook book = (DSBook) mAdp.getItem(position);
+		BookDetailActivity.showInstance(this, book.getId());
 	}
 }

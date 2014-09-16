@@ -1,6 +1,6 @@
 <resources>
 
-    <style name="AppTheme" parent="@style/Theme.Base.AppCompat.Light">
+    <style name="AppTheme" parent="@style/Theme.Base.AppCompat">
         <item name="android:actionBarStyle">@style/AbStyle</item>
         <!-- Support library compatibility -->
         <item name="actionBarStyle">@style/AbStyle</item>
@@ -12,5 +12,24 @@
         <!-- Support library compatibility -->
         <item name="icon">@drawable/ic_launcher</item>
         <item name="logo">@drawable/ic_launcher</item>
+    </style>
+
+
+    <style name="BookDetailStyle">
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:textColor">@color/text_common_white</item>
+        <item name="android:layout_marginBottom">5dp</item>
+    </style>
+
+    <style name="BookDetailStyle.Download">
+        <item name="android:textColor">@color/text_common_black</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:background">@drawable/selector_bg1_btn</item>
+        <item name="android:text">@string/lbl_download</item>
+    </style>
+
+    <style name="BookDetailStyle.Property">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
     </style>
 </resources>

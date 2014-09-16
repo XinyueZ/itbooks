@@ -2,7 +2,19 @@
 <resources>
 
     <string name="app_name">IT Books</string>
+    <string name="suggestion_auth">com.itbooks</string>
     <string name="lbl_pull_to_load">Pull to load data.</string>
     <string name="lbl_search">Search keyword.</string>
-    <string name="suggestion_auth">com.itbooks</string>
+    <string name="lbl_title">Title</string>
+    <string name="lbl_subtitle">Sub-Title</string>
+    <string name="lbl_description">Description</string>
+    <string name="lbl_author">Author</string>
+    <string name="lbl_isbn">ISBN</string>
+    <string name="lbl_year">Year</string>
+    <string name="lbl_page">Page</string>
+    <string name="lbl_publisher">Publisher</string>
+    <string name="lbl_download">Download</string>
+    <string name="menu_forward">Forward</string>
+    <string name="menu_backward">Backward</string>
+    <!--"Title": "Developing Android Applications with Flex 4.5",--><!--"SubTitle": "Building Android Applications with ActionScript",--><!--"Description": "Ready to put your ActionScript 3 skills to work on mobile apps? This hands-on book walks you through the process of creating an Adobe AIR application from start to finish, using the Flex 4.5 framework. Move quickly from a basic Hello World application to complex interactions with Android APIs, and get complete code examples for working with Android device components - GPS, camera, gallery, accelerometer, multitouch display, and OS interactions. No matter how much Flex experience you have, this book is the ideal resource.",--><!--"Author": "Rich Tretola",--><!--"ISBN": "9781449305376",--><!--"Year": "2011",--><!--"Page": "112",--><!--"Publisher": "O'Reilly Media",--><!--"Image": "http://s.it-ebooks-api.info/3/developing_android_applications_with_flex_4.5.jpg",--><!--"Download": "http://filepi.com/i/8wlDiuB"-->
 </resources>
