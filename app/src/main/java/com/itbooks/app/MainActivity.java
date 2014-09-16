@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.android.volley.Request.Method;
@@ -37,6 +38,7 @@ public class MainActivity extends BaseActivity implements  OnQueryTextListener, 
 	private SearchRecentSuggestions mSuggestions;
 	private String mKeyword;
 	private SearchView mSearchView;
+	private EditText mSearchKeyEt;
 
 	//------------------------------------------------
 	//Subscribes, event-handlers
@@ -81,6 +83,7 @@ public class MainActivity extends BaseActivity implements  OnQueryTextListener, 
 		mInitLl = findViewById(R.id.init_ll);
 		mLv.setOnItemClickListener(this);
 
+		mSearchKeyEt = (EditText) findViewById(R.id.search_keyword_et);
 
 		handleIntent(getIntent());
 	}
@@ -153,6 +156,10 @@ public class MainActivity extends BaseActivity implements  OnQueryTextListener, 
 
 	@Override
 	public void onRefresh() {
+		loadBooks();
+	}
+
+	private void loadBooks() {
 		if (!TextUtils.isEmpty(mKeyword)) {
 			loadByKeyword();
 		} else {
@@ -203,5 +210,16 @@ public class MainActivity extends BaseActivity implements  OnQueryTextListener, 
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		DSBook book = (DSBook) mAdp.getItem(position);
 		BookDetailActivity.showInstance(this, book.getId());
+	}
+
+	public void search(View view) {
+		mKeyword = mSearchKeyEt.getText().toString();
+		loadBooks();
+	}
+
+	@Override
+	protected void onAppConfigIgnored() {
+		super.onAppConfigIgnored();
+		loadDefaultPage();
 	}
 }
