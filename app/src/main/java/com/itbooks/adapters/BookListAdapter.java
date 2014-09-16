@@ -68,7 +68,7 @@ public final class BookListAdapter extends BaseAdapter {
 		viewHolder.mBookThumbIv.setImageUrl(book.getImageUrl(), TaskHelper.getImageLoader());
 		viewHolder.mBookTitleTv.setText(book.getTitle());
 		viewHolder.mBookSubTitleTv.setText(book.getSubTitle());
-		viewHolder.mISBNTv.setText(String.format("ISBN: %s", book.getISBN() + "#" + book.getId()));
+		viewHolder.mISBNTv.setText(String.format("ISBN: %s", book.getISBN()  ));
 		return convertView;
 	}
 

@@ -27,8 +27,6 @@ import com.android.volley.Request.Method;
 import com.chopping.net.GsonRequestTask;
 import com.chopping.utils.Utils;
 import com.crashlytics.android.Crashlytics;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.itbooks.R;
 import com.itbooks.adapters.BookListAdapter;
 import com.itbooks.app.fragments.AboutDialogFragment;
@@ -153,15 +151,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	public boolean onCreateOptionsMenu(Menu menu) {
 				getMenuInflater().inflate(MAIN_MENU, menu);
 
-		MenuItem menuShare = menu.findItem(R.id.action_share_app);
-		//Getting the actionprovider associated with the menu item whose id is share.
-		android.support.v7.widget.ShareActionProvider provider =
-				(android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(menuShare);
-		//Setting a share intent.
-		String subject = getString(R.string.lbl_share_app);
-		String text = getString(R.string.lbl_share_app_content );
-		provider.setShareIntent(getDefaultShareIntent(provider, subject, text));
-
 
 		//		final MenuItem searchMenu = menu.findItem(R.id.search);
 		//		mSearchView = (SearchView) MenuItemCompat.getActionView(searchMenu);
@@ -199,6 +188,19 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	}
 
 	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		MenuItem menuShare = menu.findItem(R.id.action_share_app);
+		//Getting the actionprovider associated with the menu item whose id is share.
+		android.support.v7.widget.ShareActionProvider provider =
+				(android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(menuShare);
+		//Setting a share intent.
+		String subject = getString(R.string.lbl_share_app);
+		String text = getString(R.string.lbl_share_app_content );
+		provider.setShareIntent(getDefaultShareIntent(provider, subject, text));
+		return super.onPrepareOptionsMenu(menu);
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.action_about:
@@ -208,9 +210,9 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		return super.onOptionsItemSelected(item);
 	}
 
-	protected void handleIntent(Intent _intent) {
+	protected void handleIntent(Intent intent) {
 		mRefreshLayout.setRefreshing(true);
-		mKeyword = _intent.getStringExtra(SearchManager.QUERY);
+		mKeyword = intent.getStringExtra(SearchManager.QUERY);
 		if (!TextUtils.isEmpty(mKeyword)) {
 			mKeyword = mKeyword.trim();
 			resetSearchView();

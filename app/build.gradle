@@ -20,7 +20,6 @@ repositories {
 android {
     compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
     buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
-
     defaultConfig {
         applicationId project.APP_APPLICATIONID
         minSdkVersion Integer.parseInt(project.ANDROID_BUILD_MIN_SDK_VERSION)
@@ -38,6 +37,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    productFlavors {
+    }
+
+    lintOptions {
+        htmlReport false
+        abortOnError false
+    }
 }
 
 dependencies {
@@ -45,7 +51,7 @@ dependencies {
     compile project(':ChoppingBootstrap')
     compile project(':volley_cz')
     compile 'com.crashlytics.android:crashlytics:1.+'
-    compile 'com.google.android.gms:play-services:5.+'
+    compile 'com.google.android.gms:play-services:5.0.89'
 }
 
 // Rename final apks
