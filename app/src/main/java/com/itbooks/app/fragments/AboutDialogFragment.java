@@ -101,14 +101,14 @@ public final class AboutDialogFragment extends DialogFragment {
 		aboutBody.append(eulaLink);
 
 		// Powered by.
-		SpannableString pwdLink = new SpannableString(getString(R.string.about_pwd));
+		SpannableString pwdLink = new SpannableString("Powered by: " + getString(R.string.about_pwd));
 		pwdLink.setSpan(new ClickableSpan() {
 			@Override
 			public void onClick(View view) {
 				Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://" + getString(R.string.about_pwd) ));
 				startActivity(browserIntent);
 			}
-		}, 0, eulaLink.length(), 0);
+		}, 0, pwdLink.length(), 0);
 		aboutBody.append("\n\n");
 		aboutBody.append(pwdLink);
 

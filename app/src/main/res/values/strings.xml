@@ -45,7 +45,7 @@
     <string name="play_service_url">market://details?id=com.google.android.gms</string>
 
     <!-- Shown in the 'About' window of the app. -->
-    <string name="about_body">&lt;b&gt;SchautUp &lt;/b&gt;&lt;br&gt;Version %s &lt;br&gt;</string>
+    <string name="about_body">&lt;b&gt;IT Books &lt;/b&gt;&lt;br&gt;Version %s &lt;br&gt;</string>
     <!-- Shown as a link in the About screen of the app; user can click it to see the licenses. -->
     <string name="about_licenses">Open Source Licenses</string>
     <!-- Shown as a link in the About screen of the app; user can click to see the EULA. -->
