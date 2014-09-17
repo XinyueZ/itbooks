@@ -13,9 +13,10 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.android.volley.Request.Method;
+import com.chopping.application.LL;
 import com.chopping.net.GsonRequestTask;
 import com.chopping.utils.Utils;
 import com.crashlytics.android.Crashlytics;
@@ -35,8 +37,8 @@ import com.itbooks.data.DSBookList;
 import com.itbooks.utils.Prefs;
 
 
-public class MainActivity extends BaseActivity implements OnQueryTextListener, OnItemClickListener, OnClickListener,
-		OnEditorActionListener {
+public class MainActivity extends BaseActivity implements OnQueryTextListener, OnItemClickListener,
+		OnEditorActionListener, OnScrollListener {
 	/**
 	 * Main layout for this component.
 	 */
@@ -48,7 +50,9 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	/**
 	 * Foot view for loading more.
 	 */
-	public static final int LAYOUT_LOAD_MORE = R.layout.inc_load_more;
+	private static final int LAYOUT_LOAD_MORE = R.layout.inc_load_more;
+
+	private static final int MAX_PAGER = 100;
 
 	private ListView mLv;
 	private BookListAdapter mAdp;
@@ -59,10 +63,10 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	private EditText mSearchKeyEt;
 
 	private int mCurrentPage = 1;
-	private int mMaxPage = 1;
 	private boolean mLoadedMore;
 	private View mMoreV;
 
+	private int mPreItemOnLast;
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -82,6 +86,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 			showInitView();
 			Utils.showShortToast(this, R.string.lbl_no_data);
 		} else {
+			mCurrentPage = e.getPage();
 			mLv.setVisibility(View.VISIBLE);
 			if (mAdp == null) {
 				mAdp = new BookListAdapter(e.getBooks());
@@ -95,21 +100,9 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 				}
 				mAdp.notifyDataSetChanged();
 			}
-
 			if (total > 10) {
-				mMaxPage = total / 10;
-				if (total % 10 > 0) {
-					mMaxPage++;
-				}
-				if (mCurrentPage < mMaxPage) {
-					mMoreV.setVisibility(View.VISIBLE);
-				} else {
-					mMoreV.setVisibility(View.GONE);
-				}
-			} else {
-				mMaxPage = 1;
+				mCurrentPage++;
 			}
-
 			dismissInitView();
 		}
 	}
@@ -138,18 +131,19 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 
 		mMoreV = getLayoutInflater().inflate(LAYOUT_LOAD_MORE, mLv, false);
 		mLv.addFooterView(mMoreV);
-		mMoreV.setOnClickListener(this);
 
 		mSearchKeyEt = (EditText) findViewById(R.id.search_keyword_et);
 		mSearchKeyEt.setOnEditorActionListener(this);
 
 		handleIntent(getIntent());
+
+		mLv.setOnScrollListener(this);
 	}
 
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-				getMenuInflater().inflate(MAIN_MENU, menu);
+		getMenuInflater().inflate(MAIN_MENU, menu);
 
 
 		//		final MenuItem searchMenu = menu.findItem(R.id.search);
@@ -195,7 +189,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 				(android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(menuShare);
 		//Setting a share intent.
 		String subject = getString(R.string.lbl_share_app);
-		String text = getString(R.string.lbl_share_app_content );
+		String text = getString(R.string.lbl_share_app_content);
 		provider.setShareIntent(getDefaultShareIntent(provider, subject, text));
 		return super.onPrepareOptionsMenu(menu);
 	}
@@ -258,7 +252,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	private void loadDefaultPage() {
 		String url = Prefs.getInstance(getApplication()).getApiSearchBooks();
 		url = String.format(url, Utils.encode("Android"), mCurrentPage + "");
-//		LL.d("load: " + url);
+		LL.d("load: " + url);
 		new GsonRequestTask<DSBookList>(getApplicationContext(), Method.GET, url, DSBookList.class).execute();
 	}
 
@@ -269,7 +263,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	private void loadByKeyword() {
 		String url = Prefs.getInstance(getApplication()).getApiSearchBooks();
 		url = String.format(url, Utils.encode(mKeyword), mCurrentPage + "");
-//		LL.d("load: " + url);
+		LL.d("load: " + url);
 		new GsonRequestTask<DSBookList>(getApplicationContext(), Method.GET, url, DSBookList.class).execute();
 	}
 
@@ -304,11 +298,12 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		resetPaging();
 		mKeyword = mSearchKeyEt.getText().toString();
 		loadBooks();
+
+		mMoreV.setVisibility(View.VISIBLE);
 	}
 
 	private void resetPaging() {
 		mCurrentPage = 1;
-		mMaxPage = 1;
 	}
 
 	@Override
@@ -317,16 +312,15 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		loadDefaultPage();
 	}
 
-	@Override
-	public void onClick(View v) {
-		loadMore();
-	}
-
 	private void loadMore() {
-		mLoadedMore = true;
-		mCurrentPage++;
-		mRefreshLayout.setRefreshing(true);
-		loadBooks();
+		if (mCurrentPage < MAX_PAGER) {
+			mLoadedMore = true;
+			mRefreshLayout.setRefreshing(true);
+			loadBooks();
+		} else {
+			Utils.showLongToast(getApplicationContext(), R.string.lbl_no_more);
+			mMoreV.setVisibility(View.GONE);
+		}
 	}
 
 	@Override
@@ -342,5 +336,30 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+	}
+
+
+	@Override
+	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+
+		// Make your calculation stuff here. You have all your
+		// needed info from the parameters of this function.
+
+		// Sample calculation to determine if the last
+		// item is fully visible.
+		final int lastItem = firstVisibleItem + visibleItemCount;
+		if (lastItem == totalItemCount) {
+			if (mPreItemOnLast != lastItem) { //to avoid multiple calls for last item
+				loadMore();
+				mPreItemOnLast = lastItem;
+			}
+		}
+
 	}
 }

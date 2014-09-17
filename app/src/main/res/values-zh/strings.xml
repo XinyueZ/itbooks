@@ -17,7 +17,7 @@
       <string name="lbl_share_book_content">你好！\n\n\u00A0\u00A0\u00A0\u00A0我找到一本不错的IT书。\n\n《%1$s》\n\n作者：%2$s\n\nDownload:
         %3$s\n\n下载App:market://details?id=com.itbooks</string>
     <string name="lbl_pull_to_load">下拉，重载数据。</string>
-    <string name="lbl_search">查找关键字。</string>
+    <string name="lbl_search">查找关键字，比如：Android</string>
     <string name="lbl_title">书名</string>
     <string name="lbl_subtitle">别名</string>
     <string name="lbl_description">描述</string>
@@ -28,12 +28,15 @@
     <string name="lbl_publisher">发行商</string>
     <string name="lbl_download">这里下载。</string>
     <string name="lbl_download_in_browser">浏览器中下载。</string>
-    <string name="menu_forward">向前</string>
-    <string name="menu_backward">向后</string>
     <string name="lbl_more">更多…</string>
     <string name="lbl_no_data">没有发现结果！</string>
     <string name="lbl_play_service">本App需要谷歌服务，必须先安装然后使用。</string>
     <string name="lbl_download_path">这里找到下载文件: %1$s</string>
+    <string name="lbl_no_more">已无数据…</string>
+
+
+    <string name="menu_forward">向前</string>
+    <string name="menu_backward">向后</string>
 
     <!-- Shown in the 'About' window of the app. -->
     <string name="about_body">&lt;b&gt;IT Books &lt;/b&gt;&lt;br&gt;版本%s &lt;br&gt;</string>

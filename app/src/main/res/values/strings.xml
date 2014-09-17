@@ -20,7 +20,7 @@
     <string name="lbl_share_book_content">Hello!\n\n00A0\u00A0\u00A0\u00A0I\'ve found a nice IT-Book for
         you.\n\n"%1$s"\n\nAuthor:%2$s\n\nDownload: %3$s\n\nDownload App: market://details?id=com.itbooks</string>
     <string name="lbl_pull_to_load">Pull to load data.</string>
-    <string name="lbl_search">Search keyword.</string>
+    <string name="lbl_search">Search keyword, i.e Android</string>
     <string name="lbl_title">Title</string>
     <string name="lbl_subtitle">Sub-Title</string>
     <string name="lbl_description">Description</string>
@@ -35,6 +35,7 @@
     <string name="lbl_no_data">Nothing found!</string>
     <string name="lbl_play_service">This application needs Google Play Service, you must install it first.</string>
     <string name="lbl_download_path">Find file: %1$s</string>
+    <string name="lbl_no_more">No more data…</string>
     <string name="menu_forward">Forward</string>
     <string name="menu_backward">Backward</string>
 
