@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -21,6 +22,7 @@ import com.android.volley.toolbox.ImageLoader.ImageContainer;
 import com.android.volley.toolbox.ImageLoader.ImageListener;
 import com.chopping.net.GsonRequestTask;
 import com.chopping.net.TaskHelper;
+import com.chopping.utils.Utils;
 import com.itbooks.R;
 import com.itbooks.data.DSBookDetail;
 import com.itbooks.utils.Prefs;
@@ -201,6 +203,11 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 			i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			i.setData(Uri.parse(mBookDetail.getDownloadUrl()));
 			startActivity(i);
+
+			String msg = getString(R.string.lbl_download_path,
+					new StringBuilder().append(Environment.getExternalStorageDirectory()).append('/').append(
+							Environment.DIRECTORY_DOWNLOADS));
+			Utils.showLongToast(getApplicationContext(), msg);
 		}
 	}
 

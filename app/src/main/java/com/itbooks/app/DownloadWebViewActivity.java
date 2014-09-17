@@ -3,27 +3,40 @@ package com.itbooks.app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.DownloadListener;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.TextView;
 
+import com.chopping.utils.Utils;
 import com.itbooks.R;
+import com.nineoldandroids.animation.ObjectAnimator;
+import com.nineoldandroids.view.ViewHelper;
 
-public final class DownloadWebViewActivity extends BaseActivity {
+public final class DownloadWebViewActivity extends BaseActivity implements DownloadListener {
 	/**
 	 * Main layout for this component.
 	 */
-	private static final int LAYOUT = R.layout.activity_webview;
-
+	private static final int LAYOUT = R.layout.activity_download_webview;
+	/**
+	 * There is different between android pre 3.0 and 3.x, 4.x on this wording.
+	 */
+	private static final String ALPHA =
+			(android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1) ? "alpha" : "Alpha";
 	private static final String EXTRAS_URL = "com.itbooks.app.WebViewActivity.url";
 
 	private WebView mWebView;
 	private String mUrl;
 
+	private String mDownloadPath;
 
 	/**
 	 * The menu to this view.
@@ -48,6 +61,8 @@ public final class DownloadWebViewActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mDownloadPath = getString(R.string.lbl_download_path, new StringBuilder().append(
+				Environment.getExternalStorageDirectory()).append('/').append(Environment.DIRECTORY_DOWNLOADS));
 		if (savedInstanceState != null) {
 			mUrl = savedInstanceState.getString(EXTRAS_URL);
 		} else {
@@ -73,6 +88,7 @@ public final class DownloadWebViewActivity extends BaseActivity {
 				return true;
 			}
 		});
+		mWebView.setDownloadListener(this);
 		WebSettings settings = mWebView.getSettings();
 		settings.setLoadWithOverviewMode(true);
 		settings.setJavaScriptEnabled(true);
@@ -90,6 +106,11 @@ public final class DownloadWebViewActivity extends BaseActivity {
 		mRefreshLayout.setRefreshing(true);
 		mWebView.loadUrl(mUrl);
 
+		TextView downloadTv = (TextView) findViewById(R.id.download_path_tv);
+		downloadTv.setText(getString(R.string.lbl_download_path, new StringBuilder().append(
+				Environment.getExternalStorageDirectory()).append('/').append(Environment.DIRECTORY_DOWNLOADS)));
+		float initAplha = ViewHelper.getAlpha(downloadTv);
+		ObjectAnimator.ofFloat(downloadTv, ALPHA, 0, initAplha).setDuration(2000).start();
 	}
 
 	@Override
@@ -133,5 +154,15 @@ public final class DownloadWebViewActivity extends BaseActivity {
 	@Override
 	public void onRefresh() {
 		mWebView.loadUrl(mUrl);
+	}
+
+	@Override
+	public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype,
+			long contentLength) {
+		Uri uri = Uri.parse(url);
+		Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+		startActivity(intent);
+		TextView downloadTv = (TextView) findViewById(R.id.download_path_tv);
+		Utils.showLongToast(getApplicationContext(), downloadTv.getText().toString());
 	}
 }

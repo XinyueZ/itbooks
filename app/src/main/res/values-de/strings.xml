@@ -33,6 +33,7 @@
     <string name="lbl_no_data">Nichts gefunden!</string>
     <string name="lbl_play_service">Diese App braucht Google Play Service, Sie müssen erst herunterladen dann
         weiter.</string>
+    <string name="lbl_download_path">Finden Sie die Datei: %1$s</string>
     <string name="menu_forward">Vorwärts</string>
     <string name="menu_backward">Rückwärts</string>
 </resources>
