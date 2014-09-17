@@ -15,6 +15,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
@@ -141,6 +142,12 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		mLv.setOnItemClickListener(this);
 
 		mMoreV = getLayoutInflater().inflate(LAYOUT_LOAD_MORE, mLv, false);
+		mMoreV.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+
+			}
+		});
 		mLv.addFooterView(mMoreV);
 
 		mSearchKeyEt = (EditText) findViewById(R.id.search_keyword_et);
