@@ -36,6 +36,8 @@
     <string name="lbl_play_service">This application needs Google Play Service, you must install it first.</string>
     <string name="lbl_download_path">Find file: %1$s</string>
     <string name="lbl_no_more">No more data…</string>
+    <string name="lbl_api_limit">Hi coder! You\'ve arrived the max limit of API calling today,
+        do something pause and search tomorrow, you know it!</string>
     <string name="menu_forward">Forward</string>
     <string name="menu_backward">Backward</string>
 

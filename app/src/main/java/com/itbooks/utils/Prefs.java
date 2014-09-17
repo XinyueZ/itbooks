@@ -10,6 +10,7 @@ import com.chopping.application.BasicPrefs;
  */
 public final class Prefs extends BasicPrefs {
 	public static final String NA = "N/A";
+	public static final String API_LIMIT = "API limit exceeded!";
 	/**
 	 * Impl singleton pattern.
 	 */

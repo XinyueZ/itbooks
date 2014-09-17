@@ -1,6 +1,8 @@
 package com.itbooks.app;
 
+import android.app.AlertDialog;
 import android.app.SearchManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
@@ -79,31 +81,40 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	 */
 	public void onEvent(DSBookList e) {
 		mRefreshLayout.setRefreshing(false);
-
-		int total = Integer.parseInt(e.getTotal());
-		if (total == 0) {
-			mLv.setVisibility(View.GONE);
-			showInitView();
-			Utils.showShortToast(this, R.string.lbl_no_data);
-		} else {
-			mCurrentPage = e.getPage();
-			mLv.setVisibility(View.VISIBLE);
-			if (mAdp == null) {
-				mAdp = new BookListAdapter(e.getBooks());
-				mLv.setAdapter(mAdp);
-			} else {
-				if (!mLoadedMore) {
-					mAdp.setData(e.getBooks());
-				} else {
-					mAdp.getBooks().addAll(e.getBooks());
-					mLoadedMore = false;
+		if (TextUtils.equals(e.getError(), Prefs.API_LIMIT)) {
+			new AlertDialog.Builder(this).setTitle(R.string.app_name).setMessage(R.string.lbl_api_limit).setCancelable(
+					false).setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					resetPaging();
+					finish();
 				}
-				mAdp.notifyDataSetChanged();
+			}).create().show();
+		} else {
+			int total = Integer.parseInt(e.getTotal());
+			if (total == 0) {
+				mLv.setVisibility(View.GONE);
+				showInitView();
+				Utils.showShortToast(this, R.string.lbl_no_data);
+			} else {
+				mCurrentPage = e.getPage();
+				mLv.setVisibility(View.VISIBLE);
+				if (mAdp == null) {
+					mAdp = new BookListAdapter(e.getBooks());
+					mLv.setAdapter(mAdp);
+				} else {
+					if (!mLoadedMore) {
+						mAdp.setData(e.getBooks());
+					} else {
+						mAdp.getBooks().addAll(e.getBooks());
+						mLoadedMore = false;
+					}
+					mAdp.notifyDataSetChanged();
+				}
+				if (total > 10) {
+					mCurrentPage++;
+				}
+				dismissInitView();
 			}
-			if (total > 10) {
-				mCurrentPage++;
-			}
-			dismissInitView();
 		}
 	}
 
@@ -304,6 +315,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 
 	private void resetPaging() {
 		mCurrentPage = 1;
+		mPreItemOnLast = 0;
 	}
 
 	@Override
