@@ -30,6 +30,7 @@
             </LinearLayout>
 
             <EditText
+                android:textCursorDrawable="@null"
                 android:id="@+id/search_keyword_et"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

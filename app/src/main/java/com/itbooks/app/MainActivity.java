@@ -71,6 +71,9 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	private View mLoadMoreIndicatorV;
 
 	private int mPreItemOnLast;
+
+	private boolean mDetailOpened;
+
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -161,8 +164,17 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		mLv.setOnScrollListener(this);
 
 		mKeyword = Prefs.getInstance(getApplication()).getLastSearched();
+		if (!TextUtils.isEmpty(mKeyword)) {
+			mSearchKeyEt.setText(mKeyword);
+		}
 	}
 
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		Prefs.getInstance(getApplication()).setLastSearched(mKeyword);
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -275,7 +287,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	private void loadDefaultPage() {
 		String url = Prefs.getInstance(getApplication()).getApiSearchBooks();
 		url = String.format(url, Utils.encode("Android"), mCurrentPage + "");
-//		LL.d("load: " + url);
+		//		LL.d("load: " + url);
 		new GsonRequestTask<DSBookList>(getApplicationContext(), Method.GET, url, DSBookList.class).execute();
 	}
 
@@ -286,14 +298,8 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	private void loadByKeyword() {
 		String url = Prefs.getInstance(getApplication()).getApiSearchBooks();
 		url = String.format(url, Utils.encode(mKeyword), mCurrentPage + "");
-//		LL.d("load: " + url);
+		//		LL.d("load: " + url);
 		new GsonRequestTask<DSBookList>(getApplicationContext(), Method.GET, url, DSBookList.class).execute();
-	}
-
-	@Override
-	protected void onAppConfigLoaded() {
-		super.onAppConfigLoaded();
-		loadDefaultPage();
 	}
 
 
@@ -314,6 +320,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		DSBook book = (DSBook) mAdp.getItem(position);
+		mDetailOpened = true;
 		BookDetailActivity.showInstance(this, book.getId());
 	}
 
@@ -331,9 +338,23 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	}
 
 	@Override
+	protected void onAppConfigLoaded() {
+		super.onAppConfigLoaded();
+		if (!mDetailOpened) {
+			loadBooks();
+		} else {
+			mDetailOpened = false;
+		}
+	}
+
+	@Override
 	protected void onAppConfigIgnored() {
 		super.onAppConfigIgnored();
-		loadDefaultPage();
+		if (!mDetailOpened) {
+			loadBooks();
+		} else {
+			mDetailOpened = false;
+		}
 	}
 
 	private Handler mDelayLoadBooksHandler = new Handler();
@@ -347,7 +368,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		if(mDelayLoadBooksHandler!=null && mDelayLoadBooksTask != null){
+		if (mDelayLoadBooksHandler != null && mDelayLoadBooksTask != null) {
 			mDelayLoadBooksHandler.removeCallbacks(mDelayLoadBooksTask);
 		}
 		TaskHelper.getRequestQueue().cancelAll(GsonRequestTask.TAG);

@@ -42,9 +42,9 @@
     <string name="menu_backward">Backward</string>
 
     <!--debug:-->
-    <!--<string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>-->
+    <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
     <!--release:-->
-    <string name="banner_ad_unit_id">ca-app-pub-9133982521997162/8164635739</string>
+    <!--<string name="banner_ad_unit_id">ca-app-pub-9133982521997162/8164635739</string>-->
 
     <string name="play_service_url">market://details?id=com.google.android.gms</string>
 
