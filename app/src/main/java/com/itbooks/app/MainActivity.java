@@ -5,6 +5,7 @@ import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.SearchRecentSuggestions;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -28,8 +29,8 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.android.volley.Request.Method;
-import com.chopping.application.LL;
 import com.chopping.net.GsonRequestTask;
+import com.chopping.net.TaskHelper;
 import com.chopping.utils.Utils;
 import com.crashlytics.android.Crashlytics;
 import com.itbooks.R;
@@ -67,7 +68,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 
 	private int mCurrentPage = 1;
 	private boolean mLoadedMore;
-	private View mMoreV;
+	private View mLoadMoreIndicatorV;
 
 	private int mPreItemOnLast;
 	//------------------------------------------------
@@ -90,6 +91,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 					finish();
 				}
 			}).create().show();
+			setHasShownDataOnUI(false);
 		} else {
 			int total = Integer.parseInt(e.getTotal());
 			if (total == 0) {
@@ -116,6 +118,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 				}
 				dismissInitView();
 			}
+			setHasShownDataOnUI(true);
 		}
 	}
 
@@ -141,14 +144,14 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		mInitLl = findViewById(R.id.init_ll);
 		mLv.setOnItemClickListener(this);
 
-		mMoreV = getLayoutInflater().inflate(LAYOUT_LOAD_MORE, mLv, false);
-		mMoreV.setOnClickListener(new OnClickListener() {
+		mLoadMoreIndicatorV = getLayoutInflater().inflate(LAYOUT_LOAD_MORE, mLv, false);
+		mLoadMoreIndicatorV.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 
 			}
 		});
-		mLv.addFooterView(mMoreV);
+		mLv.addFooterView(mLoadMoreIndicatorV);
 
 		mSearchKeyEt = (EditText) findViewById(R.id.search_keyword_et);
 		mSearchKeyEt.setOnEditorActionListener(this);
@@ -156,6 +159,8 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		handleIntent(getIntent());
 
 		mLv.setOnScrollListener(this);
+
+		mKeyword = Prefs.getInstance(getApplication()).getLastSearched();
 	}
 
 
@@ -270,7 +275,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	private void loadDefaultPage() {
 		String url = Prefs.getInstance(getApplication()).getApiSearchBooks();
 		url = String.format(url, Utils.encode("Android"), mCurrentPage + "");
-		LL.d("load: " + url);
+//		LL.d("load: " + url);
 		new GsonRequestTask<DSBookList>(getApplicationContext(), Method.GET, url, DSBookList.class).execute();
 	}
 
@@ -281,7 +286,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	private void loadByKeyword() {
 		String url = Prefs.getInstance(getApplication()).getApiSearchBooks();
 		url = String.format(url, Utils.encode(mKeyword), mCurrentPage + "");
-		LL.d("load: " + url);
+//		LL.d("load: " + url);
 		new GsonRequestTask<DSBookList>(getApplicationContext(), Method.GET, url, DSBookList.class).execute();
 	}
 
@@ -317,7 +322,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		mKeyword = mSearchKeyEt.getText().toString();
 		loadBooks();
 
-		mMoreV.setVisibility(View.VISIBLE);
+		mLoadMoreIndicatorV.setVisibility(View.VISIBLE);
 	}
 
 	private void resetPaging() {
@@ -331,14 +336,31 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		loadDefaultPage();
 	}
 
+	private Handler mDelayLoadBooksHandler = new Handler();
+	private Runnable mDelayLoadBooksTask = new Runnable() {
+		@Override
+		public void run() {
+			loadBooks();
+		}
+	};
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if(mDelayLoadBooksHandler!=null && mDelayLoadBooksTask != null){
+			mDelayLoadBooksHandler.removeCallbacks(mDelayLoadBooksTask);
+		}
+		TaskHelper.getRequestQueue().cancelAll(GsonRequestTask.TAG);
+	}
+
 	private void loadMore() {
 		if (mCurrentPage < MAX_PAGER) {
 			mLoadedMore = true;
 			mRefreshLayout.setRefreshing(true);
-			loadBooks();
+			mDelayLoadBooksHandler.postDelayed(mDelayLoadBooksTask, 5500);
 		} else {
 			Utils.showLongToast(getApplicationContext(), R.string.lbl_no_more);
-			mMoreV.setVisibility(View.GONE);
+			mLoadMoreIndicatorV.setVisibility(View.GONE);
 		}
 	}
 

@@ -19,6 +19,7 @@ public final class Prefs extends BasicPrefs {
 	private static final String API_SEARCH_BOOKS = "api_search_books";
 	private static final String API_BOOK_DETAIL = "api_book_detail";
 	private static final String API_DEFAULT_BOOKS = "api_default_books";
+	private static final String KEY_LAST_SEARCHED = "key.last.searched";
 	/**
 	 * Storage. Whether the "End User License Agreement" has been shown and agreed at application's first start.
 	 * <p/>
@@ -82,6 +83,14 @@ public final class Prefs extends BasicPrefs {
 	 */
 	public void setEULAOnceConfirmed(boolean isConfirmed) {
 		setBoolean(KEY_EULA_SHOWN, isConfirmed);
+	}
+
+	public void setLastSearched(String searched) {
+		setString(KEY_LAST_SEARCHED, searched);
+	}
+
+	public String getLastSearched(){
+		return getString(KEY_LAST_SEARCHED, null);
 	}
 
 }
