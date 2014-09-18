@@ -82,7 +82,9 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 		showBookDetail();
 		dismissInitView();
 		mRefreshLayout.setRefreshing(false);
+		setHasShownDataOnUI(true);
 	}
+
 
 	//------------------------------------------------
 
@@ -232,5 +234,11 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 			provider.setShareIntent(getDefaultShareIntent(provider, subject, text));
 		}
 		return super.onPrepareOptionsMenu(menu);
+	}
+
+	@Override
+	protected void onReload() {
+		super.onReload();
+		loadBookDetail();
 	}
 }
