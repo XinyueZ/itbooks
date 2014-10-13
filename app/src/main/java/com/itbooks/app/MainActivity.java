@@ -7,8 +7,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.SearchRecentSuggestions;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.text.TextUtils;
@@ -36,6 +39,7 @@ import com.crashlytics.android.Crashlytics;
 import com.itbooks.R;
 import com.itbooks.adapters.BookListAdapter;
 import com.itbooks.app.fragments.AboutDialogFragment;
+import com.itbooks.app.fragments.AppListImpFragment;
 import com.itbooks.data.DSBook;
 import com.itbooks.data.DSBookList;
 import com.itbooks.utils.Prefs;
@@ -73,7 +77,14 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	private int mPreItemOnLast;
 
 	private boolean mDetailOpened;
-
+	/**
+	 * Use navigation-drawer for this fork.
+	 */
+	private ActionBarDrawerToggle mDrawerToggle;
+	/**
+	 * Navigation drawer.
+	 */
+	private DrawerLayout mDrawerLayout;
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -167,6 +178,8 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		if (!TextUtils.isEmpty(mKeyword)) {
 			mSearchKeyEt.setText(mKeyword);
 		}
+
+		initDrawer();
 	}
 
 
@@ -231,6 +244,10 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
+		if (mDrawerToggle != null && mDrawerToggle.onOptionsItemSelected(item)) {
+			return true;
+		}
+
 		switch (item.getItemId()) {
 		case R.id.action_about:
 			showDialogFragment(AboutDialogFragment.newInstance(this), null);
@@ -345,6 +362,8 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		} else {
 			mDetailOpened = false;
 		}
+
+		showAppList();
 	}
 
 	@Override
@@ -355,6 +374,8 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		} else {
 			mDetailOpened = false;
 		}
+
+		showAppList();
 	}
 
 	private Handler mDelayLoadBooksHandler = new Handler();
@@ -423,5 +444,45 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 			}
 		}
 
+	}
+
+
+	/**
+	 * Show all external applications links.
+	 */
+	private void showAppList() {
+		getSupportFragmentManager().beginTransaction().replace(R.id.app_list_fl, AppListImpFragment.newInstance(this))
+				.commit();
+	}
+
+	/**
+	 * Initialize the navigation drawer.
+	 */
+	private void initDrawer() {
+		ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null) {
+			actionBar.setHomeButtonEnabled(true);
+			actionBar.setDisplayHomeAsUpEnabled(true);
+			mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+			mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.string.app_name,
+					R.string.app_name) {
+				@Override
+				public void onDrawerSlide(View drawerView, float slideOffset) {
+					super.onDrawerSlide(drawerView, slideOffset);
+					if (!getSupportActionBar().isShowing()) {
+						getSupportActionBar().show();
+					}
+				}
+			};
+			mDrawerLayout.setDrawerListener(mDrawerToggle);
+		}
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (mDrawerToggle != null) {
+			mDrawerToggle.syncState();
+		}
 	}
 }
