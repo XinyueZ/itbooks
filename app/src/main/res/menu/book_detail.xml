@@ -5,5 +5,5 @@
         android:id="@+id/action_share_book"
         android:title="@string/lbl_share_book"
         app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
 </menu>

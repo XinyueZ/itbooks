@@ -2,6 +2,7 @@ package com.itbooks.app;
 
 import android.app.AlertDialog;
 import android.app.SearchManager;
+import android.app.SearchableInfo;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,21 +16,16 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 
 import com.android.volley.Request.Method;
 import com.chopping.net.GsonRequestTask;
@@ -46,7 +42,7 @@ import com.itbooks.utils.Prefs;
 
 
 public class MainActivity extends BaseActivity implements OnQueryTextListener, OnItemClickListener,
-		OnEditorActionListener, OnScrollListener {
+	 OnScrollListener {
 	/**
 	 * Main layout for this component.
 	 */
@@ -68,7 +64,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	private SearchRecentSuggestions mSuggestions;
 	private String mKeyword;
 	private SearchView mSearchView;
-	private EditText mSearchKeyEt;
 
 	private int mCurrentPage = 1;
 	private boolean mLoadedMore;
@@ -167,18 +162,11 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		});
 		mLv.addFooterView(mLoadMoreIndicatorV);
 
-		mSearchKeyEt = (EditText) findViewById(R.id.search_keyword_et);
-		mSearchKeyEt.setOnEditorActionListener(this);
-
 		handleIntent(getIntent());
 
 		mLv.setOnScrollListener(this);
 
 		mKeyword = Prefs.getInstance(getApplication()).getLastSearched();
-		if (!TextUtils.isEmpty(mKeyword)) {
-			mSearchKeyEt.setText(mKeyword);
-		}
-
 		initDrawer();
 	}
 
@@ -192,40 +180,18 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(MAIN_MENU, menu);
+		final MenuItem searchMenu = menu.findItem(R.id.action_search);
+		mSearchView = (SearchView) MenuItemCompat.getActionView(searchMenu);
+		if (!TextUtils.isEmpty(mKeyword)) {
+			mSearchView.setQuery(mKeyword, false);
+		}
 
-
-		//		final MenuItem searchMenu = menu.findItem(R.id.search);
-		//		mSearchView = (SearchView) MenuItemCompat.getActionView(searchMenu);
-		//		mSearchView.setOnQueryTextListener(this);
-		//		/* In order to close ActionView automatically after clicking keyboard. */
-		//		mSearchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
-		//
-		//			@Override
-		//			public void onFocusChange(View _v, boolean _hasFocus) {
-		//				if (!_hasFocus) {
-		//					MenuItemCompat.collapseActionView(searchMenu);
-		//					mSearchView.setQuery("", false);
-		//				}
-		//			}
-		//		});
-		//		mSearchView.setOnSuggestionListener(new OnSuggestionListener() {
-		//			@Override
-		//			public boolean onSuggestionSelect(int _pos) {
-		//				return false;
-		//			}
-		//
-		//			@Override
-		//			public boolean onSuggestionClick(int _pos) {
-		//				MenuItemCompat.collapseActionView(searchMenu);
-		//				mSearchView.setQuery("", false);
-		//				return false;
-		//			}
-		//		});
-		//		SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
-		//		if (searchManager != null) {
-		//			SearchableInfo info = searchManager.getSearchableInfo(getComponentName());
-		//			mSearchView.setSearchableInfo(info);
-		//		}
+		mSearchView.setOnQueryTextListener(this);
+		SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
+		if (searchManager != null) {
+			SearchableInfo info = searchManager.getSearchableInfo(getComponentName());
+			mSearchView.setSearchableInfo(info);
+		}
 		return true;
 	}
 
@@ -260,6 +226,9 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		mRefreshLayout.setRefreshing(true);
 		mKeyword = intent.getStringExtra(SearchManager.QUERY);
 		if (!TextUtils.isEmpty(mKeyword)) {
+			if(mSearchView != null) {
+				mSearchView.setQuery(mKeyword, false);
+			}
 			mKeyword = mKeyword.trim();
 			resetSearchView();
 			mSuggestions.saveRecentQuery(mKeyword, null);
@@ -275,6 +244,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 			mSearchView.clearFocus();
 		}
 	}
+
 
 	@Override
 	protected void onNewIntent(Intent _intent) {
@@ -324,7 +294,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	public boolean onQueryTextSubmit(String s) {
 		InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 		mgr.hideSoftInputFromWindow(mSearchView.getWindowToken(), 0);
-		resetSearchView();
+		search(null);
 		return false;
 	}
 
@@ -343,7 +313,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 
 	public void search(View view) {
 		resetPaging();
-		mKeyword = mSearchKeyEt.getText().toString();
+		mKeyword =mSearchView.getQuery().toString();
 		loadBooks();
 
 		mLoadMoreIndicatorV.setVisibility(View.VISIBLE);
@@ -412,14 +382,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		loadBooks();
 	}
 
-	@Override
-	public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-		if (actionId == EditorInfo.IME_ACTION_GO) {
-			search(null);
-			return true;
-		}
-		return false;
-	}
 
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {

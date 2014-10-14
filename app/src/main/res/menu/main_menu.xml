@@ -1,14 +1,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.itbooks.app.MainActivity">
 
-    <!--<item-->
-        <!--android:id="@+id/search"-->
-        <!--android:icon="@drawable/ic_loupe"-->
-        <!--android:title="@string/lbl_search"-->
-        <!--android:menuCategory="secondary"-->
-        <!--android:orderInCategory="2"-->
-        <!--app:actionViewClass="android.support.v7.widget.SearchView"-->
-        <!--app:showAsAction="always|collapseActionView" />-->
+    <item
+        android:id="@+id/action_search"
+        android:title="@string/lbl_search"
+        android:icon="@drawable/ic_loupe"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="ifRoom|collapseActionView" />
     <item
         android:id="@+id/action_share_app"
         android:title="@string/lbl_share_app"
