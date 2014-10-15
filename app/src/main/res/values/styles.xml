@@ -8,7 +8,7 @@
         <item name="actionModeShareDrawable">@drawable/ic_action_share</item>
     </style>
 
-    <style name="AppThemeHomeUp" parent="@style/Theme.Base.AppCompat">
+    <style name="AppThemeHomeUp" parent="@style/Theme.AppCompat">
         <item name="android:actionBarStyle">@style/AbStyleHomeUp</item>
         <!-- Support library compatibility -->
         <item name="actionBarStyle">@style/AbStyleHomeUp</item>

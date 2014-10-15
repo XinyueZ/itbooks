@@ -28,6 +28,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 import com.android.volley.Request.Method;
+import com.chopping.bus.CloseDrawerEvent;
 import com.chopping.net.GsonRequestTask;
 import com.chopping.net.TaskHelper;
 import com.chopping.utils.Utils;
@@ -85,6 +86,16 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	//------------------------------------------------
 
 	/**
+	 * Handler for {@link com.chopping.bus.CloseDrawerEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link com.chopping.bus.CloseDrawerEvent}.
+	 */
+	public void onEvent(CloseDrawerEvent e) {
+		mDrawerLayout.closeDrawers();
+	}
+
+	/**
 	 * Handler for {@link com.itbooks.data.DSBookList}.
 	 *
 	 * @param e
@@ -93,7 +104,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	public void onEvent(DSBookList e) {
 		mRefreshLayout.setRefreshing(false);
 		if (TextUtils.equals(e.getError(), Prefs.API_LIMIT)) {
-			new AlertDialog.Builder(this).setTitle(R.string.app_name).setMessage(R.string.lbl_api_limit).setCancelable(
+			new AlertDialog.Builder(this).setTitle(R.string.application_name).setMessage(R.string.lbl_api_limit).setCancelable(
 					false).setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int whichButton) {
 					resetPaging();
@@ -426,7 +437,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 			actionBar.setHomeButtonEnabled(true);
 			actionBar.setDisplayHomeAsUpEnabled(true);
 			mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-			mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.string.app_name,
+			mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.string.application_name,
 					R.string.app_name) {
 				@Override
 				public void onDrawerSlide(View drawerView, float slideOffset) {

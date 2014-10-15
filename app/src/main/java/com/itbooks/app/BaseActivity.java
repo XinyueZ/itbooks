@@ -63,7 +63,7 @@ public abstract class BaseActivity extends com.chopping.activities.BaseActivity 
 				showDialogFragment(AboutDialogFragment.EulaConfirmationDialog.newInstance(this), null);
 			}
 		} else {
-			new AlertDialog.Builder(this).setTitle(R.string.app_name).setMessage(R.string.lbl_play_service)
+			new AlertDialog.Builder(this).setTitle(R.string.application_name).setMessage(R.string.lbl_play_service)
 				.setCancelable(false).setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int whichButton) {
 							dialog.dismiss();

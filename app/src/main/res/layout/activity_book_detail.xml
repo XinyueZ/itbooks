@@ -36,14 +36,14 @@
 
                 <Button
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="45dp"
                     android:onClick="download"
                     android:text="@string/lbl_download"
                     style="@style/BookDetailStyle.Download" />
 
                 <Button
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="45dp"
                     android:onClick="downloadBrowser"
                     android:text="@string/lbl_download_in_browser"
                     style="@style/BookDetailStyle.Download" />
@@ -157,13 +157,13 @@
 
                 <Button
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="45dp"
                     android:onClick="download"
                     android:text="@string/lbl_download"
                     style="@style/BookDetailStyle.Download" />
                 <Button
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="45dp"
                     android:onClick="downloadBrowser"
                     android:text="@string/lbl_download_in_browser"
                     style="@style/BookDetailStyle.Download" />
