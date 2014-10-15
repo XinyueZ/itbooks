@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">IT 书籍</string>
-
+    <string name="application_name">IT 书籍</string>
     <string name="btn_close">关闭</string>
     <string name="btn_confirm">确认</string>
     <string name="btn_cancel">取消</string>

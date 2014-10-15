@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">IT Bücher</string>
-
+    <string name="application_name">IT Bücher</string>
     <string name="btn_confirm">Sicher</string>
     <string name="btn_cancel">Abbrechen</string>
     <string name="btn_close">Schließen</string>

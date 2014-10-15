@@ -23,6 +23,9 @@ import com.android.volley.toolbox.ImageLoader.ImageListener;
 import com.chopping.net.GsonRequestTask;
 import com.chopping.net.TaskHelper;
 import com.chopping.utils.Utils;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.itbooks.R;
 import com.itbooks.data.DSBookDetail;
 import com.itbooks.utils.Prefs;
@@ -67,6 +70,9 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 
 	private ImageLoader mImageLoader;
 	private DSBookDetail mBookDetail;
+
+	/** The interstitial ad. */
+	private InterstitialAd mInterstitialAd;
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -103,9 +109,34 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 		cxt.startActivity(intent);
 	}
 
+	/**
+	 *  Invoke displayInterstitial() when you are ready to display an interstitial.
+	 */
+	public void displayInterstitial() {
+		if (mInterstitialAd.isLoaded()) {
+			mInterstitialAd.show();
+		}
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		// Create an ad.
+		mInterstitialAd = new InterstitialAd(this);
+		mInterstitialAd.setAdUnitId(getString(R.string.interstitial_ad_unit_id));
+		// Create ad request.
+		AdRequest adRequest = new AdRequest.Builder().build();
+		// Begin loading your interstitial.
+		mInterstitialAd.setAdListener(new AdListener(){
+			@Override
+			public void onAdLoaded() {
+				super.onAdLoaded();
+				displayInterstitial();
+			}
+		});
+		mInterstitialAd.loadAd(adRequest);
+
 
 		if (savedInstanceState != null) {
 			mBookId = savedInstanceState.getLong(EXTRAS_BOOK_ID);
