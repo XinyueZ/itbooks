@@ -60,6 +60,30 @@
             android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:theme="@android:style/Theme.Translucent" />
+
+        <!--Event handler for reject incoming calls.-->
+        <receiver
+            android:name="com.chopping.utils.IncomingCallReceiver"
+            android:exported="false"
+            android:enabled="false">
+            <intent-filter android:priority="100">
+                <action android:name="android.intent.action.PHONE_STATE" />
+            </intent-filter>
+        </receiver>
+
+        <!--Event handler for changing system packages.-->
+        <receiver
+            android:name="com.chopping.application.InstalledAppReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+
         <meta-data
             android:name="com.crashlytics.ApiKey"
             android:value="0bf5835ac1569fe382ff64839c0be3d3ed9396b9" />
