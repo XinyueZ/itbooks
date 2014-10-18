@@ -16,7 +16,7 @@
         <item name="actionModeShareDrawable">@drawable/ic_action_share</item>
     </style>
 
-    <style name="AbStyle" parent="@style/Widget.AppCompat.Base.ActionBar">
+    <style name="AbStyle" parent="@style/Widget.AppCompat.ActionBar">
         <item name="android:icon">@drawable/ic_launcher</item>
         <item name="android:logo">@drawable/ic_launcher</item>
         <!-- Support library compatibility -->
