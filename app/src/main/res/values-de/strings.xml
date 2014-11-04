@@ -14,7 +14,7 @@
     <string name="lbl_share_app">Teile</string>
     <string name="lbl_share_book">Teile dieses Buch</string>
     <string name="lbl_share_app_content">Hallo!\n\nsuchst du jetzt mehr IT-Bücher?\n\nDownload:
-        market://details?id=com.itbooks</string>
+        http://tinyurl.com/kto2y59</string>
     <string name="lbl_share_book_content">Hallo!\n\nich habe ein gutes IT-Buch
         gefunden.\n\n\"%1$s\"\n\nAutor:%2$s\n\nHerunterladen: %3$s\n\nApp herunterladen: http://tinyurl.com/kto2y59</string>
     <string name="lbl_pull_to_load">Ziehen nachrunter, Daten zu laden.</string>
