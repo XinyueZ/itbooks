@@ -61,15 +61,6 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:theme="@android:style/Theme.Translucent" />
 
-        <!--Event handler for reject incoming calls.-->
-        <receiver
-            android:name="com.chopping.utils.IncomingCallReceiver"
-            android:exported="false"
-            android:enabled="false">
-            <intent-filter android:priority="100">
-                <action android:name="android.intent.action.PHONE_STATE" />
-            </intent-filter>
-        </receiver>
 
         <!--Event handler for changing system packages.-->
         <receiver
