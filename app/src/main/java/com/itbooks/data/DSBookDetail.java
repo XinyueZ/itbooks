@@ -1,6 +1,7 @@
 package com.itbooks.data;
 
 import android.text.TextUtils;
+import android.view.View;
 
 import com.google.gson.annotations.SerializedName;
 import com.itbooks.utils.Prefs;
@@ -107,4 +108,5 @@ public final class DSBookDetail {
 	public String getDownloadUrl() {
 		return mDownloadUrl;
 	}
+
 }

@@ -15,7 +15,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.text.TextUtils;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewConfiguration;
 
 import com.chopping.application.BasicPrefs;
@@ -26,7 +25,6 @@ import com.itbooks.app.fragments.AboutDialogFragment;
 import com.itbooks.utils.Prefs;
 
 public abstract class BaseActivity extends com.chopping.activities.BaseActivity implements OnRefreshListener {
-	protected View mInitLl;
 	protected SwipeRefreshLayout mRefreshLayout;
 
 	@Override
@@ -109,13 +107,6 @@ public abstract class BaseActivity extends com.chopping.activities.BaseActivity 
 	}
 
 
-	protected void dismissInitView() {
-		mInitLl.setVisibility(View.GONE);
-	}
-
-	protected void showInitView() {
-		mInitLl.setVisibility(View.VISIBLE);
-	}
 
 	@Override
 	protected BasicPrefs getPrefs() {

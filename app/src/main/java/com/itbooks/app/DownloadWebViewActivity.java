@@ -36,7 +36,7 @@ public final class DownloadWebViewActivity extends BaseActivity implements Downl
 	private WebView mWebView;
 	private String mUrl;
 
-	private String mDownloadPath;
+
 
 	/**
 	 * The menu to this view.
@@ -61,7 +61,10 @@ public final class DownloadWebViewActivity extends BaseActivity implements Downl
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mDownloadPath = getString(R.string.lbl_download_path, new StringBuilder().append(
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+		String downloadPath = getString(R.string.lbl_download_path, new StringBuilder().append(
 				Environment.getExternalStorageDirectory()).append('/').append(Environment.DIRECTORY_DOWNLOADS));
 		if (savedInstanceState != null) {
 			mUrl = savedInstanceState.getString(EXTRAS_URL);
@@ -69,6 +72,12 @@ public final class DownloadWebViewActivity extends BaseActivity implements Downl
 			mUrl = getIntent().getStringExtra(EXTRAS_URL);
 		}
 		setContentView(LAYOUT);
+
+
+		mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.content_srl);
+		mRefreshLayout.setColorSchemeResources(R.color.green_1, R.color.green_2, R.color.green_3, R.color.green_4);
+		mRefreshLayout.setOnRefreshListener(this);
+		mRefreshLayout.setRefreshing(true);
 
 		mWebView = (WebView) findViewById(R.id.download_wv);
 		mWebView.setWebViewClient(new WebViewClient() {
@@ -88,6 +97,7 @@ public final class DownloadWebViewActivity extends BaseActivity implements Downl
 				return true;
 			}
 		});
+		mWebView.loadUrl(mUrl);
 		mWebView.setDownloadListener(this);
 		WebSettings settings = mWebView.getSettings();
 		settings.setLoadWithOverviewMode(true);
@@ -100,11 +110,6 @@ public final class DownloadWebViewActivity extends BaseActivity implements Downl
 		settings.setDomStorageEnabled(true);
 
 
-		mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.content_srl);
-		mRefreshLayout.setColorSchemeResources(R.color.green_1, R.color.green_2, R.color.green_3, R.color.green_4);
-		mRefreshLayout.setOnRefreshListener(this);
-		mRefreshLayout.setRefreshing(true);
-		mWebView.loadUrl(mUrl);
 
 		TextView downloadTv = (TextView) findViewById(R.id.download_path_tv);
 		downloadTv.setText(getString(R.string.lbl_download_path, new StringBuilder().append(

@@ -37,7 +37,6 @@
 
             </android.support.v4.widget.SwipeRefreshLayout>
 
-            <include layout="@layout/inc_pull_to_load" />
         </FrameLayout>
 
 

@@ -116,7 +116,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 			int total = Integer.parseInt(e.getTotal());
 			if (total == 0) {
 				mLv.setVisibility(View.GONE);
-				showInitView();
 				Utils.showShortToast(this, R.string.lbl_no_data);
 			} else {
 				mCurrentPage = e.getPage();
@@ -136,7 +135,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 				if (total > 10) {
 					mCurrentPage++;
 				}
-				dismissInitView();
 			}
 			setHasShownDataOnUI(true);
 		}
@@ -161,7 +159,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		mRefreshLayout.setRefreshing(true);
 
 		mLv = (ListView) findViewById(R.id.books_lv);
-		mInitLl = findViewById(R.id.init_ll);
 		mLv.setOnItemClickListener(this);
 
 		mLoadMoreIndicatorV = getLayoutInflater().inflate(LAYOUT_LOAD_MORE, mLv, false);
@@ -271,7 +268,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	}
 
 	private void loadBooks() {
-		dismissInitView();
 		if (!TextUtils.isEmpty(mKeyword)) {
 			loadByKeyword();
 		} else {

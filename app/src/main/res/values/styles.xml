@@ -2,14 +2,14 @@
 
     <style name="AppTheme.Base" parent="@style/Theme.AppCompat.Light">
         <item name="android:actionBarStyle">@style/AbStyle</item>
-        <item name="android:colorPrimary">@color/common_blue</item>
+        <item name="android:colorPrimary">@color/primary_color</item>
         <item name="android:colorPrimaryDark">@color/primary_dark_color</item>
         <item name="android:windowBackground">@color/background_material_light</item>
         <!-- android:textColorPrimary is the  color of the title text in the Toolbar, in the Theme.AppCompat theme:  -->
         <item name="android:textColorPrimary">@color/common_white</item>
         <!-- android:textColorPrimaryInverse is the  color of the title    text in the Toolbar, in the Theme.AppCompat.Light theme:  -->
         <item name="android:textColorPrimaryInverse">@color/common_white</item>
-        <item name="android:colorAccent">@color/common_blue</item>
+        <item name="android:colorAccent">@color/primary_accent</item>
         <item name="android:actionModeBackground">@color/common_blue</item>
         <!-- android:textColorSecondary is the color of the menu overflow icon (three vertical dots) -->
         <item name="android:textColorSecondary">@color/common_white</item>
@@ -18,9 +18,9 @@
 
         <!--##########Support library compatibility##########-->
 
-        <item name="colorPrimary">@color/common_blue</item>
+        <item name="colorPrimary">@color/primary_color</item>
         <item name="colorPrimaryDark">@color/primary_dark_color</item>
-        <item name="colorAccent">@color/common_blue</item>
+        <item name="colorAccent">@color/primary_accent</item>
         <item name="actionModeBackground">@color/common_blue</item>
         <item name="actionBarStyle">@style/AbStyle</item>
         <!--
@@ -87,4 +87,23 @@
         <item name="cardMaxElevation">12dp</item>
         <item name="cardCornerRadius">0dp</item>
     </style>
+
+    <style name="FloatButton">
+        <item name="android:layout_width">@dimen/float_button_size</item>
+        <item name="android:layout_height">@dimen/float_button_size</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:textColor">@color/text_common_white</item>
+        <item name="font">thin</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+        <item name="android:visibility">invisible</item>
+    </style>
+
+
+    <declare-styleable name="FontButton">
+        <attr name="font">
+            <enum name="thin" value="1" />
+        </attr>
+    </declare-styleable>
+
 </resources>
