@@ -34,6 +34,12 @@
     <string name="lbl_download_path">这里找到下载文件: %1$s</string>
     <string name="lbl_no_more">已无数据…</string>
     <string name="lbl_api_limit">哈！程序员，你已经达到今天能访问的极限了，休息下明天再说找吧，你懂的。</string>
+    <string name="lbl_bookmark">我的收藏夹</string>
+    <string name="lbl_bookmark_the_book">收藏</string>
+    <string name="lbl_unbookmark_the_book">取消收藏</string>
+
+    <string name="msg_bookmark_the_book">收藏</string>
+    <string name="msg_unbookmark_the_book">取消收藏</string>
 
     <string name="menu_forward">向前</string>
     <string name="menu_backward">向后</string>

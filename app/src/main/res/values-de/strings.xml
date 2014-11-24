@@ -37,6 +37,13 @@
     <string name="lbl_no_more">Keine Daten mehr…</string>
     <string name="lbl_api_limit">Hey der Coder! Bitte machen Sie eine Pause, weil Sie die Limit der API-Anfrage
         erreicht haben. Sie wissen das, bitte morgen weiter.</string>
+    <string name="lbl_bookmark">Meine Merkliste</string>
+    <string name="lbl_bookmark_the_book">Merke dieses Buch</string>
+    <string name="lbl_unbookmark_the_book">Entferne von der Merkliste</string>
+
     <string name="menu_forward">Vorwärts</string>
     <string name="menu_backward">Rückwärts</string>
+
+    <string name="msg_bookmark_the_book">In die Merkliste hinzugefügt</string>
+    <string name="msg_unbookmark_the_book">Entfernt von der Merkliste</string>
 </resources>

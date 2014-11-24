@@ -38,6 +38,12 @@
     <string name="lbl_no_more">No more data…</string>
     <string name="lbl_api_limit">Hi coder! You\'ve arrived the max limit of API calling today,
         do something pause and search tomorrow, you know it!</string>
+    <string name="lbl_bookmark">My bookmarks</string>
+    <string name="lbl_bookmark_the_book">Bookmark this book</string>
+    <string name="lbl_unbookmark_the_book">Removed from bookmarks</string>
+
+    <string name="msg_bookmark_the_book">Added to bookmarks</string>
+    <string name="msg_unbookmark_the_book">Removed from bookmarks</string>
     <string name="menu_forward">Forward</string>
     <string name="menu_backward">Backward</string>
 

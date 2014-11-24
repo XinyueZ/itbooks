@@ -13,9 +13,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -81,6 +84,8 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	 * Navigation drawer.
 	 */
 	private DrawerLayout mDrawerLayout;
+
+	private RecyclerView mBookmarksRv;
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -176,6 +181,8 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 
 		mKeyword = Prefs.getInstance(getApplication()).getLastSearched();
 		initDrawer();
+		mBookmarksRv = (RecyclerView) findViewById(R.id.bookmarks_rv);
+		mBookmarksRv.setLayoutManager(new LinearLayoutManager(this));
 	}
 
 
@@ -444,6 +451,13 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 				}
 			};
 			mDrawerLayout.setDrawerListener(mDrawerToggle);
+			findViewById(R.id.open_bookmarks_ll).setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					mDrawerLayout.openDrawer(Gravity.RIGHT);
+					mDrawerLayout.closeDrawer(Gravity.LEFT);
+				}
+			});
 		}
 	}
 

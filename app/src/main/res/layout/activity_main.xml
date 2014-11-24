@@ -63,6 +63,32 @@
             android:orientation="vertical"
             android:layout_height="wrap_content">
 
+            <LinearLayout
+                android:id="@+id/open_bookmarks_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/selector_bg2_btn">
+
+                <ImageView
+                    android:layout_width="@dimen/float_button_size"
+                    android:layout_height="@dimen/float_button_size"
+                    android:background="@color/common_transparent"
+                    android:src="@drawable/ic_bookmarks" />
+
+
+                <com.itbooks.views.FontTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    font="thin"
+                    android:gravity="center"
+                    android:textColor="@color/text_common_black"
+                    android:text="@string/lbl_bookmark"
+                    android:background="@drawable/selector_bg2_btn" />
+            </LinearLayout>
+
+
             <FrameLayout
                 android:id="@+id/app_list_fl"
                 android:layout_width="match_parent"
@@ -70,4 +96,17 @@
 
         </LinearLayout>
     </com.chopping.utils.views.OneDirectionScrollView>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="right"
+        android:background="@color/primary_accent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/bookmarks_rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </FrameLayout>
 </android.support.v4.widget.DrawerLayout>
