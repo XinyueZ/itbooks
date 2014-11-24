@@ -1,39 +1,59 @@
 <resources>
 
-    <style name="AppTheme" parent="@style/Theme.AppCompat">
+    <style name="AppTheme.Base" parent="@style/Theme.AppCompat.Light">
         <item name="android:actionBarStyle">@style/AbStyle</item>
-        <!-- Support library compatibility -->
+        <item name="android:colorPrimary">@color/common_blue</item>
+        <item name="android:colorPrimaryDark">@color/primary_dark_color</item>
+        <item name="android:windowBackground">@color/background_material_light</item>
+        <!-- android:textColorPrimary is the  color of the title text in the Toolbar, in the Theme.AppCompat theme:  -->
+        <item name="android:textColorPrimary">@color/common_white</item>
+        <!-- android:textColorPrimaryInverse is the  color of the title    text in the Toolbar, in the Theme.AppCompat.Light theme:  -->
+        <item name="android:textColorPrimaryInverse">@color/common_white</item>
+        <item name="android:colorAccent">@color/common_blue</item>
+        <item name="android:actionModeBackground">@color/common_blue</item>
+        <!-- android:textColorSecondary is the color of the menu overflow icon (three vertical dots) -->
+        <item name="android:textColorSecondary">@color/common_white</item>
+        <item name="android:actionMenuTextColor">@color/common_white</item>
+        <item name="android:dropDownListViewStyle">@style/OverflowDropDown</item>
+
+        <!--##########Support library compatibility##########-->
+
+        <item name="colorPrimary">@color/common_blue</item>
+        <item name="colorPrimaryDark">@color/primary_dark_color</item>
+        <item name="colorAccent">@color/common_blue</item>
+        <item name="actionModeBackground">@color/common_blue</item>
         <item name="actionBarStyle">@style/AbStyle</item>
-        <!--There's a bug. The ShareActionProvider doesn't run when Theme.Base.AppCompat.Light. -->
-        <item name="actionModeShareDrawable">@drawable/ic_action_share</item>
+        <!--
+            android:actionMenuTextColor is the color of the text of
+            action (menu) items in the Toolbar,
+            at least in the  Theme.AppCompat theme.
+            For some reason, they already get the textColorPrimary
+            when running on API 21, but not on older versions of
+            Android, so this is only necessary to support older
+            Android versions.
+        -->
+        <item name="actionMenuTextColor">@color/common_white</item>
+        <item name="dropDownListViewStyle">@style/OverflowDropDown</item>
+
     </style>
 
-    <style name="AppThemeHomeUp" parent="@style/Theme.AppCompat">
-        <item name="android:actionBarStyle">@style/AbStyleHomeUp</item>
-        <!-- Support library compatibility -->
-        <item name="actionBarStyle">@style/AbStyleHomeUp</item>
-        <!--There's a bug. The ShareActionProvider doesn't run when Theme.Base.AppCompat.Light. -->
-        <item name="actionModeShareDrawable">@drawable/ic_action_share</item>
-    </style>
+    <style name="AppTheme" parent="AppTheme.Base"/>
 
-    <style name="AbStyle" parent="@style/Widget.AppCompat.ActionBar">
-        <item name="android:icon">@drawable/ic_launcher</item>
-        <item name="android:logo">@drawable/ic_launcher</item>
-        <!-- Support library compatibility -->
-        <item name="icon">@drawable/ic_launcher</item>
-        <item name="logo">@drawable/ic_launcher</item>
-    </style>
 
-    <style name="AbStyleHomeUp" parent="@style/AbStyle">
-        <item name="android:displayOptions">showHome|homeAsUp|showTitle</item>
+    <style name="AbStyle" parent="@style/Widget.AppCompat.Light.ActionBar">
+        <item name="android:icon">@null</item>
+        <item name="android:logo">@null</item>
+        <item name="android:background">@color/common_blue</item>
         <!-- Support library compatibility -->
-        <item name="displayOptions">showHome|homeAsUp|showTitle</item>
+        <item name="icon">@null</item>
+        <item name="logo">@null</item>
+        <item name="background">@color/common_blue</item>
     </style>
 
 
     <style name="BookDetailStyle">
         <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
-        <item name="android:textColor">@color/text_common_white</item>
+        <item name="android:textColor">@color/text_common_black</item>
         <item name="android:layout_marginBottom">5dp</item>
     </style>
 
@@ -46,5 +66,25 @@
     <style name="BookDetailStyle.Property">
         <item name="android:textStyle">bold</item>
         <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+    </style>
+
+    <!--Actionbar overflow menu divider-->
+    <style name="OverflowDropDown" parent="@style/Widget.AppCompat.ListView.DropDown">
+        <item name="android:dividerHeight">1dp</item>
+        <item name="android:background">@color/primary_dark_color</item>
+    </style>
+
+    <style name="CardView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:foreground">@color/common_transparent</item>
+        <item name="android:background">@drawable/selector_bg3_btn</item>
+        <item name="contentPadding">10dp</item>
+        <item name="cardElevation">12dp</item>
+        <item name="cardMaxElevation">12dp</item>
+        <item name="cardCornerRadius">0dp</item>
     </style>
 </resources>

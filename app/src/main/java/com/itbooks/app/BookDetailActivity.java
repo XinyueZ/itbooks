@@ -121,7 +121,7 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		// Create an ad.
 		mInterstitialAd = new InterstitialAd(this);
 		mInterstitialAd.setAdUnitId(getString(R.string.interstitial_ad_unit_id));

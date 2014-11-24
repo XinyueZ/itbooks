@@ -21,6 +21,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:textColor="@color/text_common_black"
             android:text="@string/lbl_pull_to_load" />
 
     </LinearLayout>

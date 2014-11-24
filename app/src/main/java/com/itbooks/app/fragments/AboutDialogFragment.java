@@ -244,8 +244,8 @@ public final class AboutDialogFragment extends DialogFragment {
 			int padding = getResources().getDimensionPixelSize(R.dimen.padding_eula);
 			TextView eulaTextView = new TextView(getActivity());
 			eulaTextView.setText(Html.fromHtml(getString(R.string.about_eula_legal_text)));
-			eulaTextView.setBackgroundColor(getResources().getColor(R.color.c11));
-			eulaTextView.setTextColor(getResources().getColor(R.color.text_common_white));
+			eulaTextView.setBackgroundColor(getResources().getColor(R.color.common_white));
+			eulaTextView.setTextColor(getResources().getColor(R.color.text_common_black));
 			eulaTextView.setMovementMethod(LinkMovementMethod.getInstance());
 			eulaTextView.setPadding(padding, padding, padding, padding);
 			return new AlertDialog.Builder(getActivity()).setTitle(R.string.about_eula).setView(eulaTextView)

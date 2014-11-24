@@ -28,6 +28,8 @@
                     android:id="@+id/books_lv"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
+                    android:divider="@null"
+                    android:background="@color/common_transparent"
                     android:cacheColorHint="@android:color/transparent"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
