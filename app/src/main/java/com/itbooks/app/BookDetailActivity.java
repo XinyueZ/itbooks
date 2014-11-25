@@ -25,6 +25,7 @@ import com.android.volley.toolbox.ImageLoader.ImageListener;
 import com.chopping.net.GsonRequestTask;
 import com.chopping.net.TaskHelper;
 import com.chopping.utils.Utils;
+import com.github.mrengineer13.snackbar.SnackBar;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
@@ -94,6 +95,9 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 
 	private boolean mBookmarked;
 	private MenuItem mBookmarkItem;
+
+	private SnackBar mSnackBar;
+
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -209,6 +213,8 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 		if(!Prefs.getInstance(getApplication()).hasKnownBookmark()) {
 			showDialogFragment(BookmarkInfoDialogFragment.newInstance(getApplication()), null);
 		}
+
+		mSnackBar = new SnackBar(BookDetailActivity.this);
 	}
 
 	private OnViewAnimatedClickedListener mOpenListener = new OnViewAnimatedClickedListener() {
@@ -377,6 +383,7 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 				protected void onPostExecute(Void aVoid) {
 					super.onPostExecute(aVoid);
 					mBookmarkItem.setIcon(mBookmarked ? R.drawable.ic_bookmarked : R.drawable.ic_not_bookmarked);
+					mSnackBar.show(getString(mBookmarked ? R.string.msg_bookmark_the_book : R.string.msg_unbookmark_the_book));
 				}
 			}.executeParallel();
 			break;
