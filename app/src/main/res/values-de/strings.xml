@@ -48,4 +48,5 @@
 
     <string name="msg_bookmark_the_book">In die Merkliste hinzugefügt</string>
     <string name="msg_unbookmark_the_book">Entfernt von der Merkliste</string>
+    <string name="lbl_bookmark_empty">Merkliste ist leer.</string>
 </resources>

@@ -1,14 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/content_srl"
     tools:context="com.itbooks.app.fragments.BookmarkListFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/content_srl"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/bookmarks_rv"
-        android:layout_gravity="center" />
-</android.support.v4.widget.SwipeRefreshLayout>
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/bookmarks_rv"
+            android:layout_gravity="center" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+    <LinearLayout
+        android:id="@+id/empty_ll"
+        android:layout_width="match_parent"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/common_transparent"
+            android:src="@drawable/ic_bookshelf" />
+
+        <com.itbooks.views.FontTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/lbl_bookmark_empty"
+            font="thin"
+            android:textColor="@color/text_common_black"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+    </LinearLayout>
+</FrameLayout>

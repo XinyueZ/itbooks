@@ -37,6 +37,8 @@ public final class BookmarkListFragment extends BaseFragment implements OnRefres
 	private RecyclerView mBookmarksRv;
 
 	private BookmarkListAdapter mAdp;
+
+	private View mEmptyV;
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -70,6 +72,8 @@ public final class BookmarkListFragment extends BaseFragment implements OnRefres
 		mRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.content_srl);
 		mRefreshLayout.setColorSchemeResources(R.color.green_1, R.color.green_2, R.color.green_3, R.color.green_4);
 		mRefreshLayout.setOnRefreshListener(this);
+
+		mEmptyV = view.findViewById(R.id.empty_ll);
 	}
 
 	@Override
@@ -111,6 +115,7 @@ public final class BookmarkListFragment extends BaseFragment implements OnRefres
 					mAdp.notifyDataSetChanged();
 				}
 				mRefreshLayout.setRefreshing(false);
+				mEmptyV.setVisibility(bookmarks.size() <=0 ? View.VISIBLE : View.GONE);
 			}
 		}.executeParallel();
 	}
@@ -137,6 +142,7 @@ public final class BookmarkListFragment extends BaseFragment implements OnRefres
 				mAdp.setBookmarkList(bookmarks);
 				mAdp.notifyDataSetChanged();
 				mRefreshLayout.setRefreshing(false);
+				mEmptyV.setVisibility(bookmarks.size() <=0 ? View.VISIBLE : View.GONE);
 			}
 		}.executeParallel(bookmark);
 	}
