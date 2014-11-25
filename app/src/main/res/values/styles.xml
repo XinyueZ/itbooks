@@ -74,18 +74,18 @@
         <item name="android:background">@color/primary_dark_color</item>
     </style>
 
-    <style name="CardView">
+    <style name="CardView.Base">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
-        <item name="android:layout_marginLeft">10dp</item>
-        <item name="android:layout_marginRight">10dp</item>
-        <item name="android:layout_marginTop">10dp</item>
         <item name="android:foreground">@color/common_transparent</item>
         <item name="android:background">@drawable/selector_bg3_btn</item>
         <item name="contentPadding">10dp</item>
         <item name="cardElevation">12dp</item>
         <item name="cardMaxElevation">12dp</item>
         <item name="cardCornerRadius">0dp</item>
+    </style>
+
+    <style name="CardView" parent="CardView.Base">
     </style>
 
     <style name="FloatButton">

@@ -29,7 +29,11 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.itbooks.R;
+import com.itbooks.data.DSBook;
 import com.itbooks.data.DSBookDetail;
+import com.itbooks.data.DSBookmark;
+import com.itbooks.db.DB;
+import com.itbooks.utils.ParallelTask;
 import com.itbooks.utils.Prefs;
 import com.itbooks.views.OnButtonAnimatedClickedListener;
 import com.nineoldandroids.animation.Animator;
@@ -84,6 +88,9 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 
 	/** The interstitial ad. */
 	private InterstitialAd mInterstitialAd;
+
+	private boolean mBookmarked;
+	private MenuItem mBookmarkItem;
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -305,9 +312,6 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 
 	}
 
-	private void dismissContent() {
-		mContent.setVisibility(View.GONE);
-	}
 
 	public void downloadInternal(View view) {
 		DownloadWebViewActivity.showInstance(this, mBookDetail.getDownloadUrl());
@@ -328,9 +332,50 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(BOOK_DETAIL_MENU, menu);
+		mBookmarkItem = menu.findItem(R.id.action_bookmark);
+		new ParallelTask<Void, Void, Void>() {
+			@Override
+			protected Void doInBackground(Void... params) {
+				mBookmarked = DB.getInstance(getApplication()).isBookmarked(mBookId);
+				return null;
+			}
+
+			@Override
+			protected void onPostExecute(Void aVoid) {
+				super.onPostExecute(aVoid);
+				mBookmarkItem.setIcon(mBookmarked ? R.drawable.ic_bookmarked : R.drawable.ic_not_bookmarked);
+			}
+		}.executeParallel();
 		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.action_bookmark:
+			new ParallelTask<Void, Void, Void>() {
+				@Override
+				protected Void doInBackground(Void... params) {
+					DB.getInstance(getApplication()).addBookmark(
+							new DSBookmark(
+								new DSBook(mBookDetail.getId(), mBookDetail.getImageUrl())
+							)
+					);
+					mBookmarked = DB.getInstance(getApplication()).isBookmarked(mBookId);
+					return null;
+				}
+
+				@Override
+				protected void onPostExecute(Void aVoid) {
+					super.onPostExecute(aVoid);
+					mBookmarkItem.setIcon(mBookmarked ? R.drawable.ic_bookmarked : R.drawable.ic_not_bookmarked);
+				}
+			}.executeParallel();
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override

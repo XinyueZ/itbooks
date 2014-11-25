@@ -34,6 +34,11 @@ public final class DSBook {
 		mISBN = _ISBN;
 	}
 
+	public DSBook(long id,   String imageUrl) {
+		mId = id;
+		mImageUrl = imageUrl;
+	}
+
 	public long getId() {
 		return mId;
 	}

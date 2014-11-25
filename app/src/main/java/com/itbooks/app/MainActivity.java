@@ -85,7 +85,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	 */
 	private DrawerLayout mDrawerLayout;
 
-	private RecyclerView mBookmarksRv;
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -181,8 +180,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 
 		mKeyword = Prefs.getInstance(getApplication()).getLastSearched();
 		initDrawer();
-		mBookmarksRv = (RecyclerView) findViewById(R.id.bookmarks_rv);
-		mBookmarksRv.setLayoutManager(new LinearLayoutManager(this));
 	}
 
 

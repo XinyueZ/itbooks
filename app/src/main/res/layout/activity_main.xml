@@ -98,15 +98,16 @@
     </com.chopping.utils.views.OneDirectionScrollView>
 
     <FrameLayout
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/bookmark_list_size"
         android:layout_height="match_parent"
         android:layout_gravity="right"
-        android:background="@color/primary_accent">
+        android:background="@color/grey_500">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/bookmarks_rv"
+        <fragment
+            android:name="com.itbooks.app.fragments.BookmarkListFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"/>
 
     </FrameLayout>
 </android.support.v4.widget.DrawerLayout>

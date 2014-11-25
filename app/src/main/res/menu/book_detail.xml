@@ -2,9 +2,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto" >
 
     <item
-        android:id="@+id/action_book_mark"
+        android:id="@+id/action_bookmark"
         android:title="@string/lbl_bookmark_the_book"
-        android:icon="@drawable/ic_bookmark_before"
+        android:icon="@drawable/ic_bookmarked"
         app:showAsAction="always" />
 
     <item
