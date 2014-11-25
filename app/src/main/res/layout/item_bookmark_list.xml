@@ -4,26 +4,12 @@
     android:layout_height="match_parent"
     android:padding="10dp">
 
-    <LinearLayout
-        android:layout_marginTop="5dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <com.android.volley.toolbox.NetworkImageView
-            android:id="@+id/bookmarked_book_cover_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal" />
-
-        <TextView
-            android:id="@+id/book_id_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:layout_gravity="center_horizontal"
-            android:textColor="@color/text_common_white" />
-    </LinearLayout>
+    <com.android.volley.toolbox.NetworkImageView
+        android:id="@+id/bookmarked_book_cover_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="5dp" />
 
     <Button
         android:id="@+id/delete_bookmark_btn"

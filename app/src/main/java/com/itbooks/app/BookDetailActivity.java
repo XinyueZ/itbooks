@@ -366,26 +366,29 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.action_bookmark:
-			new ParallelTask<Void, Void, Void>() {
-				@Override
-				protected Void doInBackground(Void... params) {
-					DB db = DB.getInstance(getApplication());
-					if (mBookmarked) {
-						db.removeBookmark(new DSBook(mBookDetail.getId(), mBookDetail.getImageUrl()));
-					} else {
-						db.addBookmark(new DSBookmark(new DSBook(mBookDetail.getId(), mBookDetail.getImageUrl())));
+			if(mBookDetail != null) {
+				new ParallelTask<Void, Void, Void>() {
+					@Override
+					protected Void doInBackground(Void... params) {
+						DB db = DB.getInstance(getApplication());
+						if (mBookmarked) {
+							db.removeBookmark(new DSBook(mBookDetail.getId(), mBookDetail.getImageUrl()));
+						} else {
+							db.addBookmark(new DSBookmark(new DSBook(mBookDetail.getId(), mBookDetail.getImageUrl())));
+						}
+						mBookmarked = db.isBookmarked(mBookId);
+						return null;
 					}
-					mBookmarked = db.isBookmarked(mBookId);
-					return null;
-				}
 
-				@Override
-				protected void onPostExecute(Void aVoid) {
-					super.onPostExecute(aVoid);
-					mBookmarkItem.setIcon(mBookmarked ? R.drawable.ic_bookmarked : R.drawable.ic_not_bookmarked);
-					mSnackBar.show(getString(mBookmarked ? R.string.msg_bookmark_the_book : R.string.msg_unbookmark_the_book));
-				}
-			}.executeParallel();
+					@Override
+					protected void onPostExecute(Void aVoid) {
+						super.onPostExecute(aVoid);
+						mBookmarkItem.setIcon(mBookmarked ? R.drawable.ic_bookmarked : R.drawable.ic_not_bookmarked);
+						mSnackBar.show(getString(
+								mBookmarked ? R.string.msg_bookmark_the_book : R.string.msg_unbookmark_the_book));
+					}
+				}.executeParallel();
+			}
 			break;
 		}
 		return super.onOptionsItemSelected(item);

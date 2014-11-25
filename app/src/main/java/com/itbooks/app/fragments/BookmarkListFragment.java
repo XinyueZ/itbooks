@@ -4,9 +4,8 @@ import android.os.Bundle;
 import android.support.v4.util.LongSparseArray;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,7 +65,8 @@ public final class BookmarkListFragment extends BaseFragment implements OnRefres
 		super.onViewCreated(view, savedInstanceState);
 		setErrorHandlerAvailable(false);
 		mBookmarksRv = (RecyclerView) view.findViewById(R.id.bookmarks_rv);
-		LinearLayoutManager llmgr = new GridLayoutManager(getActivity(), 2);
+		StaggeredGridLayoutManager llmgr = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+
 		mBookmarksRv.setLayoutManager(llmgr);
 
 		mRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.content_srl);

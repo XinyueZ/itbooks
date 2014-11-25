@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.chopping.net.TaskHelper;
@@ -51,7 +50,6 @@ public final class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkList
 		long id = mBookmarkList.keyAt(position);
 		final DSBookmark bookmark = mBookmarkList.get(id);
 		DSBook book = bookmark.getBook();
-		viewHolder.mBookIdTv.setText(book.getId() + "");
 		viewHolder.mBookCoverIv.setImageUrl(book.getImageUrl(), TaskHelper.getImageLoader());
 		viewHolder.mBookCoverIv.setOnClickListener(new OnViewAnimatedClickedListener() {
 			@Override
@@ -74,13 +72,11 @@ public final class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkList
 
 	static class ViewHolder extends RecyclerView.ViewHolder {
 
-		TextView mBookIdTv;
 		NetworkImageView mBookCoverIv;
 		Button mDeleteBtn;
 
 		ViewHolder(View convertView) {
 			super(convertView);
-			mBookIdTv = (TextView) convertView.findViewById(R.id.book_id_tv);
 			mBookCoverIv = (NetworkImageView) convertView.findViewById(R.id.bookmarked_book_cover_iv);
 			mBookCoverIv.setDefaultImageResId(R.drawable.ic_launcher);
 			mDeleteBtn = (Button) convertView.findViewById(R.id.delete_bookmark_btn);
