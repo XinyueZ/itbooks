@@ -14,7 +14,7 @@ import com.nineoldandroids.view.ViewHelper;
  *
  * @author Xinyue Zhao
  */
-public   abstract class OnButtonAnimatedClickedListener implements OnClickListener {
+public   abstract class OnViewAnimatedClickedListener implements OnClickListener {
 	/**
 	 * Impl. Event what user clicks.
 	 */

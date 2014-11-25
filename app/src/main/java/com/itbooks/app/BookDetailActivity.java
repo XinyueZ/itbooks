@@ -29,13 +29,14 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.itbooks.R;
+import com.itbooks.app.fragments.BookmarkInfoDialogFragment;
 import com.itbooks.data.DSBook;
 import com.itbooks.data.DSBookDetail;
 import com.itbooks.data.DSBookmark;
 import com.itbooks.db.DB;
 import com.itbooks.utils.ParallelTask;
 import com.itbooks.utils.Prefs;
-import com.itbooks.views.OnButtonAnimatedClickedListener;
+import com.itbooks.views.OnViewAnimatedClickedListener;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.animation.AnimatorSet;
@@ -86,7 +87,9 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 	private Button mDownloadIIBtn;
 	private ImageButton mOpenBtn;
 
-	/** The interstitial ad. */
+	/**
+	 * The interstitial ad.
+	 */
 	private InterstitialAd mInterstitialAd;
 
 	private boolean mBookmarked;
@@ -127,7 +130,7 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 	}
 
 	/**
-	 *  Invoke displayInterstitial() when you are ready to display an interstitial.
+	 * Invoke displayInterstitial() when you are ready to display an interstitial.
 	 */
 	public void displayInterstitial() {
 		if (mInterstitialAd.isLoaded()) {
@@ -146,7 +149,7 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 		// Create ad request.
 		AdRequest adRequest = new AdRequest.Builder().build();
 		// Begin loading your interstitial.
-		mInterstitialAd.setAdListener(new AdListener(){
+		mInterstitialAd.setAdListener(new AdListener() {
 			@Override
 			public void onAdLoaded() {
 				super.onAdLoaded();
@@ -187,14 +190,14 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 
 
 		mDownloadIBtn = (Button) findViewById(R.id.download_I_btn);
-		mDownloadIBtn.setOnClickListener(new OnButtonAnimatedClickedListener() {
+		mDownloadIBtn.setOnClickListener(new OnViewAnimatedClickedListener() {
 			@Override
 			public void onClick() {
 				downloadInternal(mDownloadIBtn);
 			}
 		});
 		mDownloadIIBtn = (Button) findViewById(R.id.download_II_btn);
-		mDownloadIIBtn.setOnClickListener(new OnButtonAnimatedClickedListener() {
+		mDownloadIIBtn.setOnClickListener(new OnViewAnimatedClickedListener() {
 			@Override
 			public void onClick() {
 				downloadBrowser(mDownloadIIBtn);
@@ -202,15 +205,18 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 		});
 		mOpenBtn = (ImageButton) findViewById(R.id.download_btn);
 		mOpenBtn.setOnClickListener(mOpenListener);
+
+		if(!Prefs.getInstance(getApplication()).hasKnownBookmark()) {
+			showDialogFragment(BookmarkInfoDialogFragment.newInstance(getApplication()), null);
+		}
 	}
 
-	private OnButtonAnimatedClickedListener mOpenListener = new OnButtonAnimatedClickedListener() {
+	private OnViewAnimatedClickedListener mOpenListener = new OnViewAnimatedClickedListener() {
 		@Override
 		public void onClick() {
 			mDownloadIIBtn.setVisibility(View.VISIBLE);
 			AnimatorSet animatorSet = new AnimatorSet();
-			ObjectAnimator iiBtnAnim = ObjectAnimator.ofFloat(mDownloadIIBtn, "translationY", 150f, 0).setDuration(
-					100);
+			ObjectAnimator iiBtnAnim = ObjectAnimator.ofFloat(mDownloadIIBtn, "translationY", 150f, 0).setDuration(100);
 			iiBtnAnim.addListener(new AnimatorListenerAdapter() {
 				@Override
 				public void onAnimationEnd(Animator animation) {
@@ -218,25 +224,24 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 					mDownloadIBtn.setVisibility(View.VISIBLE);
 				}
 			});
-			ObjectAnimator iBtnAnim = ObjectAnimator.ofFloat(mDownloadIBtn, "translationY", 200f, 0).setDuration(
-					200);
+			ObjectAnimator iBtnAnim = ObjectAnimator.ofFloat(mDownloadIBtn, "translationY", 200f, 0).setDuration(200);
 			iBtnAnim.addListener(new AnimatorListenerAdapter() {
 				@Override
 				public void onAnimationEnd(Animator animation) {
 					super.onAnimationEnd(animation);
 					mOpenBtn.setOnClickListener(mCloseListener);
 				}
-			}); animatorSet.playSequentially(iiBtnAnim, iBtnAnim);
+			});
+			animatorSet.playSequentially(iiBtnAnim, iBtnAnim);
 			animatorSet.start();
 		}
 	};
 
-	private OnButtonAnimatedClickedListener mCloseListener = new OnButtonAnimatedClickedListener() {
+	private OnViewAnimatedClickedListener mCloseListener = new OnViewAnimatedClickedListener() {
 		@Override
 		public void onClick() {
 			AnimatorSet animatorSet = new AnimatorSet();
-			ObjectAnimator iiBtnAnim = ObjectAnimator.ofFloat(mDownloadIIBtn, "translationY", 0, 150f).setDuration(
-					100);
+			ObjectAnimator iiBtnAnim = ObjectAnimator.ofFloat(mDownloadIIBtn, "translationY", 0, 150f).setDuration(100);
 			iiBtnAnim.addListener(new AnimatorListenerAdapter() {
 				@Override
 				public void onAnimationEnd(Animator animation) {
@@ -244,8 +249,7 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 					mDownloadIIBtn.setVisibility(View.GONE);
 				}
 			});
-			ObjectAnimator iBtnAnim = ObjectAnimator.ofFloat(mDownloadIBtn, "translationY", 0, 200f).setDuration(
-					200);
+			ObjectAnimator iBtnAnim = ObjectAnimator.ofFloat(mDownloadIBtn, "translationY", 0, 200f).setDuration(200);
 			iBtnAnim.addListener(new AnimatorListenerAdapter() {
 				@Override
 				public void onAnimationEnd(Animator animation) {
@@ -254,7 +258,8 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 					mOpenBtn.setOnClickListener(mOpenListener);
 
 				}
-			}); animatorSet.playSequentially(iiBtnAnim, iBtnAnim);
+			});
+			animatorSet.playSequentially(iiBtnAnim, iBtnAnim);
 			animatorSet.start();
 		}
 	};
@@ -324,8 +329,8 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 			i.setData(Uri.parse(mBookDetail.getDownloadUrl()));
 			startActivity(i);
 
-			String msg = getString(R.string.lbl_download_path,
-					new StringBuilder().append(Environment.getExternalStorageDirectory()).append('/').append(
+			String msg = getString(R.string.lbl_download_path, new StringBuilder().append(
+							Environment.getExternalStorageDirectory()).append('/').append(
 							Environment.DIRECTORY_DOWNLOADS));
 			Utils.showLongToast(getApplicationContext(), msg);
 		}
@@ -358,12 +363,13 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 			new ParallelTask<Void, Void, Void>() {
 				@Override
 				protected Void doInBackground(Void... params) {
-					DB.getInstance(getApplication()).addBookmark(
-							new DSBookmark(
-								new DSBook(mBookDetail.getId(), mBookDetail.getImageUrl())
-							)
-					);
-					mBookmarked = DB.getInstance(getApplication()).isBookmarked(mBookId);
+					DB db = DB.getInstance(getApplication());
+					if (mBookmarked) {
+						db.removeBookmark(new DSBook(mBookDetail.getId(), mBookDetail.getImageUrl()));
+					} else {
+						db.addBookmark(new DSBookmark(new DSBook(mBookDetail.getId(), mBookDetail.getImageUrl())));
+					}
+					mBookmarked = db.isBookmarked(mBookId);
 					return null;
 				}
 

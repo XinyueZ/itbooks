@@ -20,6 +20,7 @@ public final class Prefs extends BasicPrefs {
 	private static final String API_BOOK_DETAIL = "api_book_detail";
 	private static final String API_DEFAULT_BOOKS = "api_default_books";
 	private static final String KEY_LAST_SEARCHED = "key.last.searched";
+	private static final String KEY_KNOWN_BOOKMARK = "key.known.bookmark";
 	/**
 	 * Storage. Whether the "End User License Agreement" has been shown and agreed at application's first start.
 	 * <p/>
@@ -91,6 +92,14 @@ public final class Prefs extends BasicPrefs {
 
 	public String getLastSearched(){
 		return getString(KEY_LAST_SEARCHED, null);
+	}
+
+	public void setKnownBookmark(boolean known) {
+		setBoolean(KEY_KNOWN_BOOKMARK, known);
+	}
+
+	public boolean hasKnownBookmark(){
+		return getBoolean(KEY_KNOWN_BOOKMARK, false);
 	}
 
 }

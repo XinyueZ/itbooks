@@ -13,8 +13,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.text.TextUtils;
@@ -40,6 +38,7 @@ import com.itbooks.R;
 import com.itbooks.adapters.BookListAdapter;
 import com.itbooks.app.fragments.AboutDialogFragment;
 import com.itbooks.app.fragments.AppListImpFragment;
+import com.itbooks.bus.OpenBookmarkEvent;
 import com.itbooks.data.DSBook;
 import com.itbooks.data.DSBookList;
 import com.itbooks.utils.Prefs;
@@ -88,6 +87,16 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
+
+	/**
+	 * Handler for {@link com.itbooks.bus.OpenBookmarkEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link com.itbooks.bus.OpenBookmarkEvent}.
+	 */
+	public void onEvent(OpenBookmarkEvent e) {
+		openBookDetail(e.getBook());
+	}
 
 	/**
 	 * Handler for {@link com.chopping.bus.CloseDrawerEvent}.
@@ -318,6 +327,10 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		DSBook book = (DSBook) mAdp.getItem(position);
+		openBookDetail(book);
+	}
+
+	private void openBookDetail(DSBook book) {
 		mDetailOpened = true;
 		BookDetailActivity.showInstance(this, book.getId());
 	}

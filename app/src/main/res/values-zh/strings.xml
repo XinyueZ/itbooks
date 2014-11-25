@@ -37,7 +37,8 @@
     <string name="lbl_bookmark">我的收藏夹</string>
     <string name="lbl_bookmark_the_book">收藏</string>
     <string name="lbl_unbookmark_the_book">取消收藏</string>
-
+    <string name="lbl_bookmark_info">点击工具栏上的这个按键来收藏这本书。</string>
+    <string name="lbl_bookmark_info_never_show_again">知道了，不再显示。</string>
     <string name="msg_bookmark_the_book">收藏</string>
     <string name="msg_unbookmark_the_book">取消收藏</string>
 

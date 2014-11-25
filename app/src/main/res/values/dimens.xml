@@ -2,5 +2,4 @@
     <dimen name="padding_eula">16dp</dimen>
     <dimen name="padding_float_button">16dp</dimen>
     <dimen name="float_button_size">60dp</dimen>
-    <dimen name="bookmark_list_size">200dp</dimen>
 </resources>

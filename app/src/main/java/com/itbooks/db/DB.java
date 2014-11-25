@@ -213,6 +213,40 @@ public final class DB {
 		return rowsRemain;
 	}
 
+	/**
+	 * Remove one bookmark from DB.
+	 *
+	 * @param item
+	 * 		The book that associates with the bookmark to remove.
+	 *
+	 * @return The count of rows remain in DB after removed item.
+	 * <p/>
+	 * Return -1 if there's error when removed data.
+	 */
+	public synchronized int removeBookmark(DSBook item) {
+		if (mDB == null || !mDB.isOpen()) {
+			open();
+		}
+		int rowsRemain = -1;
+		boolean success;
+		try {
+			long rowId;
+			String whereClause = BookmarksTbl.BOOK_ID + "=?";
+			String[] whereArgs = new String[] { String.valueOf(item.getId()) };
+			rowId = mDB.delete(BookmarksTbl.TABLE_NAME, whereClause, whereArgs);
+			success = rowId > 0;
+			if (success) {
+				Cursor c = mDB.query(BookmarksTbl.TABLE_NAME, new String[] { BookmarksTbl.ID }, null, null, null, null,
+						null);
+				rowsRemain = c.getCount();
+			} else {
+				rowsRemain = -1;
+			}
+		} finally {
+			close();
+		}
+		return rowsRemain;
+	}
 
 	/**
 	 * Sort direction.

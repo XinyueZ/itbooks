@@ -41,9 +41,12 @@
     <string name="lbl_bookmark">My bookmarks</string>
     <string name="lbl_bookmark_the_book">Bookmark this book</string>
     <string name="lbl_unbookmark_the_book">Removed from bookmarks</string>
+    <string name="lbl_bookmark_info">Bookmark this book by clicking the icon on bar.</string>
+    <string name="lbl_bookmark_info_never_show_again">I\'v known, never show this.</string>
 
     <string name="msg_bookmark_the_book">Added to bookmarks</string>
     <string name="msg_unbookmark_the_book">Removed from bookmarks</string>
+
     <string name="menu_forward">Forward</string>
     <string name="menu_backward">Backward</string>
 

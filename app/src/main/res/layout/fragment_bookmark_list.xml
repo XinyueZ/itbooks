@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_srl"
     tools:context="com.itbooks.app.fragments.BookmarkListFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -10,4 +11,4 @@
         android:layout_height="match_parent"
         android:id="@+id/bookmarks_rv"
         android:layout_gravity="center" />
-</FrameLayout>
+</android.support.v4.widget.SwipeRefreshLayout>

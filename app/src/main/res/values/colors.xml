@@ -12,9 +12,11 @@
     <color name="indigo_700">#303F9F</color>
     <color name="blue_grey_50">#607D8B</color>
     <color name="blue_grey_600">#546E7A</color>
+    <color name="blue_grey_600_70">#B3546E7A</color>
     <color name="grey_100">#F5F5F5</color>
     <color name="grey_500">#9E9E9E</color>
     <color name="a400">#3D5AFE</color>
+    <color name="a400_50">#803D5AFE</color>
     <color name="teal_500">#009688</color>
     <color name="red">#F44336</color>
     <color name="pink">#E91E63</color>

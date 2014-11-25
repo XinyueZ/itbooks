@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/common_transparent"
+            android:src="@drawable/bookmark_info"
+            android:layout_gravity="center" />
+
+        <com.itbooks.views.FontTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/lbl_bookmark_info"
+            android:padding="12dp"
+            font="thin"
+            android:layout_gravity="bottom"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:background="@color/a400_50"
+            android:textColor="@color/text_common_white"
+            android:gravity="center" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/close_confirm_btn"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:textColor="@color/text_common_white"
+            android:background="@color/primary_color"
+            android:text="@string/btn_ok" />
+
+        <Button
+            android:layout_marginTop="5dp"
+            android:id="@+id/close_i_know_btn"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:textColor="@color/text_common_white"
+            android:background="@color/primary_accent"
+            android:text="@string/lbl_bookmark_info_never_show_again" />
+
+    </LinearLayout>
+</LinearLayout>

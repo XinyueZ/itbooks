@@ -98,7 +98,7 @@
     </com.chopping.utils.views.OneDirectionScrollView>
 
     <FrameLayout
-        android:layout_width="@dimen/bookmark_list_size"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="right"
         android:background="@color/grey_500">
