@@ -182,7 +182,33 @@ public final class DB {
 	 * Remove one bookmark from DB.
 	 *
 	 * @param item
-	 * 		The bookmark to remove.
+	 * 		The bookmark to remove. If {@code null} then remove all bookmarks.
+	 *
+	 * @return The count of rows remain in DB after removed item.
+	 * <p/>
+	 * Return {@code true} if success.
+	 */
+	public synchronized boolean removeBookmarks() {
+		if (mDB == null || !mDB.isOpen()) {
+			open();
+		}
+		boolean success;
+		try {
+			long rowId;
+			rowId = mDB.delete(BookmarksTbl.TABLE_NAME, null, null);
+			success = rowId > 0;
+		} finally {
+			close();
+		}
+		return success;
+	}
+
+
+	/**
+	 * Remove one bookmark from DB.
+	 *
+	 * @param item
+	 * 		The bookmark to remove. If {@code null} then remove all bookmarks.
 	 *
 	 * @return The count of rows remain in DB after removed item.
 	 * <p/>
@@ -196,9 +222,13 @@ public final class DB {
 		boolean success;
 		try {
 			long rowId;
-			String whereClause = BookmarksTbl.ID + "=?";
-			String[] whereArgs = new String[] { String.valueOf(item.getId()) };
-			rowId = mDB.delete(BookmarksTbl.TABLE_NAME, whereClause, whereArgs);
+			if (item != null) {
+				String whereClause = BookmarksTbl.ID + "=?";
+				String[] whereArgs = new String[] { String.valueOf(item.getId()) };
+				rowId = mDB.delete(BookmarksTbl.TABLE_NAME, whereClause, whereArgs);
+			} else {
+				rowId = mDB.delete(BookmarksTbl.TABLE_NAME, null, null);
+			}
 			success = rowId > 0;
 			if (success) {
 				Cursor c = mDB.query(BookmarksTbl.TABLE_NAME, new String[] { BookmarksTbl.ID }, null, null, null, null,
@@ -217,7 +247,7 @@ public final class DB {
 	 * Remove one bookmark from DB.
 	 *
 	 * @param item
-	 * 		The book that associates with the bookmark to remove.
+	 * 		The book that associates with the bookmark to remove. If {@code null} then remove all bookmarks.
 	 *
 	 * @return The count of rows remain in DB after removed item.
 	 * <p/>
@@ -231,9 +261,13 @@ public final class DB {
 		boolean success;
 		try {
 			long rowId;
-			String whereClause = BookmarksTbl.BOOK_ID + "=?";
-			String[] whereArgs = new String[] { String.valueOf(item.getId()) };
-			rowId = mDB.delete(BookmarksTbl.TABLE_NAME, whereClause, whereArgs);
+			if (item != null) {
+				String whereClause = BookmarksTbl.BOOK_ID + "=?";
+				String[] whereArgs = new String[] { String.valueOf(item.getId()) };
+				rowId = mDB.delete(BookmarksTbl.TABLE_NAME, whereClause, whereArgs);
+			} else {
+				rowId = mDB.delete(BookmarksTbl.TABLE_NAME, null, null);
+			}
 			success = rowId > 0;
 			if (success) {
 				Cursor c = mDB.query(BookmarksTbl.TABLE_NAME, new String[] { BookmarksTbl.ID }, null, null, null, null,
@@ -353,7 +387,10 @@ public final class DB {
 
 	/**
 	 * To test whether the book-id has been bookmarked or not.
-	 * @param bookId An id of a book.
+	 *
+	 * @param bookId
+	 * 		An id of a book.
+	 *
 	 * @return {@code true} if bookmarked.
 	 */
 	public synchronized boolean isBookmarked(long bookId) {
@@ -364,11 +401,12 @@ public final class DB {
 		try {
 			String whereClause = BookmarksTbl.BOOK_ID + "=?";
 			String[] whereArgs = new String[] { String.valueOf(bookId) };
-			Cursor c = mDB.query(BookmarksTbl.TABLE_NAME, new String[] { BookmarksTbl.ID }, whereClause, whereArgs, null, null, null);
+			Cursor c = mDB.query(BookmarksTbl.TABLE_NAME, new String[] { BookmarksTbl.ID }, whereClause, whereArgs,
+					null, null, null);
 			success = c.getCount() >= 1;
 		} finally {
 			close();
 		}
-		return success ;
+		return success;
 	}
 }

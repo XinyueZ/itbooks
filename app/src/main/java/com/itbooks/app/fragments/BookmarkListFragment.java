@@ -53,7 +53,17 @@ public final class BookmarkListFragment extends BaseFragment implements OnRefres
 		deleteBookmark(bookmark);
 	}
 
-
+	/**
+	 * Handler for {@link com.itbooks.bus.CleanBookmarkEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link com.itbooks.bus.CleanBookmarkEvent}.
+	 */
+	public void onEvent(com.itbooks.bus.CleanBookmarkEvent e) {
+		mAdp.setBookmarkList(null);
+		mAdp.notifyDataSetChanged();
+		mEmptyV.setVisibility(View.VISIBLE);
+	}
 
 	//------------------------------------------------
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

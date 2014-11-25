@@ -50,6 +50,7 @@
 
     <string name="menu_forward">Forward</string>
     <string name="menu_backward">Backward</string>
+    <string name="menu_remove_all_bookmarks">Clean bookmarks</string>
 
     <!--debug:-->
     <!--<string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>-->

@@ -67,7 +67,7 @@ public final class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkList
 
 	@Override
 	public int getItemCount() {
-		return mBookmarkList.size();
+		return mBookmarkList == null ? 0 : mBookmarkList.size();
 	}
 
 	static class ViewHolder extends RecyclerView.ViewHolder {

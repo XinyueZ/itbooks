@@ -38,10 +38,15 @@ import com.itbooks.R;
 import com.itbooks.adapters.BookListAdapter;
 import com.itbooks.app.fragments.AboutDialogFragment;
 import com.itbooks.app.fragments.AppListImpFragment;
+import com.itbooks.bus.CleanBookmarkEvent;
 import com.itbooks.bus.OpenBookmarkEvent;
 import com.itbooks.data.DSBook;
 import com.itbooks.data.DSBookList;
+import com.itbooks.db.DB;
+import com.itbooks.utils.ParallelTask;
 import com.itbooks.utils.Prefs;
+
+import de.greenrobot.event.EventBus;
 
 
 public class MainActivity extends BaseActivity implements OnQueryTextListener, OnItemClickListener,
@@ -238,6 +243,22 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		switch (item.getItemId()) {
 		case R.id.action_about:
 			showDialogFragment(AboutDialogFragment.newInstance(this), null);
+			break;
+		case R.id.action_clear_bookmarks:
+			new ParallelTask<Void, Void, Void>() {
+				@Override
+				protected Void doInBackground(Void... params) {
+					DB.getInstance(getApplication()).removeBookmarks();
+					return null;
+				}
+
+				@Override
+				protected void onPostExecute(Void aVoid) {
+					super.onPostExecute(aVoid);
+					EventBus.getDefault().post(new CleanBookmarkEvent());
+					mDrawerLayout.openDrawer(Gravity.RIGHT);
+				}
+			}.executeParallel();
 			break;
 		}
 		return super.onOptionsItemSelected(item);

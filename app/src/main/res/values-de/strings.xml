@@ -45,6 +45,7 @@
 
     <string name="menu_forward">Vorwärts</string>
     <string name="menu_backward">Rückwärts</string>
+    <string name="menu_remove_all_bookmarks">Merkliste leeren</string>
 
     <string name="msg_bookmark_the_book">In die Merkliste hinzugefügt</string>
     <string name="msg_unbookmark_the_book">Entfernt von der Merkliste</string>
