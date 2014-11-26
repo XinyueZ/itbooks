@@ -24,7 +24,7 @@
                 android:layout_height="match_parent">
 
 
-                <ListView
+                <com.github.ksoichiro.android.observablescrollview.ObservableListView
                     android:id="@+id/books_lv"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"

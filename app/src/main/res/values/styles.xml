@@ -80,8 +80,8 @@
         <item name="android:foreground">@color/common_transparent</item>
         <item name="android:background">@drawable/selector_bg3_btn</item>
         <item name="contentPadding">10dp</item>
-        <item name="cardElevation">12dp</item>
-        <item name="cardMaxElevation">12dp</item>
+        <item name="cardElevation">4dp</item>
+        <item name="cardMaxElevation">8dp</item>
         <item name="cardCornerRadius">0dp</item>
     </style>
 

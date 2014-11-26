@@ -26,7 +26,6 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
 
 import com.android.volley.Request.Method;
 import com.chopping.bus.CloseDrawerEvent;
@@ -34,6 +33,8 @@ import com.chopping.net.GsonRequestTask;
 import com.chopping.net.TaskHelper;
 import com.chopping.utils.Utils;
 import com.crashlytics.android.Crashlytics;
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.itbooks.R;
 import com.itbooks.adapters.BookListAdapter;
 import com.itbooks.app.fragments.AboutDialogFragment;
@@ -50,7 +51,7 @@ import de.greenrobot.event.EventBus;
 
 
 public class MainActivity extends BaseActivity implements OnQueryTextListener, OnItemClickListener,
-	 OnScrollListener {
+	 OnScrollListener, ObservableScrollViewCallbacks {
 	/**
 	 * Main layout for this component.
 	 */
@@ -66,7 +67,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 
 	private static final int MAX_PAGER = 100;
 
-	private ListView mLv;
+	private com.github.ksoichiro.android.observablescrollview.ObservableListView mLv;
 	private BookListAdapter mAdp;
 
 	private SearchRecentSuggestions mSuggestions;
@@ -176,8 +177,9 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		mRefreshLayout.setOnRefreshListener(this);
 		mRefreshLayout.setRefreshing(true);
 
-		mLv = (ListView) findViewById(R.id.books_lv);
+		mLv = (com.github.ksoichiro.android.observablescrollview.ObservableListView) findViewById(R.id.books_lv);
 		mLv.setOnItemClickListener(this);
+		mLv.setScrollViewCallbacks(this);
 
 		mLoadMoreIndicatorV = getLayoutInflater().inflate(LAYOUT_LOAD_MORE, mLv, false);
 		mLoadMoreIndicatorV.setOnClickListener(new OnClickListener() {
@@ -497,6 +499,30 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		super.onResume();
 		if (mDrawerToggle != null) {
 			mDrawerToggle.syncState();
+		}
+	}
+
+	@Override
+	public void onScrollChanged(int i, boolean b, boolean b2) {
+
+	}
+
+	@Override
+	public void onDownMotionEvent() {
+
+	}
+
+	@Override
+	public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+		ActionBar ab = getSupportActionBar();
+		if (scrollState == ScrollState.UP) {
+			if (ab.isShowing()) {
+				ab.hide();
+			}
+		} else if (scrollState == ScrollState.DOWN) {
+			if (!ab.isShowing()) {
+				ab.show();
+			}
 		}
 	}
 }
