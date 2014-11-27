@@ -19,13 +19,14 @@ import com.itbooks.db.DB.Sort;
 import com.itbooks.utils.ParallelTask;
 import com.itbooks.utils.Prefs;
 import com.itbooks.views.OnViewAnimatedClickedListener;
+import com.nineoldandroids.animation.ObjectAnimator;
 
 /**
  * Show list of all bookmarks.
  *
  * @author Xinyue Zhao
  */
-public final class BookmarkListFragment extends BaseFragment   {
+public final class BookmarkListFragment extends BaseFragment {
 	/**
 	 * Main layout for this component.
 	 */
@@ -36,6 +37,9 @@ public final class BookmarkListFragment extends BaseFragment   {
 	private BookmarkListAdapter mAdp;
 
 	private View mEmptyV;
+
+	private View mRefreshV;
+
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -76,7 +80,9 @@ public final class BookmarkListFragment extends BaseFragment   {
 		StaggeredGridLayoutManager llmgr = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
 		mBookmarksRv.setLayoutManager(llmgr);
 		mEmptyV = view.findViewById(R.id.empty_ll);
-		view.findViewById(R.id.refresh_btn).setOnClickListener(new OnViewAnimatedClickedListener() {
+
+		mRefreshV = view.findViewById(R.id.refresh_btn);
+		mRefreshV.setOnClickListener(new OnViewAnimatedClickedListener() {
 			@Override
 			public void onClick() {
 				loadBookmarks();
@@ -96,10 +102,16 @@ public final class BookmarkListFragment extends BaseFragment   {
 	}
 
 
-	private void loadBookmarks(){
+	private void loadBookmarks() {
 		new ParallelTask<Void, LongSparseArray<DSBookmark>, LongSparseArray<DSBookmark>>() {
+			ObjectAnimator objectAnimator;
+
 			@Override
 			protected void onPreExecute() {
+				objectAnimator = ObjectAnimator.ofFloat(mRefreshV, "rotation", 0, 360f);
+				objectAnimator.setDuration(800);
+				objectAnimator.setRepeatCount(ObjectAnimator.INFINITE);
+				objectAnimator.start();
 				super.onPreExecute();
 			}
 
@@ -117,16 +129,25 @@ public final class BookmarkListFragment extends BaseFragment   {
 					mAdp.setBookmarkList(bookmarks);
 					mAdp.notifyDataSetChanged();
 				}
-				mEmptyV.setVisibility(bookmarks.size() <=0 ? View.VISIBLE : View.GONE);
+				mEmptyV.setVisibility(bookmarks.size() <= 0 ? View.VISIBLE : View.GONE);
+
+				objectAnimator.cancel();
 			}
 		}.executeParallel();
 	}
 
 	private void deleteBookmark(DSBookmark bookmark) {
 		new ParallelTask<DSBookmark, LongSparseArray<DSBookmark>, LongSparseArray<DSBookmark>>() {
+			ObjectAnimator objectAnimator;
+
 			@Override
 			protected void onPreExecute() {
 				super.onPreExecute();
+
+				objectAnimator = ObjectAnimator.ofFloat(mRefreshV, "rotation", 0, 360f);
+				objectAnimator.setDuration(800);
+				objectAnimator.setRepeatCount(ObjectAnimator.INFINITE);
+				objectAnimator.start();
 			}
 
 			@Override
@@ -142,7 +163,10 @@ public final class BookmarkListFragment extends BaseFragment   {
 				super.onPostExecute(bookmarks);
 				mAdp.setBookmarkList(bookmarks);
 				mAdp.notifyDataSetChanged();
-				mEmptyV.setVisibility(bookmarks.size() <=0 ? View.VISIBLE : View.GONE);
+				mEmptyV.setVisibility(bookmarks.size() <= 0 ? View.VISIBLE : View.GONE);
+
+
+				objectAnimator.cancel();
 			}
 		}.executeParallel(bookmark);
 	}
