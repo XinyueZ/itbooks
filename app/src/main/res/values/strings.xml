@@ -32,6 +32,7 @@
     <string name="lbl_download">Here download.</string>
     <string name="lbl_download_in_browser">Download in browser.</string>
     <string name="lbl_more">More…</string>
+    <string name="lbl_load_more">Loading more data…</string>
     <string name="lbl_no_data">Nothing found!</string>
     <string name="lbl_play_service">This application needs Google Play Service, you must install it first.</string>
     <string name="lbl_download_path">Find file: %1$s</string>

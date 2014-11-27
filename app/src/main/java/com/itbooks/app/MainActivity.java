@@ -36,6 +36,7 @@ import com.chopping.utils.Utils;
 import com.crashlytics.android.Crashlytics;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
+import com.github.mrengineer13.snackbar.SnackBar;
 import com.itbooks.R;
 import com.itbooks.adapters.BookListAdapter;
 import com.itbooks.app.fragments.AboutDialogFragment;
@@ -77,7 +78,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 
 	private int mCurrentPage = 1;
 	private boolean mLoadedMore;
-	private View mLoadMoreIndicatorV;
 
 	private int mPreItemOnLast;
 
@@ -94,6 +94,9 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	private SlidingPaneLayout mBookmarkSpl;
 
 	private ActionBarHelper mActionBarHelper;
+
+	private SnackBar mSnackBar;
+
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -185,14 +188,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		mLv.setOnItemClickListener(this);
 		mLv.setScrollViewCallbacks(this);
 
-		mLoadMoreIndicatorV = getLayoutInflater().inflate(LAYOUT_LOAD_MORE, mLv, false);
-		mLoadMoreIndicatorV.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
 
-			}
-		});
-		mLv.addFooterView(mLoadMoreIndicatorV);
 
 		handleIntent(getIntent());
 
@@ -383,8 +379,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		resetPaging();
 		mKeyword = mSearchView.getQuery().toString();
 		loadBooks();
-
-		mLoadMoreIndicatorV.setVisibility(View.VISIBLE);
 	}
 
 	private void resetPaging() {
@@ -440,7 +434,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 			mDelayLoadBooksHandler.postDelayed(mDelayLoadBooksTask, 5500);
 		} else {
 			Utils.showLongToast(getApplicationContext(), R.string.lbl_no_more);
-			mLoadMoreIndicatorV.setVisibility(View.GONE);
 		}
 	}
 
@@ -471,6 +464,10 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 			if (mPreItemOnLast != lastItem) { //to avoid multiple calls for last item
 				loadMore();
 				mPreItemOnLast = lastItem;
+				if(mSnackBar == null) {
+					mSnackBar = new SnackBar(this);
+				}
+				mSnackBar.show(getString(R.string.lbl_load_more));
 			}
 		}
 
