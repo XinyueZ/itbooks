@@ -10,8 +10,8 @@
     <string name="btn_agree">Stimme zu.</string>
     <string name="btn_not_agree">Stimme nicht zu.</string>
 
-    <string name="lbl_about">Über mich</string>
-    <string name="lbl_share_app">Teile</string>
+    <string name="lbl_about">About</string>
+    <string name="lbl_share_app">Teilen</string>
     <string name="lbl_share_book">Teile dieses Buch</string>
     <string name="lbl_share_app_content">Hallo!\n\nsuchst du jetzt mehr IT-Bücher?\n\nDownload:
         http://tinyurl.com/kto2y59</string>
@@ -25,7 +25,7 @@
     <string name="lbl_author">Autor</string>
     <string name="lbl_isbn">ISBN</string>
     <string name="lbl_year">Jahr</string>
-    <string name="lbl_page">Seite</string>
+    <string name="lbl_page">Seiten</string>
     <string name="lbl_publisher">Verleger</string>
     <string name="lbl_download">Hier herunterzuladen.</string>
     <string name="lbl_download_in_browser">Herunterladen in browser.</string>
