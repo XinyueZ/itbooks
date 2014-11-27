@@ -18,6 +18,7 @@ import com.itbooks.db.DB;
 import com.itbooks.db.DB.Sort;
 import com.itbooks.utils.ParallelTask;
 import com.itbooks.utils.Prefs;
+import com.itbooks.views.OnViewAnimatedClickedListener;
 
 /**
  * Show list of all bookmarks.
@@ -73,11 +74,14 @@ public final class BookmarkListFragment extends BaseFragment   {
 		setErrorHandlerAvailable(false);
 		mBookmarksRv = (RecyclerView) view.findViewById(R.id.bookmarks_rv);
 		StaggeredGridLayoutManager llmgr = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-
 		mBookmarksRv.setLayoutManager(llmgr);
-
-
 		mEmptyV = view.findViewById(R.id.empty_ll);
+		view.findViewById(R.id.refresh_btn).setOnClickListener(new OnViewAnimatedClickedListener() {
+			@Override
+			public void onClick() {
+				loadBookmarks();
+			}
+		});
 	}
 
 	@Override

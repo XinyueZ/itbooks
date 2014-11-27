@@ -36,4 +36,12 @@
             android:textColor="@color/text_common_black"
             android:textAppearance="?android:attr/textAppearanceLarge" />
     </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/refresh_btn"
+        style="@style/FloatButton"
+        android:visibility="visible"
+        android:background="@drawable/circle_blue"
+        android:src="@drawable/ic_refresh"
+        android:layout_gravity="bottom|right"/>
 </FrameLayout>

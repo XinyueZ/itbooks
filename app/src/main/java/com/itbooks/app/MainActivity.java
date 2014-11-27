@@ -196,8 +196,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 
 		mKeyword = Prefs.getInstance(getApplication()).getLastSearched();
 		initDrawer();
-
-
 		initSlidingPanel();
 	}
 
@@ -580,6 +578,9 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 			mActionBar.setHomeButtonEnabled(true);
 			mActionBar.setDisplayHomeAsUpEnabled(true);
 			mActionBar.setTitle(R.string.lbl_bookmark);
+			if(!mActionBar.isShowing()) {
+				mActionBar.show();
+			}
 		}
 
 	}
