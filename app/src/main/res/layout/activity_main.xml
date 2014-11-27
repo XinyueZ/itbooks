@@ -5,34 +5,46 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.itbooks.app.MainActivity">
 
-
-    <FrameLayout
-        android:id="@id/error_content"
+    <android.support.v4.widget.SlidingPaneLayout
+        android:id="@+id/sliding_pane_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/content_srl"
-            android:layout_gravity="top"
+        <fragment
+            android:name="com.itbooks.app.fragments.BookmarkListFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:background="@color/grey_500"/>
+        <FrameLayout
+            android:id="@id/error_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-
-            <com.github.ksoichiro.android.observablescrollview.ObservableListView
-                android:id="@+id/books_lv"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:divider="@null"
-                android:background="@color/common_transparent"
-                android:cacheColorHint="@android:color/transparent"
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/content_srl"
+                android:layout_gravity="top"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent">
 
 
-        </android.support.v4.widget.SwipeRefreshLayout>
+                <com.github.ksoichiro.android.observablescrollview.ObservableListView
+                    android:id="@+id/books_lv"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:divider="@null"
+                    android:background="@color/common_transparent"
+                    android:cacheColorHint="@android:color/transparent"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
 
-    </FrameLayout>
 
+            </android.support.v4.widget.SwipeRefreshLayout>
+
+        </FrameLayout>
+
+
+    </android.support.v4.widget.SlidingPaneLayout>
 
     <com.chopping.utils.views.OneDirectionScrollView
         android:layout_width="250dp"
@@ -82,17 +94,5 @@
         </LinearLayout>
     </com.chopping.utils.views.OneDirectionScrollView>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="right"
-        android:background="@color/grey_500">
 
-        <fragment
-            android:name="com.itbooks.app.fragments.BookmarkListFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal" />
-
-    </FrameLayout>
 </android.support.v4.widget.DrawerLayout>

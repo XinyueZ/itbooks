@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.provider.SearchRecentSuggestions;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SlidingPaneLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -50,8 +51,8 @@ import com.itbooks.utils.Prefs;
 import de.greenrobot.event.EventBus;
 
 
-public class MainActivity extends BaseActivity implements OnQueryTextListener, OnItemClickListener,
-	 OnScrollListener, ObservableScrollViewCallbacks {
+public class MainActivity extends BaseActivity implements OnQueryTextListener, OnItemClickListener, OnScrollListener,
+		ObservableScrollViewCallbacks {
 	/**
 	 * Main layout for this component.
 	 */
@@ -90,6 +91,9 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	 */
 	private DrawerLayout mDrawerLayout;
 
+	private SlidingPaneLayout mBookmarkSpl;
+
+	private ActionBarHelper mActionBarHelper;
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -123,8 +127,8 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	public void onEvent(DSBookList e) {
 		mRefreshLayout.setRefreshing(false);
 		if (TextUtils.equals(e.getError(), Prefs.API_LIMIT)) {
-			new AlertDialog.Builder(this).setTitle(R.string.application_name).setMessage(R.string.lbl_api_limit).setCancelable(
-					false).setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
+			new AlertDialog.Builder(this).setTitle(R.string.application_name).setMessage(R.string.lbl_api_limit)
+					.setCancelable(false).setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int whichButton) {
 					resetPaging();
 					finish();
@@ -196,7 +200,12 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 
 		mKeyword = Prefs.getInstance(getApplication()).getLastSearched();
 		initDrawer();
+
+
+		initSlidingPanel();
 	}
+
+
 
 
 	@Override
@@ -238,6 +247,11 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
+		if (item.getItemId() == android.R.id.home && mBookmarkSpl.isOpen()) {
+			mBookmarkSpl.closePane();
+			return true;
+		}
+
 		if (mDrawerToggle != null && mDrawerToggle.onOptionsItemSelected(item)) {
 			return true;
 		}
@@ -258,7 +272,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 				protected void onPostExecute(Void aVoid) {
 					super.onPostExecute(aVoid);
 					EventBus.getDefault().post(new CleanBookmarkEvent());
-					mDrawerLayout.openDrawer(Gravity.RIGHT);
+					openBookmarkList();
 				}
 			}.executeParallel();
 			break;
@@ -266,11 +280,18 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		return super.onOptionsItemSelected(item);
 	}
 
+	/**
+	 * Open the bookmark-list.
+	 */
+	private void openBookmarkList() {
+		mBookmarkSpl.openPane();
+	}
+
 	protected void handleIntent(Intent intent) {
 		mRefreshLayout.setRefreshing(true);
 		mKeyword = intent.getStringExtra(SearchManager.QUERY);
 		if (!TextUtils.isEmpty(mKeyword)) {
-			if(mSearchView != null) {
+			if (mSearchView != null) {
 				mSearchView.setQuery(mKeyword, false);
 			}
 			mKeyword = mKeyword.trim();
@@ -360,7 +381,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 
 	public void search(View view) {
 		resetPaging();
-		mKeyword =mSearchView.getQuery().toString();
+		mKeyword = mSearchView.getQuery().toString();
 		loadBooks();
 
 		mLoadMoreIndicatorV.setVisibility(View.VISIBLE);
@@ -465,6 +486,16 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	}
 
 	/**
+	 * Init the sliding-panel for bookmarks.
+	 */
+	private void initSlidingPanel() {
+		mActionBarHelper = new ActionBarHelper(getSupportActionBar());
+		mBookmarkSpl = (SlidingPaneLayout) findViewById(R.id.sliding_pane_layout);
+		mBookmarkSpl.setPanelSlideListener(new SliderListener(mActionBarHelper));
+		mActionBarHelper.init();
+	}
+
+	/**
 	 * Initialize the navigation drawer.
 	 */
 	private void initDrawer() {
@@ -473,7 +504,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 			actionBar.setHomeButtonEnabled(true);
 			actionBar.setDisplayHomeAsUpEnabled(true);
 			mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-			mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,   R.string.application_name,
+			mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.application_name,
 					R.string.app_name) {
 				@Override
 				public void onDrawerSlide(View drawerView, float slideOffset) {
@@ -487,7 +518,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 			findViewById(R.id.open_bookmarks_ll).setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					mDrawerLayout.openDrawer(Gravity.RIGHT);
+					openBookmarkList();
 					mDrawerLayout.closeDrawer(Gravity.LEFT);
 				}
 			});
@@ -523,6 +554,55 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 			if (!ab.isShowing()) {
 				ab.show();
 			}
+		}
+	}
+
+
+	/**
+	 * Action bar helper for use on ICS and newer devices.
+	 */
+	private static class ActionBarHelper {
+		ActionBar mActionBar;
+
+		ActionBarHelper(ActionBar actionBar) {
+			mActionBar = actionBar;
+		}
+
+		public void init() {
+			mActionBar.setDisplayHomeAsUpEnabled(true);
+			mActionBar.setHomeButtonEnabled(true);
+		}
+
+		public void onPanelClosed() {
+			mActionBar.setDisplayHomeAsUpEnabled(true);
+			mActionBar.setHomeButtonEnabled(true);
+		}
+
+		public void onPanelOpened() {
+			mActionBar.setHomeButtonEnabled(true);
+			mActionBar.setDisplayHomeAsUpEnabled(true);
+		}
+
+	}
+
+	/**
+	 * This panel slide listener updates the action bar accordingly for each panel state.
+	 */
+	private static class SliderListener extends SlidingPaneLayout.SimplePanelSlideListener {
+		ActionBarHelper mActionBarHelper;
+
+		SliderListener(ActionBarHelper actionBarHelper) {
+			mActionBarHelper = actionBarHelper;
+		}
+
+		@Override
+		public void onPanelOpened(View panel) {
+			mActionBarHelper.onPanelOpened();
+		}
+
+		@Override
+		public void onPanelClosed(View panel) {
+			mActionBarHelper.onPanelClosed();
 		}
 	}
 }

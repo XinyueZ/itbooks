@@ -2,8 +2,6 @@ package com.itbooks.app.fragments;
 
 import android.os.Bundle;
 import android.support.v4.util.LongSparseArray;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -26,13 +24,12 @@ import com.itbooks.utils.Prefs;
  *
  * @author Xinyue Zhao
  */
-public final class BookmarkListFragment extends BaseFragment implements OnRefreshListener {
+public final class BookmarkListFragment extends BaseFragment   {
 	/**
 	 * Main layout for this component.
 	 */
 	private static final int LAYOUT = R.layout.fragment_bookmark_list;
 
-	private SwipeRefreshLayout mRefreshLayout;
 	private RecyclerView mBookmarksRv;
 
 	private BookmarkListAdapter mAdp;
@@ -79,9 +76,6 @@ public final class BookmarkListFragment extends BaseFragment implements OnRefres
 
 		mBookmarksRv.setLayoutManager(llmgr);
 
-		mRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.content_srl);
-		mRefreshLayout.setColorSchemeResources(R.color.green_1, R.color.green_2, R.color.green_3, R.color.green_4);
-		mRefreshLayout.setOnRefreshListener(this);
 
 		mEmptyV = view.findViewById(R.id.empty_ll);
 	}
@@ -97,17 +91,12 @@ public final class BookmarkListFragment extends BaseFragment implements OnRefres
 		return Prefs.getInstance(getActivity().getApplication());
 	}
 
-	@Override
-	public void onRefresh() {
-		loadBookmarks();
-	}
 
 	private void loadBookmarks(){
 		new ParallelTask<Void, LongSparseArray<DSBookmark>, LongSparseArray<DSBookmark>>() {
 			@Override
 			protected void onPreExecute() {
 				super.onPreExecute();
-				mRefreshLayout.setRefreshing(true);
 			}
 
 			@Override
@@ -124,7 +113,6 @@ public final class BookmarkListFragment extends BaseFragment implements OnRefres
 					mAdp.setBookmarkList(bookmarks);
 					mAdp.notifyDataSetChanged();
 				}
-				mRefreshLayout.setRefreshing(false);
 				mEmptyV.setVisibility(bookmarks.size() <=0 ? View.VISIBLE : View.GONE);
 			}
 		}.executeParallel();
@@ -135,7 +123,6 @@ public final class BookmarkListFragment extends BaseFragment implements OnRefres
 			@Override
 			protected void onPreExecute() {
 				super.onPreExecute();
-				mRefreshLayout.setRefreshing(true);
 			}
 
 			@Override
@@ -151,7 +138,6 @@ public final class BookmarkListFragment extends BaseFragment implements OnRefres
 				super.onPostExecute(bookmarks);
 				mAdp.setBookmarkList(bookmarks);
 				mAdp.notifyDataSetChanged();
-				mRefreshLayout.setRefreshing(false);
 				mEmptyV.setVisibility(bookmarks.size() <=0 ? View.VISIBLE : View.GONE);
 			}
 		}.executeParallel(bookmark);
