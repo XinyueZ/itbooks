@@ -576,11 +576,13 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		public void onPanelClosed() {
 			mActionBar.setDisplayHomeAsUpEnabled(true);
 			mActionBar.setHomeButtonEnabled(true);
+			mActionBar.setTitle(R.string.application_name);
 		}
 
 		public void onPanelOpened() {
 			mActionBar.setHomeButtonEnabled(true);
 			mActionBar.setDisplayHomeAsUpEnabled(true);
+			mActionBar.setTitle(R.string.lbl_bookmark);
 		}
 
 	}
