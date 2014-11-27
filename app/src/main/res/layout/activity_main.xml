@@ -6,48 +6,33 @@
     tools:context="com.itbooks.app.MainActivity">
 
 
-    <RelativeLayout
+    <FrameLayout
         android:id="@id/error_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-        <FrameLayout
-            android:layout_above="@+id/ad_frg"
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/content_srl"
+            android:layout_gravity="top"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <android.support.v4.widget.SwipeRefreshLayout
-                android:id="@+id/content_srl"
-                android:layout_gravity="top"
+
+            <com.github.ksoichiro.android.observablescrollview.ObservableListView
+                android:id="@+id/books_lv"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:divider="@null"
+                android:background="@color/common_transparent"
+                android:cacheColorHint="@android:color/transparent"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent" />
 
 
-                <com.github.ksoichiro.android.observablescrollview.ObservableListView
-                    android:id="@+id/books_lv"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:divider="@null"
-                    android:background="@color/common_transparent"
-                    android:cacheColorHint="@android:color/transparent"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+        </android.support.v4.widget.SwipeRefreshLayout>
 
+    </FrameLayout>
 
-            </android.support.v4.widget.SwipeRefreshLayout>
-
-        </FrameLayout>
-
-
-        <fragment
-            android:id="@+id/ad_frg"
-            android:name="com.itbooks.app.fragments.AdFragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true" />
-    </RelativeLayout>
 
     <com.chopping.utils.views.OneDirectionScrollView
         android:layout_width="250dp"
@@ -107,7 +92,7 @@
             android:name="com.itbooks.app.fragments.BookmarkListFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"/>
+            android:layout_gravity="center_horizontal" />
 
     </FrameLayout>
 </android.support.v4.widget.DrawerLayout>
