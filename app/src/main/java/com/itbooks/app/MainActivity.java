@@ -189,7 +189,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		mLv.setScrollViewCallbacks(this);
 
 
-
 		handleIntent(getIntent());
 
 		mLv.setOnScrollListener(this);
@@ -198,8 +197,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		initDrawer();
 		initSlidingPanel();
 	}
-
-
 
 
 	@Override
@@ -269,6 +266,10 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 					openBookmarkList();
 				}
 			}.executeParallel();
+			break;
+
+		case R.id.action_setting:
+			SettingActivity.showInstance(this);
 			break;
 		}
 		return super.onOptionsItemSelected(item);
@@ -462,7 +463,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 			if (mPreItemOnLast != lastItem) { //to avoid multiple calls for last item
 				loadMore();
 				mPreItemOnLast = lastItem;
-				if(mSnackBar == null) {
+				if (mSnackBar == null) {
 					mSnackBar = new SnackBar(this);
 				}
 				mSnackBar.show(getString(R.string.lbl_load_more));
@@ -578,7 +579,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 			mActionBar.setHomeButtonEnabled(true);
 			mActionBar.setDisplayHomeAsUpEnabled(true);
 			mActionBar.setTitle(R.string.lbl_bookmark);
-			if(!mActionBar.isShowing()) {
+			if (!mActionBar.isShowing()) {
 				mActionBar.show();
 			}
 		}

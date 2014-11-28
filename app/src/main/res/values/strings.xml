@@ -48,10 +48,13 @@
 
     <string name="msg_bookmark_the_book">Added to bookmarks</string>
     <string name="msg_unbookmark_the_book">Removed from bookmarks</string>
+    <string name="msg_push_registering">Signing in push…</string>
+    <string name="msg_push_unregistering">Signing out push…</string>
 
     <string name="menu_forward">Forward</string>
     <string name="menu_backward">Backward</string>
     <string name="menu_remove_all_bookmarks">Clean bookmarks</string>
+    <string name="menu_setting">Setting</string>
 
     <!--debug:-->
     <!--<string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>-->
@@ -75,5 +78,10 @@
         notice.\n\n\nBy using the application, your agree to the use of your data and permissions of your hardware in
         accordance with Google\'s Privacy Policy and Google Terms of Service.</string>
     <string name="about_pwd">it-ebooks.info</string>
-    <!--"Title": "Developing Android Applications with Flex 4.5",--><!--"SubTitle": "Building Android Applications with ActionScript",--><!--"Description": "Ready to put your ActionScript 3 skills to work on mobile apps? This hands-on book walks you through the process of creating an Adobe AIR application from start to finish, using the Flex 4.5 framework. Move quickly from a basic Hello World application to complex interactions with Android APIs, and get complete code examples for working with Android device components - GPS, camera, gallery, accelerometer, multitouch display, and OS interactions. No matter how much Flex experience you have, this book is the ideal resource.",--><!--"Author": "Rich Tretola",--><!--"ISBN": "9781449305376",--><!--"Year": "2011",--><!--"Page": "112",--><!--"Publisher": "O'Reilly Media",--><!--"Image": "http://s.it-ebooks-api.info/3/developing_android_applications_with_flex_4.5.jpg",--><!--"Download": "http://filepi.com/i/8wlDiuB"-->
+
+
+    <string name="setting_push_cat">Push</string>
+    <string name="setting_push_title">I want to get some push-messages of new books.</string>
+    <string name="setting_push_on">On</string>
+    <string name="setting_push_off">Off</string>
 </resources>

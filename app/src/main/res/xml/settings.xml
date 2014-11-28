@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/setting_push_cat"
+        android:layout="@layout/setting_entry">
+        <CheckBoxPreference
+            android:key="key.push.setting"
+            android:title="@string/setting_push_title"
+            android:summaryOn="@string/setting_push_on"
+            android:summaryOff="@string/setting_push_off"
+            android:layout="@layout/setting_item"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+</PreferenceScreen>

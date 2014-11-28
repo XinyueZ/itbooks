@@ -24,10 +24,10 @@ const (
                 </p>
                 <p>Use the project-ID: 1086395265343 for itbooks push-messages.</p></p>
                 <form action="/response" method="post">
-                    <div><textarea name="book_id" rows="1" cols="60" placeholder="ID">This book-id</textarea></div>
-                    <div><textarea name="title" rows="1" cols="60" placeholder="ID">This book title</textarea></div>
-                    <div><textarea name="desc" rows="3" cols="60" placeholder="Message">This book description</textarea></div>
-                    <div><textarea name="image" rows="3" cols="60" placeholder="Message">Book-cover image</textarea></div>
+                    <div><textarea name="book_id" rows="1" cols="60" placeholder="ID">1539580363</textarea></div>
+                    <div><textarea name="title" rows="1" cols="60" placeholder="ID">Developing Android Applications with Flex 4.5</textarea></div>
+                    <div><textarea name="desc" rows="3" cols="60" placeholder="Message">Building Android Applications with ActionScript.</textarea></div>
+                    <div><textarea name="image" rows="3" cols="60" placeholder="Message">http://s.it-ebooks-api.info/3/developing_android_applications_with_flex_4.5.jpg</textarea></div>
                     <div><input type="submit" value="PUSH" /></div>
                 </form>
             <form action="/dela" method="post">
@@ -187,7 +187,7 @@ func (this *PushMessage) body(_r *Request) (reader io.Reader) {
     ids = ids[:len(ids)-1]
   }
 
-  this.pushed = fmt.Sprintf(`{"registration_ids" : [%s],"data" : {"book_id": %d, "title": "%s", "desc": "%s", "image": "%s"}}`, ids, _r.message.data.book_id , _r.message.data.title, _r.message.data.desc, _r.message.data.image)
+  this.pushed = fmt.Sprintf(`{"registration_ids" : [%s],"data" : {"book_id": %s, "title": "%s", "desc": "%s", "image": "%s"}}`, ids, _r.message.data.book_id , _r.message.data.title, _r.message.data.desc, _r.message.data.image)
   reader = bytes.NewBufferString(this.pushed)
   return
 }

@@ -39,6 +39,25 @@
 
     <style name="AppTheme" parent="AppTheme.Base"/>
 
+    <style name="ActionBar_ToolBar">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:minHeight">?attr/actionBarSize</item>
+        <item name="android:theme">@style/AppTheme</item>
+        <item name="theme">@style/AppTheme</item>
+        <item name="android:popupTheme">@style/AppTheme</item>
+        <item name="popupTheme">@style/AppTheme</item>
+        <item name="android:background">@color/primary_color</item>
+        <item name="background">@color/primary_color</item>
+    </style>
+
+    <style name="SettingsTheme" parent="AppTheme">
+        <item name="android:windowBackground">@color/common_white</item>
+        <item name="android:textColorPrimary">@color/blue_grey_50</item>
+        <item name="android:textColorSecondary">@color/blue_grey_50</item>
+        <item name="android:colorAccent">@color/teal_500</item>
+        <item name="colorAccent">@color/teal_500</item>
+    </style>
 
     <style name="AbStyle" parent="@style/Widget.AppCompat.Light.ActionBar">
         <item name="android:icon">@null</item>
