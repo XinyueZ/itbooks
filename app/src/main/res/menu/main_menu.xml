@@ -9,11 +9,11 @@
         android:title="@string/lbl_search"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView" />
-    <item
-        android:id="@+id/action_setting"
-        android:title="@string/menu_setting">
+    <!--<item-->
+        <!--android:id="@+id/action_setting"-->
+        <!--android:title="@string/menu_setting">-->
 
-    </item>
+    <!--</item>-->
     <item
         android:id="@+id/action_clear_bookmarks"
         android:title="@string/menu_remove_all_bookmarks"

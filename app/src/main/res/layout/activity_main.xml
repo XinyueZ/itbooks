@@ -85,6 +85,31 @@
                     android:background="@drawable/selector_bg2_btn" />
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/open_setting_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/selector_bg2_btn">
+
+                <ImageView
+                    android:layout_width="@dimen/float_button_size"
+                    android:layout_height="@dimen/float_button_size"
+                    android:background="@color/common_transparent"
+                    android:src="@drawable/ic_setting" />
+
+
+                <com.itbooks.views.FontTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    font="thin"
+                    android:gravity="center"
+                    android:textColor="@color/text_common_black"
+                    android:text="@string/menu_setting"
+                    android:background="@drawable/selector_bg2_btn" />
+            </LinearLayout>
+
 
             <FrameLayout
                 android:id="@+id/app_list_fl"

@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationCompat.BigPictureStyle;
 import android.support.v4.app.NotificationCompat.BigTextStyle;
 import android.text.TextUtils;
 
@@ -22,7 +21,6 @@ import com.itbooks.R;
 import com.itbooks.app.MainActivity;
 
 public class GcmIntentService extends IntentService {
-	private static final int NOTIFICATION_ID = 1;
 	private NotificationManager mNotificationManager;
 	private	NotificationCompat.Builder mNotifyBuilder;
 
@@ -60,7 +58,7 @@ public class GcmIntentService extends IntentService {
 	// This is just one simple example of what you might choose to do with
 	// a GCM message.
 	private void sendNotification(final Bundle msg) {
-		String bookId = msg.getString("book_id");
+		final long bookId = Long.valueOf(msg.getString("book_id"));
 		final String title = msg.getString("title");
 		final String desc = msg.getString("desc");
 		final String image = msg.getString("image");
@@ -77,38 +75,27 @@ public class GcmIntentService extends IntentService {
 					TaskHelper.getImageLoader().get(image, new ImageListener() {
 						@Override
 						public void onResponse(ImageContainer response, boolean isImmediate) {
-							mNotifyBuilder = new NotificationCompat.Builder(GcmIntentService.this).setSmallIcon(
+							mNotifyBuilder = new NotificationCompat.Builder(GcmIntentService.this).setWhen(System.currentTimeMillis()).setSmallIcon(
 									R.drawable.ic_launcher).setTicker(title).setContentTitle(title).setContentText(desc)
-									.setStyle(new BigPictureStyle().bigPicture(response.getBitmap()).setBigContentTitle(
-													title).setSummaryText(desc)).setAutoCancel(true);
-
+									.setStyle(new BigTextStyle().bigText(desc).setBigContentTitle(
+													title)).setAutoCancel(true).setLargeIcon(response.getBitmap());
 							mNotifyBuilder.setContentIntent(contentIntent);
-							mNotificationManager.notify(NOTIFICATION_ID, mNotifyBuilder.build());
+							mNotificationManager.notify((int)bookId, mNotifyBuilder.build());
 
 						}
 
 						@Override
 						public void onErrorResponse(VolleyError error) {
-							mNotifyBuilder = new NotificationCompat.Builder(GcmIntentService.this).setSmallIcon(
-									R.drawable.ic_launcher).setTicker(title).setContentTitle(title).setContentText(desc)
-									.setStyle(new BigTextStyle().setBigContentTitle(title).setSummaryText(desc).bigText(
-											desc)).setAutoCancel(true);
-
-							mNotifyBuilder.setContentIntent(contentIntent);
-							mNotificationManager.notify(NOTIFICATION_ID, mNotifyBuilder.build());
 						}
 					});
 				}
 			});
 		} else {
-			mNotifyBuilder = new NotificationCompat.Builder(GcmIntentService.this).setSmallIcon(R.drawable.ic_launcher)
-					.setTicker(title).setContentTitle(title).setContentText(desc).setStyle(
-							new BigTextStyle().setBigContentTitle(title).setSummaryText(desc).bigText(desc)).setAutoCancel(true);
-
+			mNotifyBuilder = new NotificationCompat.Builder(GcmIntentService.this).setWhen(System.currentTimeMillis()).setSmallIcon(
+					R.drawable.ic_launcher).setTicker(title).setContentTitle(title).setContentText(desc).setStyle(
+							new BigTextStyle().bigText(desc).setBigContentTitle(title)).setAutoCancel(true);
 			mNotifyBuilder.setContentIntent(contentIntent);
-			mNotificationManager.notify(NOTIFICATION_ID, mNotifyBuilder.build());
-
+			mNotificationManager.notify((int)bookId, mNotifyBuilder.build());
 		}
-
 	}
 }

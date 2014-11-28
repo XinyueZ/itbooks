@@ -268,9 +268,9 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 			}.executeParallel();
 			break;
 
-		case R.id.action_setting:
-			SettingActivity.showInstance(this);
-			break;
+//		case R.id.action_setting:
+//			SettingActivity.showInstance(this);
+//			break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -516,6 +516,12 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 				public void onClick(View v) {
 					openBookmarkList();
 					mDrawerLayout.closeDrawer(Gravity.LEFT);
+				}
+			});
+			findViewById(R.id.open_setting_ll).setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					SettingActivity.showInstance(MainActivity.this);
 				}
 			});
 		}
