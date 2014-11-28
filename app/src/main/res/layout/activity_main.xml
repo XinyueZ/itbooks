@@ -79,7 +79,8 @@
                     android:layout_height="match_parent"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     font="thin"
-                    android:gravity="center"
+                    android:gravity="left|center_vertical"
+                    android:layout_marginLeft="10dp"
                     android:textColor="@color/text_common_black"
                     android:text="@string/lbl_bookmark"
                     android:background="@drawable/selector_bg2_btn" />
@@ -104,7 +105,8 @@
                     android:layout_height="match_parent"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     font="thin"
-                    android:gravity="center"
+                    android:layout_marginLeft="10dp"
+                    android:gravity="left|center_vertical"
                     android:textColor="@color/text_common_black"
                     android:text="@string/menu_setting"
                     android:background="@drawable/selector_bg2_btn" />
