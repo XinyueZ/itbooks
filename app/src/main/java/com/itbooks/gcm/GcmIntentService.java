@@ -18,7 +18,7 @@ import com.android.volley.toolbox.ImageLoader.ImageListener;
 import com.chopping.net.TaskHelper;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.itbooks.R;
-import com.itbooks.app.MainActivity;
+import com.itbooks.app.BookDetailActivity;
 
 public class GcmIntentService extends IntentService {
 	private NotificationManager mNotificationManager;
@@ -65,7 +65,10 @@ public class GcmIntentService extends IntentService {
 
 		mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 
-		final PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
+		Intent intent = new Intent(this, BookDetailActivity.class);
+		intent.putExtra(BookDetailActivity.EXTRAS_BOOK_ID, bookId);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		final PendingIntent contentIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_ONE_SHOT);
 
 
 		if (!TextUtils.isEmpty(image)) {
