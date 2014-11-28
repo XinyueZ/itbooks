@@ -38,7 +38,7 @@ public   class UnregGCMTask extends ParallelTask<Void, Void, String> {
 		String regId;
 		try {
 			mGCM.unregister();
-			regId = "unreg";
+			regId = mPrefs.getPushRegId();
 		} catch (IOException ex) {
 			regId = null;
 		}
@@ -48,7 +48,7 @@ public   class UnregGCMTask extends ParallelTask<Void, Void, String> {
 	@Override
 	protected void onPostExecute(final String regId) {
 		if (!TextUtils.isEmpty(regId)) {
-			StringRequest req = new StringRequest(Request.Method.POST, Const.URL_INFO_BACKEND_UNREG,
+			StringRequest req = new StringRequest(Request.Method.POST, mPrefs.getPushBackendUnregUrl(),
 				new Response.Listener<String>() {
 					@Override
 					public void onResponse(String response) {

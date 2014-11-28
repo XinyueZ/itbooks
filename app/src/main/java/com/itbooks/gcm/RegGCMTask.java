@@ -37,7 +37,7 @@ public   class RegGCMTask extends ParallelTask<Void, Void, String> {
 		String regId;
 		try {
 			if(TextUtils.isEmpty(mPrefs.getPushRegId())) {
-				regId = mGCM.register(Const.SENDER_ID);
+				regId = mGCM.register(mPrefs.getPushSenderId() + "");
 			} else {
 				regId = mPrefs.getPushRegId();
 			}
@@ -50,7 +50,7 @@ public   class RegGCMTask extends ParallelTask<Void, Void, String> {
 	@Override
 	protected void onPostExecute(final String regId) {
 		if (!TextUtils.isEmpty(regId)) {
-			StringRequest req = new StringRequest(Request.Method.POST, Const.URL_INFO_BACKEND_REG,
+			StringRequest req = new StringRequest(Request.Method.POST, mPrefs.getPushBackendRegUrl(),
 				new Response.Listener<String>() {
 					@Override
 					public void onResponse(String response) {

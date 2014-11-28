@@ -22,7 +22,7 @@ const (
           <html>
               <body>
                 </p>
-                <p>Use the project-ID: 1086395265343 for itbooks push-messages.</p></p>
+                <p>Project itbooks push-messages.</p></p>
                 <form action="/response" method="post">
                     <div><textarea name="book_id" rows="1" cols="60" placeholder="ID">1539580363</textarea></div>
                     <div><textarea name="title" rows="1" cols="60" placeholder="ID">Developing Android Applications with Flex 4.5</textarea></div>
@@ -30,9 +30,11 @@ const (
                     <div><textarea name="image" rows="3" cols="60" placeholder="Message">http://s.it-ebooks-api.info/3/developing_android_applications_with_flex_4.5.jpg</textarea></div>
                     <div><input type="submit" value="PUSH" /></div>
                 </form>
+
             <form action="/dela" method="post">
               <div><input type="submit" value="REMOVE ALL USERS"/></div>
             </form>
+         
             </body>
           </html>
         `
@@ -163,7 +165,7 @@ type PushMessage struct {
 }
 
 func (this *PushMessage) newRequest(_msg *Message) *Request {
-  return &Request{"https://android.googleapis.com/gcm/send", "key=AIzaSyDnLbS3DW6U7vaCPhzm4hCvlT_KtHb8pe4", "application/json", _msg}
+  return &Request{"https://android.googleapis.com/gcm/send", "key=" + PUSH_KEY, "application/json", _msg}
 }
 
 func (this *PushMessage) newBreakingNews(_book_id string, _title string, _content string, _type string) *BreakingNews {

@@ -30,14 +30,30 @@ android {
     buildTypes {
         debug {
             zipAlign true
-//            versionNameSuffix buildNumber
+            versionNameSuffix buildNumber
         }
         release {
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            versionNameSuffix buildNumber
         }
     }
+
     productFlavors {
+        stage {
+            applicationId project.APP_STAGE_APPLICATIONID
+            minSdkVersion Integer.parseInt(project.ANDROID_BUILD_MIN_SDK_VERSION)
+            targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
+            versionCode Integer.parseInt(project.APP_VERSIONCODE)
+            versionName project.APP_VERSIONNAME
+        }
+        live {
+            applicationId project.APP_APPLICATIONID
+            minSdkVersion Integer.parseInt(project.ANDROID_BUILD_MIN_SDK_VERSION)
+            targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
+            versionCode Integer.parseInt(project.APP_VERSIONCODE)
+            versionName project.APP_VERSIONNAME
+        }
     }
 
     lintOptions {

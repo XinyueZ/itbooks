@@ -1,6 +1,5 @@
 package com.itbooks.utils;
 
-import android.app.Application;
 import android.content.Context;
 
 import com.chopping.application.BasicPrefs;
@@ -30,6 +29,12 @@ public final class Prefs extends BasicPrefs {
 	 * {@code true} if EULA has been shown and agreed.
 	 */
 	private static final String KEY_EULA_SHOWN = "key_eula_shown";
+
+
+	private static final String PUSH_HOST  = "push_host";
+	private static final String PUSH_SENDER_ID  = "push_sender_id";
+	private static final String PUSH_URL_INFO_BACKEND_REG = "push_url_info_backend_reg";
+	private static final String PUSH_URL_INFO_BACKEND_UNREG = "push_url_info_backend_unreg";
 
 	/**
 	 * Created a DeviceData storage.
@@ -119,5 +124,21 @@ public final class Prefs extends BasicPrefs {
 
 	public String getAppVersionForPush() {
 		return getString(KEY_APP_VERSION_FOR_PUSH, null);
+	}
+
+	private String getPushHost() {
+		return getString(PUSH_HOST, null);
+	}
+
+	public long getPushSenderId() {
+		return getLong(PUSH_SENDER_ID, -1);
+	}
+
+	public String getPushBackendRegUrl() {
+		return getPushHost() + getString(PUSH_URL_INFO_BACKEND_REG, null);
+	}
+
+	public String getPushBackendUnregUrl() {
+		return getPushHost() +  getString(PUSH_URL_INFO_BACKEND_UNREG, null);
 	}
 }
