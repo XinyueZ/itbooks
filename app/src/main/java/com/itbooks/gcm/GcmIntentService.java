@@ -6,16 +6,25 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat.BigPictureStyle;
+import android.support.v4.app.NotificationCompat.BigTextStyle;
+import android.text.TextUtils;
 
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader.ImageContainer;
+import com.android.volley.toolbox.ImageLoader.ImageListener;
+import com.chopping.net.TaskHelper;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.itbooks.R;
 import com.itbooks.app.MainActivity;
 
 public class GcmIntentService extends IntentService {
-	public static final int NOTIFICATION_ID = 1;
+	private static final int NOTIFICATION_ID = 1;
 	private NotificationManager mNotificationManager;
-	NotificationCompat.Builder builder;
+	private	NotificationCompat.Builder mNotifyBuilder;
 
 	public GcmIntentService() {
 		super("GcmIntentService");
@@ -30,21 +39,17 @@ public class GcmIntentService extends IntentService {
 		String messageType = gcm.getMessageType(intent);
 
 		if (!extras.isEmpty()) {  // has effect of unparcelling Bundle
-            /*
+			/*
              * Filter messages based on message type. Since it is likely that GCM will be
              * extended in the future with new message types, just ignore any message types you're
              * not interested in, or that you don't recognize.
              */
 			if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
-				sendNotification("Send error: " + extras.toString());
+				//ignore.
 			} else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType)) {
-				sendNotification("Deleted messages on server: " + extras.toString());
-				// If it's a regular GCM message, do some work.
+				//ignore.
 			} else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
-				// This loop represents the service doing some work.
-
-				// Post notification of received message.
-				sendNotification("Received: " + extras.toString());
+				sendNotification(extras);
 			}
 		}
 		// Release the wake lock provided by the WakefulBroadcastReceiver.
@@ -54,22 +59,56 @@ public class GcmIntentService extends IntentService {
 	// Put the message into a notification and post it.
 	// This is just one simple example of what you might choose to do with
 	// a GCM message.
-	private void sendNotification(String msg) {
-		mNotificationManager = (NotificationManager)
-				this.getSystemService(Context.NOTIFICATION_SERVICE);
+	private void sendNotification(final Bundle msg) {
+		String bookId = msg.getString("book_id");
+		final String title = msg.getString("title");
+		final String desc = msg.getString("desc");
+		final String image = msg.getString("image");
 
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-				new Intent(this, MainActivity.class), 0);
+		mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 
-		NotificationCompat.Builder mBuilder =
-				new NotificationCompat.Builder(this)
-						.setSmallIcon(R.drawable.ic_launcher)
-						.setContentTitle("GCM Notification")
-						.setStyle(new NotificationCompat.BigTextStyle()
-								.bigText(msg))
-						.setContentText(msg);
+		final PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
 
-		mBuilder.setContentIntent(contentIntent);
-		mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+
+		if (!TextUtils.isEmpty(image)) {
+			new Handler( Looper.getMainLooper()).post(new Runnable() {
+				@Override
+				public void run() {
+					TaskHelper.getImageLoader().get(image, new ImageListener() {
+						@Override
+						public void onResponse(ImageContainer response, boolean isImmediate) {
+							mNotifyBuilder = new NotificationCompat.Builder(GcmIntentService.this).setSmallIcon(
+									R.drawable.ic_launcher).setTicker(title).setContentTitle(title).setContentText(desc)
+									.setStyle(new BigPictureStyle().bigPicture(response.getBitmap()).setBigContentTitle(
+													title).setSummaryText(desc)).setAutoCancel(true);
+
+							mNotifyBuilder.setContentIntent(contentIntent);
+							mNotificationManager.notify(NOTIFICATION_ID, mNotifyBuilder.build());
+
+						}
+
+						@Override
+						public void onErrorResponse(VolleyError error) {
+							mNotifyBuilder = new NotificationCompat.Builder(GcmIntentService.this).setSmallIcon(
+									R.drawable.ic_launcher).setTicker(title).setContentTitle(title).setContentText(desc)
+									.setStyle(new BigTextStyle().setBigContentTitle(title).setSummaryText(desc).bigText(
+											desc)).setAutoCancel(true);
+
+							mNotifyBuilder.setContentIntent(contentIntent);
+							mNotificationManager.notify(NOTIFICATION_ID, mNotifyBuilder.build());
+						}
+					});
+				}
+			});
+		} else {
+			mNotifyBuilder = new NotificationCompat.Builder(GcmIntentService.this).setSmallIcon(R.drawable.ic_launcher)
+					.setTicker(title).setContentTitle(title).setContentText(desc).setStyle(
+							new BigTextStyle().setBigContentTitle(title).setSummaryText(desc).bigText(desc)).setAutoCancel(true);
+
+			mNotifyBuilder.setContentIntent(contentIntent);
+			mNotificationManager.notify(NOTIFICATION_ID, mNotifyBuilder.build());
+
+		}
+
 	}
 }
