@@ -46,7 +46,7 @@ public final class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkList
 	}
 
 	@Override
-	public void onBindViewHolder(ViewHolder viewHolder, int position) {
+	public void onBindViewHolder(final ViewHolder viewHolder, int position) {
 		long id = mBookmarkList.keyAt(position);
 		final DSBookmark bookmark = mBookmarkList.get(id);
 		DSBook book = bookmark.getBook();
@@ -54,7 +54,7 @@ public final class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkList
 		viewHolder.mBookCoverIv.setOnClickListener(new OnViewAnimatedClickedListener() {
 			@Override
 			public void onClick() {
-				EventBus.getDefault().post(new OpenBookmarkEvent(bookmark));
+				EventBus.getDefault().post(new OpenBookmarkEvent(bookmark, viewHolder.mBookCoverIv));
 			}
 		});
 		viewHolder.mDeleteBtn.setOnClickListener(new OnViewAnimatedClickedListener() {

@@ -81,8 +81,8 @@ public final class BookListAdapter extends BaseAdapter {
 	 *
 	 * @author Xinyue Zhao.
 	 */
-	private static class ViewHolder {
-		private NetworkImageView mBookThumbIv;
+	public static class ViewHolder {
+		public NetworkImageView mBookThumbIv;
 		private TextView mBookTitleTv;
 		private TextView mBookSubTitleTv;
 		private TextView mISBNTv;

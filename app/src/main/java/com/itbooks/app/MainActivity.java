@@ -107,7 +107,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	 * 		Event {@link com.itbooks.bus.OpenBookmarkEvent}.
 	 */
 	public void onEvent(OpenBookmarkEvent e) {
-		openBookDetail(e.getBook());
+		openBookDetail(e.getBook(), e.getBookCoverV());
 	}
 
 	/**
@@ -384,12 +384,13 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		DSBook book = (DSBook) mAdp.getItem(position);
-		openBookDetail(book);
+		BookListAdapter.ViewHolder vh = (BookListAdapter.ViewHolder) view.getTag();
+		openBookDetail(book, vh.mBookThumbIv);
 	}
 
-	private void openBookDetail(DSBook book) {
+	private void openBookDetail(DSBook book, View bookCoverV) {
 		mDetailOpened = true;
-		BookDetailActivity.showInstance(this, book.getId());
+		BookDetailActivity.showInstance(this, book.getId(), bookCoverV);
 	}
 
 	public void search(View view) {

@@ -1,11 +1,14 @@
 package com.itbooks.app;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
@@ -126,11 +129,16 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 	 * @param bookId
 	 * 		Book's id.
 	 */
-	public static void showInstance(Context cxt, long bookId) {
+	public static void showInstance(Activity cxt, long bookId, View bookCoverV) {
 		Intent intent = new Intent(cxt, BookDetailActivity.class);
 		intent.putExtra(EXTRAS_BOOK_ID, bookId);
 		intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		cxt.startActivity(intent);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+			ActivityOptionsCompat transitionActivityOptions = ActivityOptionsCompat.makeSceneTransitionAnimation(cxt,  Pair.create(bookCoverV, "bookCover"));
+			cxt.startActivity(intent, transitionActivityOptions.toBundle());
+		} else {
+			cxt.startActivity(intent);
+		}
 	}
 
 	/**
