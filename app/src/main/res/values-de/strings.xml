@@ -51,7 +51,6 @@
     <string name="msg_bookmark_the_book">In die Merkliste hinzugefügt</string>
     <string name="msg_unbookmark_the_book">Entfernt von der Merkliste</string>
     <string name="lbl_bookmark_empty">Merkliste ist leer.</string>
-    <string name="setting_push_title">Ich möchte regelmäßig benachrichtigt werden.</string>
     <string name="menu_setting">Einstellung</string>
     <string name="setting_push_cat">Benachrichtigungen</string>
     <string name="setting_push_off">Ein</string>
@@ -59,5 +58,5 @@
     <string name="msg_push_registering">Anmeldung…</string>
     <string name="msg_push_unregistering">Abmeldung…</string>
     <string name="btn_turn_on">Einschalten</string>
-    <string name="lbl_turn_on_push_info">Möchtest Du Push-Benachrichtigungen empfangen? Damit können wir Dir einige neuen IT-eBook regelmäßig informieren.</string>
+    <string name="lbl_turn_on_push_info">Möchtest Du Push-Benachrichtigungen empfangen? Damit können wir Dir einige neuen IT-eBooks regelmäßig informieren.</string>
 </resources>

@@ -433,5 +433,12 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 		loadBookDetail();
 	}
 
-
+	@Override
+	public void onBackPressed() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			finishAfterTransition();
+		} else {
+			finish();
+		}
+	}
 }
