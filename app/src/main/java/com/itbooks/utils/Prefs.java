@@ -24,6 +24,9 @@ public final class Prefs extends BasicPrefs {
 	public static final String KEY_PUSH_REG_ID = "key.push.regid";
 	private static final String KEY_APP_VERSION_FOR_PUSH ="key.app.version.push";
 	public static final String KEY_PUSH_SETTING = "key.push.setting";
+	private static final String KEY_SHOWN_DETAILS_TIMES = "key.details.shown.times";
+	private static final String KEY_SHOWN_DETAILS_ADS_TIMES = "ads";
+
 	/**
 	 * Storage. Whether the "End User License Agreement" has been shown and agreed at application's first start.
 	 * <p/>
@@ -155,5 +158,15 @@ public final class Prefs extends BasicPrefs {
 
 	public void turnOnPush() {
 		setBoolean(KEY_PUSH_SETTING, true);
+	}
+
+	public void setShownDetailsTimes(int times) {
+		setInt(KEY_SHOWN_DETAILS_TIMES, times);
+	}
+	public int getShownDetailsTimes() {
+		return getInt(KEY_SHOWN_DETAILS_TIMES, 1);
+	}
+	public int getShownDetailsAdsTimes() {
+		return getInt(KEY_SHOWN_DETAILS_ADS_TIMES, 5);
 	}
 }
