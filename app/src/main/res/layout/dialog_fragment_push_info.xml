@@ -1,38 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:background="@color/common_transparent"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="@color/common_transparent"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
-    <FrameLayout
+    <ImageView
+        android:layout_width="400dp"
+        android:layout_height="400dp"
         android:background="@color/common_transparent"
+        android:src="@drawable/push_info"
+        android:layout_gravity="center" />
+
+    <com.itbooks.views.FontTextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:layout_width="400dp"
-            android:layout_height="400dp"
-            android:background="@color/common_transparent"
-            android:src="@drawable/push_info"
-            android:layout_gravity="center" />
-
-        <com.itbooks.views.FontTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/lbl_turn_on_push_info"
-            android:padding="12dp"
-            font="thin"
-            android:layout_gravity="bottom"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:background="@color/a400"
-            android:textColor="@color/text_common_white"
-            android:gravity="center" />
-    </FrameLayout>
+        android:layout_height="wrap_content"
+        android:text="@string/lbl_turn_on_push_info"
+        android:padding="12dp"
+        font="thin"
+        android:layout_gravity="top"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:background="@color/a400"
+        android:textColor="@color/text_common_white"
+        android:gravity="center" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:orientation="vertical"
-        android:layout_height="match_parent">
+        android:layout_gravity="bottom"
+        android:layout_height="wrap_content">
 
         <Button
             android:id="@+id/close_confirm_btn"
@@ -52,4 +48,4 @@
             android:text="@string/lbl_bookmark_info_never_show_again" />
 
     </LinearLayout>
-</LinearLayout>
+</FrameLayout>
