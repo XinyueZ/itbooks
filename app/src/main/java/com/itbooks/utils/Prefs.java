@@ -20,9 +20,10 @@ public final class Prefs extends BasicPrefs {
 	private static final String API_DEFAULT_BOOKS = "api_default_books";
 	private static final String KEY_LAST_SEARCHED = "key.last.searched";
 	private static final String KEY_KNOWN_BOOKMARK = "key.known.bookmark";
+	private static final String KEY_KNOWN_PUSH = "key.known.push";
 	public static final String KEY_PUSH_REG_ID = "key.push.regid";
 	private static final String KEY_APP_VERSION_FOR_PUSH ="key.app.version.push";
-
+	public static final String KEY_PUSH_SETTING = "key.push.setting";
 	/**
 	 * Storage. Whether the "End User License Agreement" has been shown and agreed at application's first start.
 	 * <p/>
@@ -106,9 +107,19 @@ public final class Prefs extends BasicPrefs {
 		setBoolean(KEY_KNOWN_BOOKMARK, known);
 	}
 
+	public void setKnownPush(boolean known) {
+		setBoolean(KEY_KNOWN_PUSH, known);
+	}
+
 	public boolean hasKnownBookmark(){
 		return getBoolean(KEY_KNOWN_BOOKMARK, false);
 	}
+
+
+	public boolean hasKnownPush(){
+		return getBoolean(KEY_KNOWN_PUSH, false);
+	}
+
 
 	public void setPushRegId(String regId) {
 		setString(KEY_PUSH_REG_ID, regId);
@@ -140,5 +151,9 @@ public final class Prefs extends BasicPrefs {
 
 	public String getPushBackendUnregUrl() {
 		return getPushHost() +  getString(PUSH_URL_INFO_BACKEND_UNREG, null);
+	}
+
+	public void turnOnPush() {
+		setBoolean(KEY_PUSH_SETTING, true);
 	}
 }

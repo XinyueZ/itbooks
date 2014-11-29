@@ -10,23 +10,24 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import com.itbooks.R;
+import com.itbooks.gcm.RegGCMTask;
 import com.itbooks.utils.Prefs;
 
 /**
- * Dialog to show some information about bookmark-list.
+ * Dialog to show some information about push
  *
  * @author Xinyue Zhao
  */
-public final class BookmarkInfoDialogFragment extends DialogFragment implements OnClickListener {
+public final class PushInfoDialogFragment extends DialogFragment implements OnClickListener {
 	/**
 	 * Main layout for this component.
 	 */
-	private static final int LAYOUT = R.layout.dialog_fragment_bookmark_info;
+	private static final int LAYOUT = R.layout.dialog_fragment_push_info;
 
 
-	public static BookmarkInfoDialogFragment newInstance(Context context) {
-		return (BookmarkInfoDialogFragment) BookmarkInfoDialogFragment.instantiate(context,
-				BookmarkInfoDialogFragment.class.getName());
+	public static PushInfoDialogFragment newInstance(Context context) {
+		return (PushInfoDialogFragment) PushInfoDialogFragment.instantiate(context,
+				PushInfoDialogFragment.class.getName());
 	}
 
 	@Override
@@ -49,9 +50,14 @@ public final class BookmarkInfoDialogFragment extends DialogFragment implements 
 
 	@Override
 	public void onClick(View v) {
+		Prefs prefs = Prefs.getInstance(getActivity().getApplication());
 		switch (v.getId()) {
 		case R.id.close_i_know_btn:
-			Prefs.getInstance(getActivity().getApplication()).setKnownBookmark(true);
+			prefs.setKnownPush(true);
+			break;
+		case R.id.close_confirm_btn:
+			new RegGCMTask(getActivity()).executeParallel();
+			prefs.turnOnPush();
 			break;
 		}
 		dismiss();

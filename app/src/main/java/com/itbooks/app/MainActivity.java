@@ -41,7 +41,10 @@ import com.itbooks.R;
 import com.itbooks.adapters.BookListAdapter;
 import com.itbooks.app.fragments.AboutDialogFragment;
 import com.itbooks.app.fragments.AppListImpFragment;
+import com.itbooks.app.fragments.PushInfoDialogFragment;
 import com.itbooks.bus.CleanBookmarkEvent;
+import com.itbooks.bus.EULAConfirmedEvent;
+import com.itbooks.bus.EULARejectEvent;
 import com.itbooks.bus.OpenBookmarkEvent;
 import com.itbooks.data.DSBook;
 import com.itbooks.data.DSBookList;
@@ -62,10 +65,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	 * Main menu.
 	 */
 	private static final int MAIN_MENU = R.menu.main_menu;
-	/**
-	 * Foot view for loading more.
-	 */
-	private static final int LAYOUT_LOAD_MORE = R.layout.inc_load_more;
 
 	private static final int MAX_PAGER = 100;
 
@@ -166,6 +165,25 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		}
 	}
 
+	/**
+	 * Handler for {@link com.itbooks.bus.EULARejectEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link com.itbooks.bus.EULARejectEvent}.
+	 */
+	public void onEvent(EULARejectEvent e) {
+		finish();
+	}
+
+	/**
+	 * Handler for {@link com.itbooks.bus.EULAConfirmedEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link com.itbooks.bus.EULAConfirmedEvent}.
+	 */
+	public void onEvent(EULAConfirmedEvent e) {
+		showPushInfo();
+	}
 
 	//------------------------------------------------
 
@@ -522,6 +540,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 				@Override
 				public void onClick(View v) {
 					SettingActivity.showInstance(MainActivity.this);
+					mDrawerLayout.closeDrawer(Gravity.LEFT);
 				}
 			});
 		}
@@ -532,6 +551,14 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		super.onResume();
 		if (mDrawerToggle != null) {
 			mDrawerToggle.syncState();
+		}
+		showPushInfo();
+	}
+
+	private void showPushInfo() {
+		Prefs prefs = Prefs.getInstance(getApplication());
+		if(prefs.isEULAOnceConfirmed() && !prefs.hasKnownPush()) {
+			showDialogFragment(PushInfoDialogFragment.newInstance(getApplication()), null);
 		}
 	}
 

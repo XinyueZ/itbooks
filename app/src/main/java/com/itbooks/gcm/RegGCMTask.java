@@ -49,6 +49,7 @@ public   class RegGCMTask extends ParallelTask<Void, Void, String> {
 
 	@Override
 	protected void onPostExecute(final String regId) {
+		mPrefs.setKnownPush(true);
 		if (!TextUtils.isEmpty(regId)) {
 			StringRequest req = new StringRequest(Request.Method.POST, mPrefs.getPushBackendRegUrl(),
 				new Response.Listener<String>() {

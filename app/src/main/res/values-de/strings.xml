@@ -58,4 +58,6 @@
     <string name="setting_push_on">Aus</string>
     <string name="msg_push_registering">Anmeldung…</string>
     <string name="msg_push_unregistering">Abmeldung…</string>
+    <string name="btn_turn_on">Einschalten</string>
+    <string name="lbl_turn_on_push_info">Möchtest Du Push-Benachrichtigungen empfangen? Damit können wir Dir einige neuen IT-eBook regelmäßig informieren.</string>
 </resources>

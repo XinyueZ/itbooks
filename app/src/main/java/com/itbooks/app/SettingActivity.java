@@ -20,6 +20,7 @@ import android.view.ViewGroup.MarginLayoutParams;
 import com.itbooks.R;
 import com.itbooks.gcm.RegGCMTask;
 import com.itbooks.gcm.UnregGCMTask;
+import com.itbooks.utils.Prefs;
 
 
 /**
@@ -32,8 +33,6 @@ public final class SettingActivity extends PreferenceActivity implements Prefere
 	 */
 	private Toolbar mToolbar;
 
-
-	private static final String KEY_PUSH_SETTING = "key.push.setting";
 
 	/**
 	 * Show an instance of SettingsActivity.
@@ -63,7 +62,7 @@ public final class SettingActivity extends PreferenceActivity implements Prefere
 			}
 		});
 
-		CheckBoxPreference push = (CheckBoxPreference) findPreference(KEY_PUSH_SETTING);
+		CheckBoxPreference push = (CheckBoxPreference) findPreference(Prefs.KEY_PUSH_SETTING);
 		push.setOnPreferenceChangeListener(this);
 		((MarginLayoutParams) findViewById(android.R.id.list).getLayoutParams()).topMargin = getActionBarHeight(this);
 	}
@@ -102,7 +101,7 @@ public final class SettingActivity extends PreferenceActivity implements Prefere
 
 	@Override
 	public boolean onPreferenceChange(Preference preference, Object newValue) {
-		if (preference.getKey().equals(KEY_PUSH_SETTING)) {
+		if (preference.getKey().equals(Prefs.KEY_PUSH_SETTING)) {
 			if (!Boolean.valueOf(newValue.toString())) {
 				new UnregGCMTask(getApplication()) {
 					ProgressDialog dlg;
