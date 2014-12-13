@@ -29,13 +29,10 @@ android {
     }
     buildTypes {
         debug {
-            zipAlign true
             versionNameSuffix buildNumber
         }
         release {
-            runProguard false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            versionNameSuffix buildNumber
+
         }
     }
 
@@ -76,10 +73,11 @@ dependencies {
 }
 
 // Rename final apks
-android.applicationVariants.all { variant ->
-    def apk = variant.outputFile
-    def newName = apk.name
-            .replace("_Android", "")
-            .replace(".apk", "-${android.defaultConfig.versionName}${buildNumber}.apk")
-    variant.outputFile = new File(apk.parent, newName)
+android.applicationVariants.all {  variant ->
+    variant.outputs.each  { output ->
+        output.outputFile = new File(
+                output.outputFile.parent, output.outputFile.name.replace("_Android", "")
+                .replace(".apk", "-${android.defaultConfig.versionName}${buildNumber}.apk"))
+    }
 }
+

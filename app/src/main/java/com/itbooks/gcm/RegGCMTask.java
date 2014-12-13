@@ -9,11 +9,13 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.chopping.net.TaskHelper;
+import com.chopping.utils.NetworkUtils;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.itbooks.utils.ParallelTask;
 import com.itbooks.utils.Prefs;
@@ -70,10 +72,13 @@ public   class RegGCMTask extends ParallelTask<Void, Void, String> {
 					if (headers == null || headers.equals(Collections.emptyMap())) {
 						headers = new HashMap<String, String>();
 					}
+					NetworkUtils.makeHttpHeaders(headers);
 					headers.put("Cookie","pushID=" + regId);
 					return headers;
 				}
 			};
+			req.setRetryPolicy(new DefaultRetryPolicy(120 * 1000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+					DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 			TaskHelper.getRequestQueue().add(req);
 		}
 	}

@@ -5,6 +5,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -19,6 +21,8 @@ import com.chopping.net.TaskHelper;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.itbooks.R;
 import com.itbooks.app.BookDetailActivity;
+
+import static android.media.AudioManager.RINGER_MODE_SILENT;
 
 public class GcmIntentService extends IntentService {
 	private NotificationManager mNotificationManager;
@@ -83,6 +87,19 @@ public class GcmIntentService extends IntentService {
 									.setStyle(new BigTextStyle().bigText(desc).setBigContentTitle(
 													title)).setAutoCancel(true).setLargeIcon(response.getBitmap());
 							mNotifyBuilder.setContentIntent(contentIntent);
+
+
+							AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+							if (audioManager.getRingerMode() != RINGER_MODE_SILENT) {
+								mNotifyBuilder.setVibrate(new long[] { 1000, 1000, 1000, 1000 });
+								mNotifyBuilder.setSound(Uri.parse(String.format("android.resource://%s/%s", getPackageName(),
+										R.raw.signal)));
+							}
+							mNotifyBuilder.setLights(getResources().getColor(R.color.primary_color), 1000, 1000);
+
+
+
+
 							mNotificationManager.notify((int)bookId, mNotifyBuilder.build());
 
 						}
