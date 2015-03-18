@@ -59,4 +59,5 @@
     <string name="msg_push_unregistering">Abmeldung…</string>
     <string name="btn_turn_on">Einschalten</string>
     <string name="lbl_turn_on_push_info">Möchtest Du Push-Benachrichtigungen empfangen? Damit können wir Dir einige neuen IT-eBooks regelmäßig informieren.</string>
+    <string name="msg_ask_download">Möchten Sie den Web-browser öffnen, dieses Buch herunterzuladen?</string>
 </resources>

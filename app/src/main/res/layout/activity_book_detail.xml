@@ -8,7 +8,6 @@
     tools:context="com.itbooks.app.BookDetailActivity">
 
 
-
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/content_srl"
         android:layout_gravity="top"
@@ -22,7 +21,7 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:parallax_factor="1.8" >
+            app:parallax_factor="1.8">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -171,35 +170,13 @@
         </com.nirhart.parallaxscroll.views.ParallaxScrollView>
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+
+    <ImageButton
+        android:layout_margin="@dimen/padding_float_button"
+        android:id="@+id/download_btn"
+        style="@style/FloatButton"
         android:layout_gravity="bottom|right"
-        android:orientation="vertical"
-        android:layout_margin="@dimen/padding_float_button">
-
-
-        <com.itbooks.views.FontButton
-            android:id="@+id/download_I_btn"
-            android:background="@drawable/circle_pink"
-            android:text="I"
-            style="@style/FloatButton"
-            android:contentDescription="@string/lbl_download" />
-
-        <com.itbooks.views.FontButton
-            android:id="@+id/download_II_btn"
-            android:background="@drawable/circle_red"
-            android:text="II"
-            style="@style/FloatButton"
-            android:contentDescription="@string/lbl_download_in_browser" />
-
-
-        <ImageButton
-            android:id="@+id/download_btn"
-            style="@style/FloatButton"
-            android:visibility="visible"
-            android:background="@drawable/circle_blue"
-            android:src="@drawable/ic_download" />
-    </LinearLayout>
+        android:background="@drawable/circle_blue"
+        android:src="@drawable/ic_download" />
 
 </FrameLayout>

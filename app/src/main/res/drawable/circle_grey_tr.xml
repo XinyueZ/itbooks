@@ -5,4 +5,8 @@
         android:startColor="@color/blue_grey_600_70"
         android:endColor="@color/blue_grey_600_70"
         android:angle="270" />
+
+    <stroke
+        android:width="1dp"
+        android:color="#bebebe" />
 </shape>

@@ -110,12 +110,11 @@
     <style name="FloatButton">
         <item name="android:layout_width">@dimen/float_button_size</item>
         <item name="android:layout_height">@dimen/float_button_size</item>
-        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:layout_marginBottom">15dp</item>
         <item name="android:textColor">@color/text_common_white</item>
         <item name="font">thin</item>
         <item name="android:gravity">center</item>
         <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
-        <item name="android:visibility">invisible</item>
     </style>
 
 

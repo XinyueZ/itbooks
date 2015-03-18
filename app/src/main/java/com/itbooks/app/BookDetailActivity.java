@@ -1,6 +1,9 @@
 package com.itbooks.app;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -8,6 +11,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.util.Pair;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -15,7 +19,6 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,6 +30,7 @@ import com.android.volley.toolbox.ImageLoader.ImageContainer;
 import com.android.volley.toolbox.ImageLoader.ImageListener;
 import com.chopping.net.GsonRequestTask;
 import com.chopping.net.TaskHelper;
+import com.chopping.utils.DeviceUtils;
 import com.chopping.utils.Utils;
 import com.github.mrengineer13.snackbar.SnackBar;
 import com.google.android.gms.ads.AdListener;
@@ -41,10 +45,8 @@ import com.itbooks.db.DB;
 import com.itbooks.utils.ParallelTask;
 import com.itbooks.utils.Prefs;
 import com.itbooks.views.OnViewAnimatedClickedListener;
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.AnimatorListenerAdapter;
-import com.nineoldandroids.animation.AnimatorSet;
-import com.nineoldandroids.animation.ObjectAnimator;
+import com.nineoldandroids.view.ViewHelper;
+import com.nineoldandroids.view.ViewPropertyAnimator;
 
 /**
  * Details of book.
@@ -87,8 +89,6 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 	private ImageLoader mImageLoader;
 	private DSBookDetail mBookDetail;
 
-	private Button mDownloadIBtn;
-	private Button mDownloadIIBtn;
 	private ImageButton mOpenBtn;
 
 	/**
@@ -209,82 +209,47 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 		loadBookDetail();
 
 
-		mDownloadIBtn = (Button) findViewById(R.id.download_I_btn);
-		mDownloadIBtn.setOnClickListener(new OnViewAnimatedClickedListener() {
-			@Override
-			public void onClick() {
-				downloadInternal(mDownloadIBtn);
-			}
-		});
-		mDownloadIIBtn = (Button) findViewById(R.id.download_II_btn);
-		mDownloadIIBtn.setOnClickListener(new OnViewAnimatedClickedListener() {
-			@Override
-			public void onClick() {
-				downloadBrowser(mDownloadIIBtn);
-			}
-		});
+
 		mOpenBtn = (ImageButton) findViewById(R.id.download_btn);
-		mOpenBtn.setOnClickListener(mOpenListener);
+		ViewHelper.setX(mOpenBtn, -10);
+		ViewHelper.setRotation(mOpenBtn, -360f * 4);
+		mOpenBtn.setOnClickListener(new OnViewAnimatedClickedListener() {
+			@Override
+			public void onClick() {
+				showDialogFragment(new DialogFragment() {
+					@Override
+					public Dialog onCreateDialog(Bundle savedInstanceState) {
+						AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+						builder.setMessage(R.string.msg_ask_download).setPositiveButton(R.string.btn_now_load,
+								new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog, int id) {
+										downloadBrowser();
+									}
+								}).setNegativeButton(R.string.btn_not_yet_load, new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								// User cancelled the dialog
+							}
+						});
+						return builder.create();
+					}
+				}, "download ask");
+			}
+		});
 
 		if(!prefs.hasKnownBookmark()) {
 			showDialogFragment(BookmarkInfoDialogFragment.newInstance(getApplication()), null);
 		}
-
+		showOpenButton();
 		mSnackBar = new SnackBar(BookDetailActivity.this);
 	}
 
-	private OnViewAnimatedClickedListener mOpenListener = new OnViewAnimatedClickedListener() {
-		@Override
-		public void onClick() {
-			mDownloadIIBtn.setVisibility(View.VISIBLE);
-			AnimatorSet animatorSet = new AnimatorSet();
-			ObjectAnimator iiBtnAnim = ObjectAnimator.ofFloat(mDownloadIIBtn, "translationY", 150f, 0).setDuration(100);
-			iiBtnAnim.addListener(new AnimatorListenerAdapter() {
-				@Override
-				public void onAnimationEnd(Animator animation) {
-					super.onAnimationEnd(animation);
-					mDownloadIBtn.setVisibility(View.VISIBLE);
-				}
-			});
-			ObjectAnimator iBtnAnim = ObjectAnimator.ofFloat(mDownloadIBtn, "translationY", 200f, 0).setDuration(200);
-			iBtnAnim.addListener(new AnimatorListenerAdapter() {
-				@Override
-				public void onAnimationEnd(Animator animation) {
-					super.onAnimationEnd(animation);
-					mOpenBtn.setOnClickListener(mCloseListener);
-				}
-			});
-			animatorSet.playSequentially(iiBtnAnim, iBtnAnim);
-			animatorSet.start();
-		}
-	};
+	private void showOpenButton() {
+		int screenWidth = DeviceUtils.getScreenSize(getApplication()).Width;
+		ViewPropertyAnimator animator = ViewPropertyAnimator.animate(mOpenBtn);
+		animator.x(screenWidth - getResources().getDimensionPixelSize(R.dimen.float_button_anim_qua)).rotation(0)
+				.setDuration(500).start();
 
-	private OnViewAnimatedClickedListener mCloseListener = new OnViewAnimatedClickedListener() {
-		@Override
-		public void onClick() {
-			AnimatorSet animatorSet = new AnimatorSet();
-			ObjectAnimator iiBtnAnim = ObjectAnimator.ofFloat(mDownloadIIBtn, "translationY", 0, 150f).setDuration(100);
-			iiBtnAnim.addListener(new AnimatorListenerAdapter() {
-				@Override
-				public void onAnimationEnd(Animator animation) {
-					super.onAnimationEnd(animation);
-					mDownloadIIBtn.setVisibility(View.GONE);
-				}
-			});
-			ObjectAnimator iBtnAnim = ObjectAnimator.ofFloat(mDownloadIBtn, "translationY", 0, 200f).setDuration(200);
-			iBtnAnim.addListener(new AnimatorListenerAdapter() {
-				@Override
-				public void onAnimationEnd(Animator animation) {
-					super.onAnimationEnd(animation);
-					mDownloadIBtn.setVisibility(View.GONE);
-					mOpenBtn.setOnClickListener(mOpenListener);
-
-				}
-			});
-			animatorSet.playSequentially(iiBtnAnim, iBtnAnim);
-			animatorSet.start();
-		}
-	};
+	}
 
 	@Override
 	protected void onNewIntent(Intent intent) {
@@ -307,7 +272,7 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 	private void loadBookDetail() {
 		String url = Prefs.getInstance(getApplication()).getApiBookDetail();
 		url = String.format(url, mBookId + "");
-		new GsonRequestTask<DSBookDetail>(getApplication(), Method.GET, url, DSBookDetail.class).execute();
+		new GsonRequestTask<>(getApplication(), Method.GET, url, DSBookDetail.class).execute();
 	}
 
 	private void showBookDetail() {
@@ -340,11 +305,11 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 	}
 
 
-	public void downloadInternal(View view) {
-		DownloadWebViewActivity.showInstance(this, mBookDetail.getDownloadUrl());
-	}
+//	public void downloadInternal(View view) {
+//		DownloadWebViewActivity.showInstance(this, mBookDetail.getDownloadUrl());
+//	}
 
-	public void downloadBrowser(View view) {
+	public void downloadBrowser(   ) {
 		if (mBookDetail != null && !TextUtils.isEmpty(mBookDetail.getDownloadUrl())) {
 			Intent i = new Intent(Intent.ACTION_VIEW);
 			i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -435,10 +400,6 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 
 	@Override
 	public void onBackPressed() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-			finishAfterTransition();
-		} else {
-			finish();
-		}
+		ActivityCompat.finishAfterTransition(this);
 	}
 }

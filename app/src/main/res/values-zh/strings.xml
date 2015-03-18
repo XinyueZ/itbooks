@@ -64,6 +64,6 @@
     <string name="msg_push_unregistering">取消推送…</string>
     <string name="btn_turn_on">启动</string>
     <string name="lbl_turn_on_push_info">是否启动推送功能？我们可以常提供给你一些新的IT方面的eBook信息。</string>
-
+    <string name="msg_ask_download">打开浏览器来下载这本书吗？</string>
 
 </resources>

@@ -34,7 +34,7 @@ const (
             <form action="/dela" method="post">
               <div><input type="submit" value="REMOVE ALL USERS"/></div>
             </form>
-         
+
             </body>
           </html>
         `
