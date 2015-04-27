@@ -190,7 +190,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Crashlytics.start(this);
 		setContentView(LAYOUT);
 
 
