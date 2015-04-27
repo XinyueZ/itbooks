@@ -32,7 +32,7 @@ import com.chopping.net.GsonRequestTask;
 import com.chopping.net.TaskHelper;
 import com.chopping.utils.DeviceUtils;
 import com.chopping.utils.Utils;
-import com.github.mrengineer13.snackbar.SnackBar;
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
@@ -99,7 +99,6 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 	private boolean mBookmarked;
 	private MenuItem mBookmarkItem;
 
-	private SnackBar mSnackBar;
 
 	//------------------------------------------------
 	//Subscribes, event-handlers
@@ -153,6 +152,7 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Crashlytics.start(this);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		Prefs prefs = Prefs.getInstance(getApplication());
@@ -240,7 +240,6 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 			showDialogFragment(BookmarkInfoDialogFragment.newInstance(getApplication()), null);
 		}
 		showOpenButton();
-		mSnackBar = new SnackBar(BookDetailActivity.this);
 	}
 
 	private void showOpenButton() {
@@ -365,7 +364,7 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 					protected void onPostExecute(Void aVoid) {
 						super.onPostExecute(aVoid);
 						mBookmarkItem.setIcon(mBookmarked ? R.drawable.ic_bookmarked : R.drawable.ic_not_bookmarked);
-						mSnackBar.show(getString(
+						Utils.showShortToast(getApplicationContext(), getString(
 								mBookmarked ? R.string.msg_bookmark_the_book : R.string.msg_unbookmark_the_book));
 					}
 				}.executeParallel();

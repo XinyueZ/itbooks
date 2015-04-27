@@ -33,10 +33,8 @@ import com.chopping.bus.CloseDrawerEvent;
 import com.chopping.net.GsonRequestTask;
 import com.chopping.net.TaskHelper;
 import com.chopping.utils.Utils;
-import com.crashlytics.android.Crashlytics;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
-import com.github.mrengineer13.snackbar.SnackBar;
 import com.itbooks.R;
 import com.itbooks.adapters.BookListAdapter;
 import com.itbooks.app.fragments.AboutDialogFragment;
@@ -94,7 +92,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 
 	private ActionBarHelper mActionBarHelper;
 
-	private SnackBar mSnackBar;
 
 	//------------------------------------------------
 	//Subscribes, event-handlers
@@ -163,6 +160,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 			}
 			setHasShownDataOnUI(true);
 		}
+		findViewById(R.id.loading_more_pb).setVisibility(View.GONE);
 	}
 
 	/**
@@ -447,7 +445,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	private void loadMore() {
 		if (mCurrentPage < MAX_PAGER) {
 			mLoadedMore = true;
-			mRefreshLayout.setRefreshing(true);
+			findViewById(R.id.loading_more_pb).setVisibility(View.VISIBLE);
 			mDelayLoadBooksHandler.postDelayed(mDelayLoadBooksTask, 5500);
 		} else {
 			Utils.showLongToast(getApplicationContext(), R.string.lbl_no_more);
@@ -481,10 +479,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 			if (mPreItemOnLast != lastItem) { //to avoid multiple calls for last item
 				loadMore();
 				mPreItemOnLast = lastItem;
-				if (mSnackBar == null) {
-					mSnackBar = new SnackBar(this);
-				}
-				mSnackBar.show(getString(R.string.lbl_load_more));
 			}
 		}
 

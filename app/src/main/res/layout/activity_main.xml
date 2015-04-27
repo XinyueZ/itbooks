@@ -32,7 +32,7 @@
                     android:id="@+id/books_lv"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
-                    android:divider="@null"
+                    android:divider="@null" android:scrollbars="none"
                     android:background="@color/common_transparent"
                     android:cacheColorHint="@android:color/transparent"
                     android:layout_width="match_parent"
@@ -40,6 +40,16 @@
 
 
             </android.support.v4.widget.SwipeRefreshLayout>
+
+
+            <fr.castorflex.android.smoothprogressbar.SmoothProgressBar
+                android:id="@+id/loading_more_pb"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/pb_height"
+                style="@style/GradientProgressBar"
+                android:layout_gravity="bottom"
+                android:visibility="gone"
+                android:indeterminate="true" />
 
         </FrameLayout>
 

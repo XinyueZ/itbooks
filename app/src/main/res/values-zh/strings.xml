@@ -29,7 +29,6 @@
     <string name="lbl_download">这里下载。</string>
     <string name="lbl_download_in_browser">浏览器中下载。</string>
     <string name="lbl_more">更多…</string>
-    <string name="lbl_load_more">下载更多…</string>
     <string name="lbl_no_data">没有发现结果！</string>
     <string name="lbl_play_service">本App需要谷歌服务，必须先安装然后使用。</string>
     <string name="lbl_download_path">这里找到下载文件: %1$s</string>

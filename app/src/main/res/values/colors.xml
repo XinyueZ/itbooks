@@ -35,4 +35,19 @@
     <color name="primary_color">@color/indigo_500</color>
     <color name="primary_dark_color">@color/indigo_700</color>
     <color name="primary_accent">@color/teal_500</color>
+
+
+    <integer-array name="loading_colors">
+        <item>@color/color_pocket_1</item>
+        <item>@color/color_pocket_2</item>
+        <item>@color/color_pocket_3</item>
+        <item>@color/color_pocket_4</item>
+    </integer-array>
+
+
+    <color name="color_pocket_1">#4CAF50</color>
+    <color name="color_pocket_2">#3F51B5</color>
+    <color name="color_pocket_3">#F44336</color>
+    <color name="color_pocket_4">#009688</color>
+
 </resources>
