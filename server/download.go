@@ -3,14 +3,12 @@ package itbooks
 import (
 	"fmt"
 	"net/http"
-_	"net/url"
   "io/ioutil"
   "appengine"
   "appengine/urlfetch"
 	"bytes"
 	"encoding/xml"
-	"encoding/json"
-	_ "strings"
+	"encoding/json" 
 )
 
 type Error string
