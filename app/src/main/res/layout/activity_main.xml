@@ -1,8 +1,9 @@
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout
     android:id="@+id/drawer_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.itbooks.app.MainActivity">
 
     <android.support.v4.widget.SlidingPaneLayout
@@ -15,7 +16,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="right"
-            android:background="@color/grey_500"/>
+            android:background="@color/grey_500" />
+
         <FrameLayout
             android:id="@id/error_content"
             android:layout_width="match_parent"
@@ -23,33 +25,24 @@
 
             <android.support.v4.widget.SwipeRefreshLayout
                 android:id="@+id/content_srl"
-                android:layout_gravity="top"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_gravity="top">
 
 
-                <com.github.ksoichiro.android.observablescrollview.ObservableListView
-                    android:id="@+id/books_lv"
+                <com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView
+                    android:id="@+id/books_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
-                    android:divider="@null" android:scrollbars="none"
                     android:background="@color/common_transparent"
-                    android:cacheColorHint="@android:color/transparent"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
+                    android:scrollbars="none" />
 
             </android.support.v4.widget.SwipeRefreshLayout>
 
 
-            <fr.castorflex.android.smoothprogressbar.SmoothProgressBar
-                android:id="@+id/loading_more_pb"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/pb_height"
-                style="@style/GradientProgressBar"
-                android:layout_gravity="bottom"
-                android:visibility="gone"
-                android:indeterminate="true" />
+
 
         </FrameLayout>
 
@@ -58,24 +51,24 @@
 
     <com.chopping.utils.views.OneDirectionScrollView
         android:layout_width="250dp"
+        android:layout_height="match_parent"
         android:layout_gravity="left"
-        android:scrollbars="none"
         android:background="@android:color/white"
-        android:layout_height="match_parent">
+        android:scrollbars="none">
 
 
         <LinearLayout
             android:id="@+id/drawer_menu_ll"
             android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/open_bookmarks_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@drawable/selector_bg2_btn">
+                android:background="@drawable/selector_bg2_btn"
+                android:orientation="horizontal">
 
                 <ImageView
                     android:layout_width="@dimen/float_button_size"
@@ -85,23 +78,23 @@
 
 
                 <com.itbooks.views.FontTextView
+                    font="thin"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    font="thin"
-                    android:gravity="left|center_vertical"
                     android:layout_marginLeft="10dp"
-                    android:textColor="@color/text_common_black"
+                    android:background="@drawable/selector_bg2_btn"
+                    android:gravity="left|center_vertical"
                     android:text="@string/lbl_bookmark"
-                    android:background="@drawable/selector_bg2_btn" />
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/text_common_black" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/open_setting_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@drawable/selector_bg2_btn">
+                android:background="@drawable/selector_bg2_btn"
+                android:orientation="horizontal">
 
                 <ImageView
                     android:layout_width="@dimen/float_button_size"
@@ -111,15 +104,15 @@
 
 
                 <com.itbooks.views.FontTextView
+                    font="thin"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    font="thin"
                     android:layout_marginLeft="10dp"
+                    android:background="@drawable/selector_bg2_btn"
                     android:gravity="left|center_vertical"
-                    android:textColor="@color/text_common_black"
                     android:text="@string/menu_setting"
-                    android:background="@drawable/selector_bg2_btn" />
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/text_common_black" />
             </LinearLayout>
 
 

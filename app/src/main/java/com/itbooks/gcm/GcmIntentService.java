@@ -21,6 +21,7 @@ import com.chopping.net.TaskHelper;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.itbooks.R;
 import com.itbooks.app.BookDetailActivity;
+import com.itbooks.data.rest.RSBook;
 
 import static android.media.AudioManager.RINGER_MODE_SILENT;
 
@@ -70,7 +71,8 @@ public class GcmIntentService extends IntentService {
 		mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 
 		Intent intent = new Intent(this, BookDetailActivity.class);
-		intent.putExtra(BookDetailActivity.EXTRAS_BOOK_ID, bookId);
+		//TODO PUSH of a book.
+		intent.putExtra(BookDetailActivity.EXTRAS_BOOK, new RSBook());
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		final PendingIntent contentIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_ONE_SHOT);
 

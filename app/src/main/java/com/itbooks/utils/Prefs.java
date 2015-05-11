@@ -15,9 +15,6 @@ public final class Prefs extends BasicPrefs {
 	 */
 	private static Prefs sInstance;
 
-	private static final String API_SEARCH_BOOKS = "api_search_books";
-	private static final String API_BOOK_DETAIL = "api_book_detail";
-	private static final String API_DEFAULT_BOOKS = "api_default_books";
 	private static final String KEY_LAST_SEARCHED = "key.last.searched";
 	private static final String KEY_KNOWN_BOOKMARK = "key.known.bookmark";
 	private static final String KEY_KNOWN_PUSH = "key.known.push";
@@ -35,6 +32,10 @@ public final class Prefs extends BasicPrefs {
 	private static final String KEY_EULA_SHOWN = "key_eula_shown";
 
 
+	private static final String API_SEARCH_BOOKS = "api_search_books";
+	private static final String API_BOOK_DETAIL = "api_book_detail";
+	private static final String API_DEFAULT_BOOKS = "api_default_books";
+	private static final String REST_API = "rest_api";
 	private static final String PUSH_HOST  = "push_host";
 	private static final String PUSH_SENDER_ID  = "push_sender_id";
 	private static final String PUSH_URL_INFO_BACKEND_REG = "push_url_info_backend_reg";
@@ -168,5 +169,9 @@ public final class Prefs extends BasicPrefs {
 	}
 	public int getShownDetailsAdsTimes() {
 		return getInt(KEY_SHOWN_DETAILS_ADS_TIMES, 5);
+	}
+
+	public String getRESTApi() {
+		return getString(REST_API, null);
 	}
 }

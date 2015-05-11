@@ -1,12 +1,9 @@
 package com.itbooks.app;
 
-import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.SearchRecentSuggestions;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -14,6 +11,7 @@ import android.support.v4.widget.SlidingPaneLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.text.TextUtils;
@@ -23,38 +21,40 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 
-import com.android.volley.Request.Method;
 import com.chopping.bus.CloseDrawerEvent;
 import com.chopping.net.GsonRequestTask;
 import com.chopping.net.TaskHelper;
 import com.chopping.utils.Utils;
+import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.itbooks.R;
 import com.itbooks.adapters.BookListAdapter;
+import com.itbooks.api.Api;
+import com.itbooks.api.ApiNotInitializedException;
 import com.itbooks.app.fragments.AboutDialogFragment;
 import com.itbooks.app.fragments.AppListImpFragment;
 import com.itbooks.app.fragments.PushInfoDialogFragment;
 import com.itbooks.bus.CleanBookmarkEvent;
 import com.itbooks.bus.EULAConfirmedEvent;
 import com.itbooks.bus.EULARejectEvent;
+import com.itbooks.bus.OpenBookDetailEvent;
 import com.itbooks.bus.OpenBookmarkEvent;
-import com.itbooks.data.DSBook;
-import com.itbooks.data.DSBookList;
+import com.itbooks.data.rest.RSBook;
+import com.itbooks.data.rest.RSBookList;
+import com.itbooks.data.rest.RSBookQuery;
 import com.itbooks.db.DB;
 import com.itbooks.utils.ParallelTask;
 import com.itbooks.utils.Prefs;
 
 import de.greenrobot.event.EventBus;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
-public class MainActivity extends BaseActivity implements OnQueryTextListener, OnItemClickListener, OnScrollListener,
-		ObservableScrollViewCallbacks {
+public class MainActivity extends BaseActivity implements OnQueryTextListener, ObservableScrollViewCallbacks {
 	/**
 	 * Main layout for this component.
 	 */
@@ -64,19 +64,12 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	 */
 	private static final int MAIN_MENU = R.menu.main_menu;
 
-	private static final int MAX_PAGER = 100;
-
-	private com.github.ksoichiro.android.observablescrollview.ObservableListView mLv;
+	private ObservableRecyclerView mRv;
 	private BookListAdapter mAdp;
 
 	private SearchRecentSuggestions mSuggestions;
 	private String mKeyword;
 	private SearchView mSearchView;
-
-	private int mCurrentPage = 1;
-	private boolean mLoadedMore;
-
-	private int mPreItemOnLast;
 
 	private boolean mDetailOpened;
 	/**
@@ -104,7 +97,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	 * 		Event {@link com.itbooks.bus.OpenBookmarkEvent}.
 	 */
 	public void onEvent(OpenBookmarkEvent e) {
-		openBookDetail(e.getBook(), e.getBookCoverV());
+		//openBookDetail(e.getBook() );
 	}
 
 	/**
@@ -117,51 +110,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		mDrawerLayout.closeDrawers();
 	}
 
-	/**
-	 * Handler for {@link com.itbooks.data.DSBookList}.
-	 *
-	 * @param e
-	 * 		Event {@link com.itbooks.data.DSBookList}.
-	 */
-	public void onEvent(DSBookList e) {
-		mRefreshLayout.setRefreshing(false);
-		if (TextUtils.equals(e.getError(), Prefs.API_LIMIT)) {
-			new AlertDialog.Builder(this).setTitle(R.string.application_name).setMessage(R.string.lbl_api_limit)
-					.setCancelable(false).setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int whichButton) {
-					resetPaging();
-					finish();
-				}
-			}).create().show();
-			setHasShownDataOnUI(false);
-		} else {
-			int total = Integer.parseInt(e.getTotal());
-			if (total == 0) {
-				mLv.setVisibility(View.GONE);
-				Utils.showShortToast(this, R.string.lbl_no_data);
-			} else {
-				mCurrentPage = e.getPage();
-				mLv.setVisibility(View.VISIBLE);
-				if (mAdp == null) {
-					mAdp = new BookListAdapter(e.getBooks());
-					mLv.setAdapter(mAdp);
-				} else {
-					if (!mLoadedMore) {
-						mAdp.setData(e.getBooks());
-					} else {
-						mAdp.getBooks().addAll(e.getBooks());
-						mLoadedMore = false;
-					}
-					mAdp.notifyDataSetChanged();
-				}
-				if (total > 10) {
-					mCurrentPage++;
-				}
-			}
-			setHasShownDataOnUI(true);
-		}
-		findViewById(R.id.loading_more_pb).setVisibility(View.GONE);
-	}
+
 
 	/**
 	 * Handler for {@link com.itbooks.bus.EULARejectEvent}.
@@ -183,13 +132,22 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		showPushInfo();
 	}
 
+	/**
+	 * Handler for {@link OpenBookDetailEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link OpenBookDetailEvent}.
+	 */
+	public void onEvent(OpenBookDetailEvent e) {
+		openBookDetail(e.getBook());
+	}
+
 	//------------------------------------------------
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(LAYOUT);
-
 
 		mSuggestions = new SearchRecentSuggestions(this, SearchSuggestionProvider.AUTHORITY,
 				SearchSuggestionProvider.MODE);
@@ -199,14 +157,13 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		mRefreshLayout.setOnRefreshListener(this);
 		mRefreshLayout.setRefreshing(true);
 
-		mLv = (com.github.ksoichiro.android.observablescrollview.ObservableListView) findViewById(R.id.books_lv);
-		mLv.setOnItemClickListener(this);
-		mLv.setScrollViewCallbacks(this);
-
+		mRv = (ObservableRecyclerView) findViewById(R.id.books_rv);
+		mRv.setScrollViewCallbacks(this);
+		mRv.setLayoutManager(new LinearLayoutManager(this));
+		mAdp = new BookListAdapter(null);
+		mRv.setAdapter(mAdp);
 
 		handleIntent(getIntent());
-
-		mLv.setOnScrollListener(this);
 
 		mKeyword = Prefs.getInstance(getApplication()).getLastSearched();
 		initDrawer();
@@ -283,9 +240,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 			}.executeParallel();
 			break;
 
-//		case R.id.action_setting:
-//			SettingActivity.showInstance(this);
-//			break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -330,10 +284,12 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 
 	@Override
 	public void onRefresh() {
-		resetPaging();
 		loadBooks();
 	}
 
+	/**
+	 * Load feed of books.
+	 */
 	private void loadBooks() {
 		if (!TextUtils.isEmpty(mKeyword)) {
 			loadByKeyword();
@@ -346,10 +302,22 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	 * Default page when nothing wanna be searched.
 	 */
 	private void loadDefaultPage() {
-		String url = Prefs.getInstance(getApplication()).getApiSearchBooks();
-		url = String.format(url, Utils.encode("Android"), mCurrentPage + "");
-		//		LL.d("load: " + url);
-		new GsonRequestTask<DSBookList>(getApplicationContext(), Method.GET, url, DSBookList.class).execute();
+		RSBookQuery query = new RSBookQuery("Android");
+		try {
+			Api.queryBooks(query, new Callback<RSBookList>() {
+				@Override
+				public void success(RSBookList rsBookList, Response response) {
+					showBookList(rsBookList);
+				}
+
+				@Override
+				public void failure(RetrofitError error) {
+					Utils.showLongToast(getApplicationContext(), "failure");
+				}
+			});
+		} catch (ApiNotInitializedException e) {
+			e.printStackTrace();
+		}
 	}
 
 
@@ -357,10 +325,22 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	 * Page when nothing wanna be searched.
 	 */
 	private void loadByKeyword() {
-		String url = Prefs.getInstance(getApplication()).getApiSearchBooks();
-		url = String.format(url, Utils.encode(mKeyword), mCurrentPage + "");
-		//		LL.d("load: " + url);
-		new GsonRequestTask<DSBookList>(getApplicationContext(), Method.GET, url, DSBookList.class).execute();
+		RSBookQuery query = new RSBookQuery(mKeyword);
+		try {
+			Api.queryBooks(query, new Callback<RSBookList>() {
+				@Override
+				public void success(RSBookList rsBookList, Response response) {
+					showBookList(rsBookList);
+				}
+
+				@Override
+				public void failure(RetrofitError error) {
+					Utils.showLongToast(getApplicationContext(), "failure");
+				}
+			});
+		} catch (ApiNotInitializedException e) {
+			e.printStackTrace();
+		}
 	}
 
 
@@ -378,110 +358,57 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		return false;
 	}
 
-	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		DSBook book = (DSBook) mAdp.getItem(position);
-		BookListAdapter.ViewHolder vh = (BookListAdapter.ViewHolder) view.getTag();
-		openBookDetail(book, vh.mBookThumbIv);
-	}
 
-	private void openBookDetail(DSBook book, View bookCoverV) {
+	/**
+	 * Open detail of a book.
+	 * @param book {@link RSBook}
+	 */
+	private void openBookDetail(RSBook book) {
 		mDetailOpened = true;
-		BookDetailActivity.showInstance(this, book.getId(), bookCoverV);
+		BookDetailActivity.showInstance(this, book ); //book.getId() );
 	}
 
 	public void search(View view) {
-		resetPaging();
 		mKeyword = mSearchView.getQuery().toString();
 		loadBooks();
-	}
-
-	private void resetPaging() {
-		mCurrentPage = 1;
-		mPreItemOnLast = 0;
 	}
 
 	@Override
 	protected void onAppConfigLoaded() {
 		super.onAppConfigLoaded();
+		Api.initialize(this, Prefs.getInstance(getApplicationContext()).getRESTApi(), 1024 * 10);
 		if (!mDetailOpened) {
 			loadBooks();
 		} else {
 			mDetailOpened = false;
 		}
-
 		showAppList();
 	}
 
 	@Override
 	protected void onAppConfigIgnored() {
 		super.onAppConfigIgnored();
+		Api.initialize(this, Prefs.getInstance(getApplicationContext()).getRESTApi(), 1024 * 10);
 		if (!mDetailOpened) {
 			loadBooks();
 		} else {
 			mDetailOpened = false;
 		}
-
 		showAppList();
 	}
 
-	private Handler mDelayLoadBooksHandler = new Handler();
-	private Runnable mDelayLoadBooksTask = new Runnable() {
-		@Override
-		public void run() {
-			loadBooks();
-		}
-	};
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		if (mDelayLoadBooksHandler != null && mDelayLoadBooksTask != null) {
-			mDelayLoadBooksHandler.removeCallbacks(mDelayLoadBooksTask);
-		}
 		TaskHelper.getRequestQueue().cancelAll(GsonRequestTask.TAG);
 	}
 
-	private void loadMore() {
-		if (mCurrentPage < MAX_PAGER) {
-			mLoadedMore = true;
-			findViewById(R.id.loading_more_pb).setVisibility(View.VISIBLE);
-			mDelayLoadBooksHandler.postDelayed(mDelayLoadBooksTask, 5500);
-		} else {
-			Utils.showLongToast(getApplicationContext(), R.string.lbl_no_more);
-		}
-	}
 
 	@Override
 	protected void onReload() {
 		super.onReload();
 		loadBooks();
-	}
-
-
-	@Override
-	public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-	}
-
-
-	@Override
-	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-
-		// Make your calculation stuff here. You have all your
-		// needed info from the parameters of this function.
-
-		// Sample calculation to determine if the last
-		// item is fully visible.
-		final int lastItem = firstVisibleItem + visibleItemCount;
-		if (lastItem == totalItemCount) {
-			if (mPreItemOnLast != lastItem) { //to avoid multiple calls for last item
-				loadMore();
-				mPreItemOnLast = lastItem;
-			}
-		}
-
 	}
 
 
@@ -551,7 +478,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 
 	private void showPushInfo() {
 		Prefs prefs = Prefs.getInstance(getApplication());
-		if(prefs.isEULAOnceConfirmed() && !prefs.hasKnownPush()) {
+		if (prefs.isEULAOnceConfirmed() && !prefs.hasKnownPush()) {
 			showDialogFragment(PushInfoDialogFragment.newInstance(getApplication()), null);
 		}
 	}
@@ -570,12 +497,16 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	public void onUpOrCancelMotionEvent(ScrollState scrollState) {
 		ActionBar ab = getSupportActionBar();
 		if (scrollState == ScrollState.UP) {
-			if (ab.isShowing()) {
-				ab.hide();
+			if (ab != null) {
+				if (ab.isShowing()) {
+					ab.hide();
+				}
 			}
 		} else if (scrollState == ScrollState.DOWN) {
-			if (!ab.isShowing()) {
-				ab.show();
+			if (ab != null) {
+				if (!ab.isShowing()) {
+					ab.show();
+				}
 			}
 		}
 	}
@@ -632,5 +563,16 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		public void onPanelClosed(View panel) {
 			mActionBarHelper.onPanelClosed();
 		}
+	}
+
+	/**
+	 * Show feeds.
+	 * @param bookList The result of REST call.
+	 */
+	public void showBookList(RSBookList bookList) {
+		mAdp.setData(bookList.getBooks());
+		mAdp.notifyDataSetChanged();
+		mRefreshLayout.setRefreshing(false);
+		setHasShownDataOnUI(true);
 	}
 }
