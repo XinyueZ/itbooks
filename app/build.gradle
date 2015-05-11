@@ -74,6 +74,7 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
     compile 'com.squareup.okhttp:okhttp:2.0.0'
     compile 'com.github.navasmdc:MaterialDesign:1.+@aar'
+    compile 'com.squareup.picasso:picasso:2.5.2'
 }
 
 // Rename final apks

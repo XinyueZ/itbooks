@@ -18,11 +18,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.ImageLoader.ImageContainer;
-import com.android.volley.toolbox.ImageLoader.ImageListener;
-import com.chopping.net.TaskHelper;
 import com.chopping.utils.Utils;
 import com.crashlytics.android.Crashlytics;
 import com.gc.materialdesign.views.ButtonFloat;
@@ -39,13 +34,14 @@ import com.itbooks.utils.ParallelTask;
 import com.itbooks.utils.Prefs;
 import com.itbooks.views.OnViewAnimatedClickedListener;
 import com.nineoldandroids.view.ViewHelper;
+import com.squareup.picasso.Picasso;
 
 /**
  * Details of book.
  *
  * @author Xinyue Zhao
  */
-public final class BookDetailActivity extends BaseActivity implements ImageListener {
+public final class BookDetailActivity extends BaseActivity   {
 
 	/**
 	 * Main layout for this component.
@@ -78,8 +74,6 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 	private TextView mPageTv;
 	private TextView mPublisherTv;
 
-
-	private ImageLoader mImageLoader;
 
 	private ButtonFloat mOpenBtn;
 
@@ -163,8 +157,6 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 		mPageTv = (TextView) findViewById(R.id.detail_page_tv);
 		mPublisherTv = (TextView) findViewById(R.id.detail_publisher_tv);
 
-		mImageLoader = TaskHelper.getImageLoader();
-
 		mOpenBtn = (ButtonFloat) findViewById(R.id.download_btn);
 		ViewHelper.setX(mOpenBtn, -10);
 		ViewHelper.setRotation(mOpenBtn, -360f * 4);
@@ -217,7 +209,10 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 	 */
 	private void showBookDetail() {
 		if (!TextUtils.isEmpty(mBook.getCoverUrl())) {
-			mImageLoader.get(mBook.getCoverUrl(), this);
+			Picasso.with(this)
+					.load(mBook.getCoverUrl())
+					.placeholder(R.drawable.ic_launcher)
+					.into(mThumbIv);
 		}
 		mTitleTv.setText(mBook.getName());
 		mDescriptionTv.setText(mBook.getDescription());
@@ -230,17 +225,6 @@ public final class BookDetailActivity extends BaseActivity implements ImageListe
 		ActivityCompat.invalidateOptionsMenu(this);
 	}
 
-	@Override
-	public void onResponse(ImageContainer response, boolean isImmediate) {
-		if (response != null && response.getBitmap() != null) {
-			mThumbIv.setImageBitmap(response.getBitmap());
-		}
-	}
-
-	@Override
-	public void onErrorResponse(VolleyError error) {
-
-	}
 
 
 	//	public void downloadInternal(View view) {
