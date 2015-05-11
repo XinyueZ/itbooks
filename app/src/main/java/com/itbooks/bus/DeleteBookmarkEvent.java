@@ -1,7 +1,7 @@
 package com.itbooks.bus;
 
-import com.itbooks.data.DSBook;
 import com.itbooks.data.DSBookmark;
+import com.itbooks.data.rest.RSBook;
 
 /**
  * Event to remove a bookmark.
@@ -20,7 +20,7 @@ public final class DeleteBookmarkEvent {
 		return mBookmark;
 	}
 
-	public DSBook getBook() {
+	public RSBook getBook() {
 		return mBookmark.getBook();
 	}
 }

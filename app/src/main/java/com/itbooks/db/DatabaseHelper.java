@@ -14,10 +14,11 @@ public final class DatabaseHelper extends SQLiteOpenHelper {
 	 * DB name.
 	 */
 	public static final String DATABASE_NAME = "itbooksDB";
+	private static final int DATABASE_VERSION = 2;
 	/**
 	 * Init version of DB.
 	 */
-	private static final int DATABASE_VERSION = 1;
+	//private static final int DATABASE_VERSION = 1;
 
 	/**
 	 * Constructor of {@link DatabaseHelper}.
@@ -37,5 +38,10 @@ public final class DatabaseHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		if (oldVersion == 1 && newVersion == 2) {
+			//Have to delete old version because of new API.
+			db.execSQL(String.format("DROP TABLE IF EXISTS %s", BookmarksTbl.TABLE_NAME));
+			db.execSQL(String.format("DROP TABLE IF EXISTS %s", BookmarksTbl.TABLE_NAME));
+		}
 	}
 }

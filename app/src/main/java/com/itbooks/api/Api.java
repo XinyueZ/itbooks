@@ -1,7 +1,6 @@
 package com.itbooks.api;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -58,13 +57,10 @@ public final class Api {
 
 		File cacheDir = new File(cxt != null ? cxt.getCacheDir().getAbsolutePath() : System.getProperty(
 				"java.io.tmpdir"), UUID.randomUUID().toString());
-		try {
-			sCache = new com.squareup.okhttp.Cache(cacheDir, sCacheSize);
-		} catch (IOException e) {
-			//Ignore.
-		}
-		okHttpClient.setCache(sCache);
 
+		sCache = new com.squareup.okhttp.Cache(cacheDir, sCacheSize);
+
+		okHttpClient.setCache(sCache);
 		okHttpClient.setReadTimeout(3600, TimeUnit.SECONDS);
 		okHttpClient.setConnectTimeout(3600, TimeUnit.SECONDS);
 		sClient = new OkClient(okHttpClient);

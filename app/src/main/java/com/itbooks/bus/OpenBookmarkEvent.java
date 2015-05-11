@@ -1,9 +1,7 @@
 package com.itbooks.bus;
 
-import android.view.View;
-
-import com.itbooks.data.DSBook;
 import com.itbooks.data.DSBookmark;
+import com.itbooks.data.rest.RSBook;
 
 /**
  * Event to open a bookmark.
@@ -12,23 +10,17 @@ import com.itbooks.data.DSBookmark;
  */
 public final class OpenBookmarkEvent {
 	private DSBookmark mBookmark;
-	private View mBookCoverV;
 
 
-	public OpenBookmarkEvent(DSBookmark bookmark, View bookCoverV) {
+	public OpenBookmarkEvent(DSBookmark bookmark   ) {
 		mBookmark = bookmark;
-		mBookCoverV = bookCoverV;
 	}
 
 	public DSBookmark getBookmark() {
 		return mBookmark;
 	}
 
-	public DSBook getBook() {
+	public RSBook getBook() {
 		return mBookmark.getBook();
-	}
-
-	public View getBookCoverV() {
-		return mBookCoverV;
 	}
 }

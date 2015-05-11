@@ -97,7 +97,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	 * 		Event {@link com.itbooks.bus.OpenBookmarkEvent}.
 	 */
 	public void onEvent(OpenBookmarkEvent e) {
-		//openBookDetail(e.getBook() );
+		openBookDetail(e.getBook() );
 	}
 
 	/**

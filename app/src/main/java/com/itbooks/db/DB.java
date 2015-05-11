@@ -7,9 +7,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.util.LongSparseArray;
 
-import com.itbooks.data.DSBook;
 import com.itbooks.data.DSBookmark;
 import com.itbooks.data.DSLabel;
+import com.itbooks.data.rest.RSBook;
 
 
 /**
@@ -121,12 +121,22 @@ public final class DB {
 		boolean success = false;
 		try {
 			long rowId = -1;
-			DSBook book = item.getBook();
+			RSBook book = item.getBook();
 			ContentValues v = new ContentValues();
-			v.put(BookmarksTbl.BOOK_ID, book.getId());
-			v.put(BookmarksTbl.BOOK_COVER_URL, book.getImageUrl());
+
+			v.put(BookmarksTbl.BOOK_NAME, book.getName());
+			v.put(BookmarksTbl.BOOK_AUTH, book.getAuthor());
+			v.put(BookmarksTbl.BOOK_SIZE, book.getSize());
+			v.put(BookmarksTbl.BOOK_PAGES, book.getPages());
+			v.put(BookmarksTbl.BOOK_LINK, book.getLink());
+			v.put(BookmarksTbl.BOOK_ISBN, book.getISBN());
+			v.put(BookmarksTbl.BOOK_YEAR, book.getYear());
+			v.put(BookmarksTbl.BOOK_PUB, book.getPublisher());
+			v.put(BookmarksTbl.BOOK_DESC, book.getDescription());
+			v.put(BookmarksTbl.BOOK_COVER_URL, book.getCoverUrl());
 			v.put(BookmarksTbl.LABEL_ID, item.getLabelId());
 			v.put(BookmarksTbl.EDIT_TIME, System.currentTimeMillis());
+
 			rowId = mDB.insert(BookmarksTbl.TABLE_NAME, null, v);
 			item.setId(rowId);
 			success = rowId != -1;
@@ -181,8 +191,6 @@ public final class DB {
 	/**
 	 * Remove one bookmark from DB.
 	 *
-	 * @param item
-	 * 		The bookmark to remove. If {@code null} then remove all bookmarks.
 	 *
 	 * @return The count of rows remain in DB after removed item.
 	 * <p/>
@@ -246,14 +254,14 @@ public final class DB {
 	/**
 	 * Remove one bookmark from DB.
 	 *
-	 * @param item
+	 * @param book
 	 * 		The book that associates with the bookmark to remove. If {@code null} then remove all bookmarks.
 	 *
 	 * @return The count of rows remain in DB after removed item.
 	 * <p/>
 	 * Return -1 if there's error when removed data.
 	 */
-	public synchronized int removeBookmark(DSBook item) {
+	public synchronized int removeBookmark(RSBook book) {
 		if (mDB == null || !mDB.isOpen()) {
 			open();
 		}
@@ -261,9 +269,18 @@ public final class DB {
 		boolean success;
 		try {
 			long rowId;
-			if (item != null) {
-				String whereClause = BookmarksTbl.BOOK_ID + "=?";
-				String[] whereArgs = new String[] { String.valueOf(item.getId()) };
+			if (book != null) {
+				String whereClause = BookmarksTbl.BOOK_NAME + "=? AND " +
+						BookmarksTbl.BOOK_AUTH + "=? AND " +
+						BookmarksTbl.BOOK_SIZE + "=? AND " +
+						BookmarksTbl.BOOK_PAGES + "=? AND " +
+						BookmarksTbl.BOOK_LINK + "=? AND " +
+						BookmarksTbl.BOOK_ISBN + "=? AND " +
+						BookmarksTbl.BOOK_YEAR + "=? AND " +
+						BookmarksTbl.BOOK_PUB + "=? AND " +
+						BookmarksTbl.BOOK_DESC + "=? AND "+
+						BookmarksTbl.BOOK_COVER_URL + "=? "  ;
+				String[] whereArgs = book.toArray();
 				rowId = mDB.delete(BookmarksTbl.TABLE_NAME, whereClause, whereArgs);
 			} else {
 				rowId = mDB.delete(BookmarksTbl.TABLE_NAME, null, null);
@@ -367,13 +384,27 @@ public final class DB {
 		DSBookmark item;
 		LongSparseArray<DSBookmark> list = new LongSparseArray<DSBookmark>();
 		try {
-			DSBook book;
+			RSBook book;
 			while (c.moveToNext()) {
-				book = new DSBook(c.getLong(c.getColumnIndex(BookmarksTbl.BOOK_ID)), c.getString(c.getColumnIndex(
-						BookmarksTbl.BOOK_COVER_URL)));
+				book = new RSBook(
+						c.getString(c.getColumnIndex(BookmarksTbl.BOOK_NAME)),
+						c.getString(c.getColumnIndex(BookmarksTbl.BOOK_AUTH)),
+						c.getString(c.getColumnIndex(BookmarksTbl.BOOK_SIZE)),
+						c.getString(c.getColumnIndex(BookmarksTbl.BOOK_PAGES)),
+						c.getString(c.getColumnIndex(BookmarksTbl.BOOK_LINK)),
+						c.getString(c.getColumnIndex(BookmarksTbl.BOOK_ISBN)),
+						c.getString(c.getColumnIndex(BookmarksTbl.BOOK_YEAR)),
+						c.getString(c.getColumnIndex(BookmarksTbl.BOOK_PUB)),
+						c.getString(c.getColumnIndex(BookmarksTbl.BOOK_DESC)),
+						c.getString(c.getColumnIndex(BookmarksTbl.BOOK_COVER_URL))
+				);
 
-				item = new DSBookmark(c.getLong(c.getColumnIndex(BookmarksTbl.ID)), book, c.getLong(c.getColumnIndex(
-						BookmarksTbl.LABEL_ID)), c.getLong(c.getColumnIndex(LabelsTbl.EDIT_TIME)));
+				item = new DSBookmark(
+						c.getLong(c.getColumnIndex(BookmarksTbl.ID)),
+						book,
+						c.getLong(c.getColumnIndex( BookmarksTbl.LABEL_ID)),
+						c.getLong(c.getColumnIndex(LabelsTbl.EDIT_TIME))
+				);
 				list.put(item.getId(), item);
 			}
 		} finally {
@@ -386,22 +417,30 @@ public final class DB {
 	}
 
 	/**
-	 * To test whether the book-id has been bookmarked or not.
+	 * To test whether the book has been bookmarked or not.
 	 *
-	 * @param bookId
-	 * 		An id of a book.
+	 * @param book {@link RSBook}
 	 *
 	 * @return {@code true} if bookmarked.
 	 */
-	public synchronized boolean isBookmarked(long bookId) {
+	public synchronized boolean isBookmarked(RSBook book) {
 		if (mDB == null || !mDB.isOpen()) {
 			open();
 		}
 		boolean success;
 		try {
-			String whereClause = BookmarksTbl.BOOK_ID + "=?";
-			String[] whereArgs = new String[] { String.valueOf(bookId) };
-			Cursor c = mDB.query(BookmarksTbl.TABLE_NAME, new String[] { BookmarksTbl.ID }, whereClause, whereArgs,
+			String whereClause = BookmarksTbl.BOOK_NAME + "=? AND " +
+					BookmarksTbl.BOOK_AUTH + "=? AND " +
+					BookmarksTbl.BOOK_SIZE + "=? AND " +
+					BookmarksTbl.BOOK_PAGES + "=? AND " +
+					BookmarksTbl.BOOK_LINK + "=? AND " +
+					BookmarksTbl.BOOK_ISBN + "=? AND " +
+					BookmarksTbl.BOOK_YEAR + "=? AND " +
+					BookmarksTbl.BOOK_PUB + "=? AND " +
+					BookmarksTbl.BOOK_DESC + "=? AND "+
+					BookmarksTbl.BOOK_COVER_URL + "=? "  ;
+			String[] whereArgs = book.toArray();
+			Cursor c = mDB.query(BookmarksTbl.TABLE_NAME, new String[] { BookmarksTbl.BOOK_NAME }, whereClause, whereArgs,
 					null, null, null);
 			success = c.getCount() >= 1;
 		} finally {

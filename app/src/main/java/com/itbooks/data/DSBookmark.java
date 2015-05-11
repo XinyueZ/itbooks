@@ -1,5 +1,6 @@
 package com.itbooks.data;
 
+import com.itbooks.data.rest.RSBook;
 import com.itbooks.db.BookmarksTbl;
 
 /**
@@ -9,33 +10,33 @@ import com.itbooks.db.BookmarksTbl;
  */
 public final class DSBookmark {
 	private  long mId = -1;
-	private DSBook mBook;
+	private RSBook mBook;
 	private long mLabelId = Long.parseLong(BookmarksTbl.DEF_LABEL_ID);
 	private long mEditTime = -1;
 
-	public DSBookmark(DSBook book, long labelId, long editTime) {
+	public DSBookmark(RSBook book, long labelId, long editTime) {
 		mBook = book;
 		mLabelId = labelId;
 		mEditTime = editTime;
 	}
 
-	public DSBookmark(DSBook book, long labelId) {
+	public DSBookmark(RSBook book, long labelId) {
 		mBook = book;
 		mLabelId = labelId;
 	}
 
-	public DSBookmark(DSBook book ) {
+	public DSBookmark(RSBook book ) {
 		mBook = book;
 	}
 
-	public DSBookmark(long id, DSBook book, long labelId, long editTime) {
+	public DSBookmark(long id, RSBook book, long labelId, long editTime) {
 		mId = id;
 		mBook = book;
 		mLabelId = labelId;
 		mEditTime = editTime;
 	}
 
-	public DSBookmark(long id, DSBook book, long labelId) {
+	public DSBookmark(long id, RSBook book, long labelId) {
 		mId = id;
 		mBook = book;
 		mLabelId = labelId;
@@ -49,11 +50,11 @@ public final class DSBookmark {
 		mId = id;
 	}
 
-	public DSBook getBook() {
+	public RSBook getBook() {
 		return mBook;
 	}
 
-	public void setBook(DSBook book) {
+	public void setBook(RSBook book) {
 		mBook = book;
 	}
 

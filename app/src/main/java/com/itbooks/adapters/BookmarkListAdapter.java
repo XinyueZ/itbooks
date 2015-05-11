@@ -6,15 +6,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 
-import com.android.volley.toolbox.NetworkImageView;
-import com.chopping.net.TaskHelper;
 import com.itbooks.R;
 import com.itbooks.bus.DeleteBookmarkEvent;
 import com.itbooks.bus.OpenBookmarkEvent;
-import com.itbooks.data.DSBook;
 import com.itbooks.data.DSBookmark;
+import com.itbooks.data.rest.RSBook;
 import com.itbooks.views.OnViewAnimatedClickedListener;
+import com.squareup.picasso.Picasso;
 
 import de.greenrobot.event.EventBus;
 
@@ -49,12 +49,20 @@ public final class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkList
 	public void onBindViewHolder(final ViewHolder viewHolder, int position) {
 		long id = mBookmarkList.keyAt(position);
 		final DSBookmark bookmark = mBookmarkList.get(id);
-		DSBook book = bookmark.getBook();
-		viewHolder.mBookCoverIv.setImageUrl(book.getImageUrl(), TaskHelper.getImageLoader());
+		RSBook book = bookmark.getBook();
+
+
+
+		Picasso.with(viewHolder.itemView.getContext())
+				.load(book.getCoverUrl())
+				.placeholder(R.drawable.ic_launcher)
+				.tag(viewHolder.itemView.getContext())
+				.into(viewHolder.mBookCoverIv);
+
 		viewHolder.mBookCoverIv.setOnClickListener(new OnViewAnimatedClickedListener() {
 			@Override
 			public void onClick() {
-				EventBus.getDefault().post(new OpenBookmarkEvent(bookmark, viewHolder.mBookCoverIv));
+				EventBus.getDefault().post(new OpenBookmarkEvent(bookmark ));
 			}
 		});
 		viewHolder.mDeleteBtn.setOnClickListener(new OnViewAnimatedClickedListener() {
@@ -72,13 +80,12 @@ public final class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkList
 
 	static class ViewHolder extends RecyclerView.ViewHolder {
 
-		NetworkImageView mBookCoverIv;
+		ImageView mBookCoverIv;
 		Button mDeleteBtn;
 
 		ViewHolder(View convertView) {
 			super(convertView);
-			mBookCoverIv = (NetworkImageView) convertView.findViewById(R.id.bookmarked_book_cover_iv);
-			mBookCoverIv.setDefaultImageResId(R.drawable.ic_launcher);
+			mBookCoverIv = (ImageView) convertView.findViewById(R.id.bookmarked_book_cover_iv);
 			mDeleteBtn = (Button) convertView.findViewById(R.id.delete_bookmark_btn);
 		}
 	}

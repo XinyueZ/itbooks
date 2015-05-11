@@ -15,7 +15,6 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,7 +26,6 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.itbooks.R;
 import com.itbooks.app.fragments.BookmarkInfoDialogFragment;
-import com.itbooks.data.DSBook;
 import com.itbooks.data.DSBookmark;
 import com.itbooks.data.rest.RSBook;
 import com.itbooks.db.DB;
@@ -65,7 +63,6 @@ public final class BookDetailActivity extends BaseActivity   {
 	private RSBook mBook;
 
 
-	private View mContent;
 	private ImageView mThumbIv;
 	private TextView mTitleTv;
 	private TextView mDescriptionTv;
@@ -148,7 +145,6 @@ public final class BookDetailActivity extends BaseActivity   {
 
 		setContentView(LAYOUT);
 
-		mContent = findViewById(R.id.content_psv);
 		mThumbIv = (ImageView) findViewById(R.id.detail_thumb_iv);
 		mTitleTv = (TextView) findViewById(R.id.detail_title_tv);
 		mDescriptionTv = (TextView) findViewById(R.id.detail_description_tv);
@@ -247,8 +243,7 @@ public final class BookDetailActivity extends BaseActivity   {
 		new ParallelTask<Void, Void, Void>() {
 			@Override
 			protected Void doInBackground(Void... params) {
-				//TODO test for bookmarking.
-				mBookmarked = DB.getInstance(getApplication()).isBookmarked(1539580363);
+				mBookmarked = DB.getInstance(getApplication()).isBookmarked(mBook);
 				return null;
 			}
 
@@ -271,14 +266,11 @@ public final class BookDetailActivity extends BaseActivity   {
 					protected Void doInBackground(Void... params) {
 						DB db = DB.getInstance(getApplication());
 						if (mBookmarked) {
-							//TODO test for bookmarking.
-							db.removeBookmark(new DSBook(1539580363, mBook.getLink()));
+							db.removeBookmark(mBook);
 						} else {
-							//TODO test for bookmarking.
-							db.addBookmark(new DSBookmark(new DSBook(1539580363, mBook.getCoverUrl())));
+							db.addBookmark(new DSBookmark(mBook));
 						}
-						//TODO test for bookmarking.
-						mBookmarked = db.isBookmarked(1539580363);
+						mBookmarked = db.isBookmarked(mBook);
 						return null;
 					}
 
