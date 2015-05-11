@@ -11,6 +11,7 @@ import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.MenuItemCompat;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -215,7 +216,7 @@ public final class BookDetailActivity extends BaseActivity   {
 					.into(mThumbIv);
 		}
 		mTitleTv.setText(mBook.getName());
-		mDescriptionTv.setText(mBook.getDescription());
+		mDescriptionTv.setText(Html.fromHtml(mBook.getDescription()));
 		mAuthorTv.setText(mBook.getAuthor());
 		mISBNTv.setText(mBook.getISBN());
 		mYearTv.setText(mBook.getYear());
@@ -225,11 +226,6 @@ public final class BookDetailActivity extends BaseActivity   {
 		ActivityCompat.invalidateOptionsMenu(this);
 	}
 
-
-
-	//	public void downloadInternal(View view) {
-	//		DownloadWebViewActivity.showInstance(this, mBookDetail.getDownloadUrl());
-	//	}
 
 	public void downloadBrowser() {
 		if (mBook != null && !TextUtils.isEmpty(mBook.getLink())) {
