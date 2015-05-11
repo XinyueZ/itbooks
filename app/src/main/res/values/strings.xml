@@ -37,8 +37,6 @@
     <string name="lbl_play_service">This application needs Google Play Service, you must install it first.</string>
     <string name="lbl_download_path">Find file: %1$s</string>
     <string name="lbl_no_more">No more data…</string>
-    <string name="lbl_api_limit">Hi coder! You\'ve arrived the max limit of API calling today,
-        do something pause and search tomorrow, you know it!</string>
     <string name="lbl_bookmark">My bookmarks</string>
     <string name="lbl_bookmark_the_book">Bookmark this book</string>
     <string name="lbl_unbookmark_the_book">Removed from bookmarks</string>
@@ -79,7 +77,6 @@
         policies. Google\'s terms of service and privacy policies may be updated from time to time and without
         notice.\n\n\nBy using the application, your agree to the use of your data and permissions of your hardware in
         accordance with Google\'s Privacy Policy and Google Terms of Service.</string>
-    <string name="about_pwd">it-ebooks.info</string>
 
 
     <string name="setting_push_cat">Push</string>

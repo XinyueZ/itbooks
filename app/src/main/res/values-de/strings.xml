@@ -35,8 +35,6 @@
         weiter.</string>
     <string name="lbl_download_path">Finden Sie die Datei: %1$s</string>
     <string name="lbl_no_more">Keine Daten mehr…</string>
-    <string name="lbl_api_limit">Hey der Coder! Bitte machen Sie eine Pause, weil Sie die Limit der API-Anfrage
-        erreicht haben. Sie wissen das, bitte morgen weiter.</string>
     <string name="lbl_bookmark">Meine Merkliste</string>
     <string name="lbl_bookmark_the_book">Merke dieses Buch</string>
     <string name="lbl_unbookmark_the_book">Entferne von der Merkliste</string>
