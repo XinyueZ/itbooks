@@ -3,8 +3,10 @@ package com.itbooks.app;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
+import android.support.v4.os.AsyncTaskCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SlidingPaneLayout;
@@ -31,8 +33,6 @@ import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCal
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.itbooks.R;
 import com.itbooks.adapters.BookListAdapter;
-import com.itbooks.api.Api;
-import com.itbooks.api.ApiNotInitializedException;
 import com.itbooks.app.fragments.AboutDialogFragment;
 import com.itbooks.app.fragments.AppListImpFragment;
 import com.itbooks.app.fragments.PushInfoDialogFragment;
@@ -45,7 +45,8 @@ import com.itbooks.data.rest.RSBook;
 import com.itbooks.data.rest.RSBookList;
 import com.itbooks.data.rest.RSBookQuery;
 import com.itbooks.db.DB;
-import com.itbooks.utils.ParallelTask;
+import com.itbooks.net.api.Api;
+import com.itbooks.net.api.ApiNotInitializedException;
 import com.itbooks.utils.Prefs;
 
 import de.greenrobot.event.EventBus;
@@ -224,7 +225,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 			showDialogFragment(AboutDialogFragment.newInstance(this), null);
 			break;
 		case R.id.action_clear_bookmarks:
-			new ParallelTask<Void, Void, Void>() {
+			AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Void>() {
 				@Override
 				protected Void doInBackground(Void... params) {
 					DB.getInstance(getApplication()).removeBookmarks();
@@ -237,7 +238,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 					EventBus.getDefault().post(new CleanBookmarkEvent());
 					openBookmarkList();
 				}
-			}.executeParallel();
+			});
 			break;
 
 		}

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.text.TextUtils;
 
 import com.android.volley.AuthFailureError;
@@ -17,7 +18,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.chopping.net.TaskHelper;
 import com.chopping.utils.NetworkUtils;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.itbooks.utils.ParallelTask;
 import com.itbooks.utils.Prefs;
 
 /**
@@ -25,7 +25,7 @@ import com.itbooks.utils.Prefs;
  *
  * @author Xinyue Zhao
  */
-public   class UnregGCMTask extends ParallelTask<Void, Void, String> {
+public   class UnregGCMTask extends AsyncTask<Void, Void, String> {
 	private GoogleCloudMessaging mGCM;
 	private Prefs mPrefs;
 

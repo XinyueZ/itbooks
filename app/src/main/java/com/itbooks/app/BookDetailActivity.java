@@ -6,10 +6,12 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.os.AsyncTaskCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.text.Html;
 import android.text.TextUtils;
@@ -29,7 +31,6 @@ import com.itbooks.app.fragments.BookmarkInfoDialogFragment;
 import com.itbooks.data.DSBookmark;
 import com.itbooks.data.rest.RSBook;
 import com.itbooks.db.DB;
-import com.itbooks.utils.ParallelTask;
 import com.itbooks.utils.Prefs;
 import com.itbooks.views.OnViewAnimatedClickedListener;
 import com.nineoldandroids.view.ViewHelper;
@@ -243,19 +244,19 @@ public final class BookDetailActivity extends BaseActivity   {
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(BOOK_DETAIL_MENU, menu);
 		mBookmarkItem = menu.findItem(R.id.action_bookmark);
-		new ParallelTask<Void, Void, Void>() {
-			@Override
-			protected Void doInBackground(Void... params) {
-				mBookmarked = DB.getInstance(getApplication()).isBookmarked(mBook);
-				return null;
-			}
+		AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Void>() {
+					@Override
+					protected Void doInBackground(Void... params) {
+						mBookmarked = DB.getInstance(getApplication()).isBookmarked(mBook);
+						return null;
+					}
 
-			@Override
-			protected void onPostExecute(Void aVoid) {
-				super.onPostExecute(aVoid);
-				mBookmarkItem.setIcon(mBookmarked ? R.drawable.ic_bookmarked : R.drawable.ic_not_bookmarked);
-			}
-		}.executeParallel();
+					@Override
+					protected void onPostExecute(Void aVoid) {
+						super.onPostExecute(aVoid);
+						mBookmarkItem.setIcon(mBookmarked ? R.drawable.ic_bookmarked : R.drawable.ic_not_bookmarked);
+					}
+				});
 		return true;
 	}
 
@@ -264,7 +265,7 @@ public final class BookDetailActivity extends BaseActivity   {
 		switch (item.getItemId()) {
 		case R.id.action_bookmark:
 			if (mBook != null) {
-				new ParallelTask<Void, Void, Void>() {
+				AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Void>() {
 					@Override
 					protected Void doInBackground(Void... params) {
 						DB db = DB.getInstance(getApplication());
@@ -284,7 +285,7 @@ public final class BookDetailActivity extends BaseActivity   {
 						Utils.showShortToast(getApplicationContext(), getString(
 								mBookmarked ? R.string.msg_bookmark_the_book : R.string.msg_unbookmark_the_book));
 					}
-				}.executeParallel();
+				});
 			}
 			break;
 		}

@@ -1,6 +1,8 @@
 package com.itbooks.app.fragments;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.os.AsyncTaskCompat;
 import android.support.v4.util.LongSparseArray;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -16,7 +18,6 @@ import com.itbooks.bus.DeleteBookmarkEvent;
 import com.itbooks.data.DSBookmark;
 import com.itbooks.db.DB;
 import com.itbooks.db.DB.Sort;
-import com.itbooks.utils.ParallelTask;
 import com.itbooks.utils.Prefs;
 import com.itbooks.views.OnViewAnimatedClickedListener;
 import com.nineoldandroids.animation.ObjectAnimator;
@@ -103,7 +104,7 @@ public final class BookmarkListFragment extends BaseFragment {
 
 
 	private void loadBookmarks() {
-		new ParallelTask<Void, LongSparseArray<DSBookmark>, LongSparseArray<DSBookmark>>() {
+		AsyncTaskCompat.executeParallel(new AsyncTask<Void, LongSparseArray<DSBookmark>, LongSparseArray<DSBookmark>>() {
 			ObjectAnimator objectAnimator;
 
 			@Override
@@ -133,11 +134,11 @@ public final class BookmarkListFragment extends BaseFragment {
 
 				objectAnimator.cancel();
 			}
-		}.executeParallel();
+		});
 	}
 
 	private void deleteBookmark(DSBookmark bookmark) {
-		new ParallelTask<DSBookmark, LongSparseArray<DSBookmark>, LongSparseArray<DSBookmark>>() {
+		AsyncTaskCompat.executeParallel(new AsyncTask<DSBookmark, LongSparseArray<DSBookmark>, LongSparseArray<DSBookmark>>() {
 			ObjectAnimator objectAnimator;
 
 			@Override
@@ -168,7 +169,7 @@ public final class BookmarkListFragment extends BaseFragment {
 
 				objectAnimator.cancel();
 			}
-		}.executeParallel(bookmark);
+		});
 	}
 
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.os.AsyncTaskCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -56,7 +57,7 @@ public final class PushInfoDialogFragment extends DialogFragment implements OnCl
 			prefs.setKnownPush(true);
 			break;
 		case R.id.close_confirm_btn:
-			new RegGCMTask(getActivity()).executeParallel();
+			AsyncTaskCompat.executeParallel(new RegGCMTask(getActivity()) );
 			prefs.turnOnPush();
 			break;
 		}

@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.support.v4.os.AsyncTaskCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -103,12 +104,14 @@ public final class SettingActivity extends PreferenceActivity implements Prefere
 	public boolean onPreferenceChange(Preference preference, Object newValue) {
 		if (preference.getKey().equals(Prefs.KEY_PUSH_SETTING)) {
 			if (!Boolean.valueOf(newValue.toString())) {
-				new UnregGCMTask(getApplication()) {
+				AsyncTaskCompat.executeParallel(new UnregGCMTask(getApplication()) {
 					ProgressDialog dlg;
+
 					@Override
 					protected void onPreExecute() {
 						super.onPreExecute();
-						dlg = ProgressDialog.show(SettingActivity.this, null, getString(R.string.msg_push_unregistering));
+						dlg = ProgressDialog.show(SettingActivity.this, null, getString(
+								R.string.msg_push_unregistering));
 						dlg.setCancelable(false);
 					}
 
@@ -117,10 +120,11 @@ public final class SettingActivity extends PreferenceActivity implements Prefere
 						super.onPostExecute(regId);
 						dlg.dismiss();
 					}
-				}.executeParallel();
+				});
 			} else {
-				new RegGCMTask(getApplication()) {
+				AsyncTaskCompat.executeParallel(new RegGCMTask(getApplication()) {
 					ProgressDialog dlg;
+
 					@Override
 					protected void onPreExecute() {
 						super.onPreExecute();
@@ -133,7 +137,7 @@ public final class SettingActivity extends PreferenceActivity implements Prefere
 						super.onPostExecute(regId);
 						dlg.dismiss();
 					}
-				}.executeParallel();
+				});
 			}
 		}
 		return true;
