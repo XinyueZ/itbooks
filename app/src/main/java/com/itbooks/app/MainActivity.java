@@ -14,6 +14,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.text.TextUtils;
@@ -27,10 +28,7 @@ import android.view.inputmethod.InputMethodManager;
 import com.chopping.bus.CloseDrawerEvent;
 import com.chopping.net.GsonRequestTask;
 import com.chopping.net.TaskHelper;
-import com.chopping.utils.Utils;
-import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
-import com.github.ksoichiro.android.observablescrollview.ScrollState;
+import com.gc.materialdesign.widgets.SnackBar;
 import com.itbooks.R;
 import com.itbooks.adapters.BookListAdapter;
 import com.itbooks.app.fragments.AboutDialogFragment;
@@ -55,7 +53,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class MainActivity extends BaseActivity implements OnQueryTextListener, ObservableScrollViewCallbacks {
+public class MainActivity extends BaseActivity implements OnQueryTextListener  {
 	/**
 	 * Main layout for this component.
 	 */
@@ -65,7 +63,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	 */
 	private static final int MAIN_MENU = R.menu.main_menu;
 
-	private ObservableRecyclerView mRv;
+	private RecyclerView mRv;
 	private BookListAdapter mAdp;
 
 	private SearchRecentSuggestions mSuggestions;
@@ -86,7 +84,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 
 	private ActionBarHelper mActionBarHelper;
 
-
+	private LinearLayoutManager mLayoutManager;
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -98,7 +96,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	 * 		Event {@link com.itbooks.bus.OpenBookmarkEvent}.
 	 */
 	public void onEvent(OpenBookmarkEvent e) {
-		openBookDetail(e.getBook() );
+		openBookDetail(e.getBook());
 	}
 
 	/**
@@ -110,7 +108,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	public void onEvent(CloseDrawerEvent e) {
 		mDrawerLayout.closeDrawers();
 	}
-
 
 
 	/**
@@ -158,9 +155,8 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		mRefreshLayout.setOnRefreshListener(this);
 		mRefreshLayout.setRefreshing(true);
 
-		mRv = (ObservableRecyclerView) findViewById(R.id.books_rv);
-		mRv.setScrollViewCallbacks(this);
-		mRv.setLayoutManager(new LinearLayoutManager(this));
+		mRv = (RecyclerView) findViewById(R.id.books_rv);
+		mRv.setLayoutManager(mLayoutManager = new LinearLayoutManager(this));
 		mAdp = new BookListAdapter(null);
 		mRv.setAdapter(mAdp);
 
@@ -169,6 +165,16 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		mKeyword = Prefs.getInstance(getApplication()).getLastSearched();
 		initDrawer();
 		initSlidingPanel();
+
+		View topV = findViewById(R.id.to_top_btn);
+		topV.setBackgroundColor(getResources().getColor(R.color.common_pink));
+		topV.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mLayoutManager.scrollToPositionWithOffset(0, 0);
+				getSupportActionBar().show();
+			}
+		});
 	}
 
 
@@ -292,6 +298,9 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 	 * Load feed of books.
 	 */
 	private void loadBooks() {
+		if (mAdp.getItemCount() == 0) {
+			findViewById(R.id.loading_pb).setVisibility(View.VISIBLE);
+		}
 		if (!TextUtils.isEmpty(mKeyword)) {
 			loadByKeyword();
 		} else {
@@ -313,7 +322,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 
 				@Override
 				public void failure(RetrofitError error) {
-					Utils.showLongToast(getApplicationContext(), "failure");
 				}
 			});
 		} catch (ApiNotInitializedException e) {
@@ -336,7 +344,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 
 				@Override
 				public void failure(RetrofitError error) {
-					Utils.showLongToast(getApplicationContext(), "failure");
 				}
 			});
 		} catch (ApiNotInitializedException e) {
@@ -362,11 +369,13 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 
 	/**
 	 * Open detail of a book.
-	 * @param book {@link RSBook}
+	 *
+	 * @param book
+	 * 		{@link RSBook}
 	 */
 	private void openBookDetail(RSBook book) {
 		mDetailOpened = true;
-		BookDetailActivity.showInstance(this, book ); //book.getId() );
+		BookDetailActivity.showInstance(this, book); //book.getId() );
 	}
 
 	public void search(View view) {
@@ -484,33 +493,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 		}
 	}
 
-	@Override
-	public void onScrollChanged(int i, boolean b, boolean b2) {
 
-	}
-
-	@Override
-	public void onDownMotionEvent() {
-
-	}
-
-	@Override
-	public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-		ActionBar ab = getSupportActionBar();
-		if (scrollState == ScrollState.UP) {
-			if (ab != null) {
-				if (ab.isShowing()) {
-					ab.hide();
-				}
-			}
-		} else if (scrollState == ScrollState.DOWN) {
-			if (ab != null) {
-				if (!ab.isShowing()) {
-					ab.show();
-				}
-			}
-		}
-	}
 
 
 	/**
@@ -568,12 +551,30 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener, O
 
 	/**
 	 * Show feeds.
-	 * @param bookList The result of REST call.
+	 *
+	 * @param bookList
+	 * 		The result of REST call.
 	 */
 	public void showBookList(RSBookList bookList) {
-		mAdp.setData(bookList.getBooks());
-		mAdp.notifyDataSetChanged();
+		if (bookList != null && bookList.getStatus() == 200 && bookList.getBooks() != null &&
+				bookList.getBooks().size() > 0) {
+			mAdp.setData(bookList.getBooks());
+			mAdp.notifyDataSetChanged();
+			setHasShownDataOnUI(true);
+			SnackBar snackbar = new SnackBar(this, String.format(getString(R.string.msg_items_count),
+					bookList.getBooks().size()));
+			snackbar.show();
+		} else {
+			SnackBar snackbar = new SnackBar(this, getString(R.string.msg_refresh_fail), getString(R.string.btn_retry),
+					new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							loadBooks();
+						}
+					});
+			snackbar.show();
+		}
+		findViewById(R.id.loading_pb).setVisibility(View.GONE);
 		mRefreshLayout.setRefreshing(false);
-		setHasShownDataOnUI(true);
 	}
 }

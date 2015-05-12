@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.itbooks.app.MainActivity">
+    tools:context="com.itbooks.app.MainActivity"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.v4.widget.SlidingPaneLayout
         android:id="@+id/sliding_pane_layout"
@@ -18,10 +19,19 @@
             android:layout_gravity="right"
             android:background="@color/grey_500" />
 
+
+
         <FrameLayout
             android:id="@id/error_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+            <com.gc.materialdesign.views.ProgressBarCircularIndeterminate
+                android:id="@+id/loading_pb"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:background="@color/common_green" />
 
             <android.support.v4.widget.SwipeRefreshLayout
                 android:id="@+id/content_srl"
@@ -30,7 +40,7 @@
                 android:layout_gravity="top">
 
 
-                <com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView
+                <android.support.v7.widget.RecyclerView
                     android:id="@+id/books_rv"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -39,11 +49,18 @@
                     android:background="@color/common_transparent"
                     android:scrollbars="none" />
 
+
             </android.support.v4.widget.SwipeRefreshLayout>
 
-
-
-
+            <com.gc.materialdesign.views.ButtonFloat
+                android:id="@+id/to_top_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_marginRight="24dp"
+                android:background="#8BC34A"
+                app:animate="true"
+                app:iconDrawable="@drawable/ic_to_top" />
         </FrameLayout>
 
 
@@ -71,8 +88,8 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="@dimen/float_button_size"
-                    android:layout_height="@dimen/float_button_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:background="@color/common_transparent"
                     android:src="@drawable/ic_bookmarks" />
 
@@ -97,8 +114,8 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="@dimen/float_button_size"
-                    android:layout_height="@dimen/float_button_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:background="@color/common_transparent"
                     android:src="@drawable/ic_setting" />
 

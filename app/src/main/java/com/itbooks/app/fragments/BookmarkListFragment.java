@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import com.chopping.application.BasicPrefs;
@@ -19,7 +20,6 @@ import com.itbooks.data.DSBookmark;
 import com.itbooks.db.DB;
 import com.itbooks.db.DB.Sort;
 import com.itbooks.utils.Prefs;
-import com.itbooks.views.OnViewAnimatedClickedListener;
 import com.nineoldandroids.animation.ObjectAnimator;
 
 /**
@@ -83,9 +83,9 @@ public final class BookmarkListFragment extends BaseFragment {
 		mEmptyV = view.findViewById(R.id.empty_ll);
 
 		mRefreshV = view.findViewById(R.id.refresh_btn);
-		mRefreshV.setOnClickListener(new OnViewAnimatedClickedListener() {
+		mRefreshV.setOnClickListener(new OnClickListener() {
 			@Override
-			public void onClick() {
+			public void onClick(View v) {
 				loadBookmarks();
 			}
 		});
@@ -169,7 +169,7 @@ public final class BookmarkListFragment extends BaseFragment {
 
 				objectAnimator.cancel();
 			}
-		});
+		}, bookmark);
 	}
 
 }

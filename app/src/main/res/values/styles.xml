@@ -17,7 +17,6 @@
         <item name="android:dropDownListViewStyle">@style/OverflowDropDown</item>
 
         <!--##########Support library compatibility##########-->
-
         <item name="colorPrimary">@color/primary_color</item>
         <item name="colorPrimaryDark">@color/primary_dark_color</item>
         <item name="colorAccent">@color/primary_accent</item>
@@ -117,15 +116,7 @@
 
     <style name="CardView" parent="@style/ListItemCardView" />
 
-    <style name="FloatButton">
-        <item name="android:layout_width">@dimen/float_button_size</item>
-        <item name="android:layout_height">@dimen/float_button_size</item>
-        <item name="android:layout_marginBottom">15dp</item>
-        <item name="android:textColor">@color/text_common_white</item>
-        <item name="font">thin</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
-    </style>
+
 
 
     <declare-styleable name="FontButton">
@@ -135,14 +126,6 @@
     </declare-styleable>
 
 
-    <style name="GradientProgressBar" parent="SmoothProgressBar">
-        <item name="spb_stroke_separator_length">0dp</item>
-        <item name="spb_sections_count">3</item>
-        <item name="spb_speed">1.7</item>
-        <item name="spb_stroke_width">@dimen/pb_height</item>
-        <item name="android:interpolator">@android:anim/decelerate_interpolator</item>
-        <item name="spb_colors">@array/loading_colors</item>
-        <item name="spb_gradients">true</item>
-    </style>
+
 
 </resources>

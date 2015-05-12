@@ -38,8 +38,7 @@
     <string name="lbl_unbookmark_the_book">取消收藏</string>
     <string name="lbl_bookmark_info">点击工具栏上的这个按键来收藏这本书。</string>
     <string name="lbl_bookmark_info_never_show_again">知道了，不再显示。</string>
-    <string name="msg_bookmark_the_book">收藏</string>
-    <string name="msg_unbookmark_the_book">取消收藏</string>
+
 
     <string name="menu_forward">向前</string>
     <string name="menu_backward">向后</string>
@@ -58,10 +57,15 @@
     <string name="setting_push_off">打开</string>
     <string name="setting_push_on">关闭</string>
     <string name="menu_setting">设置</string>
-    <string name="msg_push_registering">注册推送…</string>
-    <string name="msg_push_unregistering">取消推送…</string>
+
     <string name="btn_turn_on">启动</string>
     <string name="lbl_turn_on_push_info">是否启动推送功能？我们可以常提供给你一些新的IT方面的eBook信息。</string>
-    <string name="msg_ask_download">打开浏览器来下载这本书吗？</string>
 
+    <string name="msg_bookmark_the_book">收藏</string>
+    <string name="msg_unbookmark_the_book">取消收藏</string>
+    <string name="msg_push_registering">注册推送…</string>
+    <string name="msg_push_unregistering">取消推送…</string>
+    <string name="msg_ask_download">打开浏览器来下载这本书吗？</string>
+    <string name="msg_items_count">搜索到 %s 本书。</string>
+    <string name="msg_items_not_found">无法找到所需要的书籍。</string>
 </resources>

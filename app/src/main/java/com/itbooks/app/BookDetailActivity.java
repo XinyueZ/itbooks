@@ -17,6 +17,8 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -32,8 +34,6 @@ import com.itbooks.data.DSBookmark;
 import com.itbooks.data.rest.RSBook;
 import com.itbooks.db.DB;
 import com.itbooks.utils.Prefs;
-import com.itbooks.views.OnViewAnimatedClickedListener;
-import com.nineoldandroids.view.ViewHelper;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -159,11 +159,9 @@ public final class BookDetailActivity extends BaseActivity   {
 		mOpenBtn.setBackgroundColor(getResources().getColor(R.color.common_green));
 
 
-		ViewHelper.setX(mOpenBtn, -10);
-		ViewHelper.setRotation(mOpenBtn, -360f * 4);
-		mOpenBtn.setOnClickListener(new OnViewAnimatedClickedListener() {
+		mOpenBtn.setOnClickListener(new OnClickListener() {
 			@Override
-			public void onClick() {
+			public void onClick(View v) {
 				showDialogFragment(new DialogFragment() {
 					@Override
 					public Dialog onCreateDialog(Bundle savedInstanceState) {

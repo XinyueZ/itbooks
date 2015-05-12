@@ -45,11 +45,7 @@
     <string name="lbl_bookmark_empty">Bookmark-list is empty.</string>
     <string name="lbl_turn_on_push_info">Do you want to turn on push-messages? We can provide you much more information about many new IT-eBooks regularly.</string>
 
-    <string name="msg_bookmark_the_book">Added to bookmarks</string>
-    <string name="msg_unbookmark_the_book">Removed from bookmarks</string>
-    <string name="msg_push_registering">Signing in push…</string>
-    <string name="msg_push_unregistering">Signing out push…</string>
-    <string name="msg_ask_download">Do you want to open browser and be transferred to download this book?</string>
+
 
     <string name="menu_forward">Forward</string>
     <string name="menu_backward">Backward</string>
@@ -83,4 +79,13 @@
     <string name="setting_push_title">@string/lbl_turn_on_push_info</string>
     <string name="setting_push_on">On</string>
     <string name="setting_push_off">Off</string>
+
+    <string name="msg_bookmark_the_book">Added to bookmarks</string>
+    <string name="msg_unbookmark_the_book">Removed from bookmarks</string>
+    <string name="msg_push_registering">Signing in push…</string>
+    <string name="msg_push_unregistering">Signing out push…</string>
+    <string name="msg_ask_download">Do you want to open browser and be transferred to download this book?</string>
+    <string name="msg_items_count">Find %s books.</string>
+    <string name="msg_items_not_found">Can\'t find books you searched.</string>
+    <string name="msg_refresh_fail">@string/msg_items_not_found</string>
 </resources>
