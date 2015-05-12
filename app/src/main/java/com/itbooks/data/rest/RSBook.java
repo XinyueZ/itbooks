@@ -3,6 +3,8 @@ package com.itbooks.data.rest;
 
 import java.io.Serializable;
 
+import android.os.Bundle;
+
 import com.google.gson.annotations.SerializedName;
 
 public final class RSBook implements Serializable {
@@ -27,9 +29,6 @@ public final class RSBook implements Serializable {
 	@SerializedName("CoverUrl")
 	private String mCoverUrl;
 
-	public RSBook() {
-
-	}
 
 	public RSBook(String name, String author, String size, String pages, String link, String ISBN, String year,
 			String publisher, String description, String coverUrl) {
@@ -98,5 +97,26 @@ public final class RSBook implements Serializable {
 		array[8] = mDescription;
 		array[9] = mCoverUrl;
 		return array;
+	}
+
+	/**
+	 * RSBook(String name, String author, String size, String pages, String link, String ISBN, String year,
+	 String publisher, String description, String coverUrl)
+	 * @param bundle
+	 * @return
+	 */
+	public static RSBook newInstance(Bundle bundle) {
+		return new RSBook(
+				bundle.getString("Name"),
+				bundle.getString("Author"),
+				bundle.getString("Size"),
+				bundle.getString("Pages"),
+				bundle.getString("Link"),
+				bundle.getString("ISBN"),
+				bundle.getString("Year"),
+				bundle.getString("Publisher"),
+				bundle.getString("Description"),
+				bundle.getString("CoverUrl")
+		);
 	}
 }
