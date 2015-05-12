@@ -247,6 +247,11 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener  {
 			});
 			break;
 
+				case R.id.action_setting:
+					SettingActivity.showInstance(this);
+					break;
+
+
 		}
 		return super.onOptionsItemSelected(item);
 	}
