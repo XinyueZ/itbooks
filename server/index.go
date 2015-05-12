@@ -23,10 +23,18 @@ const (
                 </p>
                 <p>Project itbooks push-messages.</p></p>
                 <form action="/response" method="post">
-                    <div><textarea name="book_id" rows="1" cols="60" placeholder="ID">1539580363</textarea></div>
-                    <div><textarea name="title" rows="1" cols="60" placeholder="ID">Developing Android Applications with Flex 4.5</textarea></div>
-                    <div><textarea name="desc" rows="3" cols="60" placeholder="Message">Building Android Applications with ActionScript.</textarea></div>
-                    <div><textarea name="image" rows="3" cols="60" placeholder="Message">http://s.it-ebooks-api.info/3/developing_android_applications_with_flex_4.5.jpg</textarea></div>
+
+                    <div><textarea name="Name" rows="1" cols="160" placeholder="Name"></textarea></div>
+										<div><textarea name="Author" rows="1" cols="160" placeholder="Author"></textarea></div>
+										<div><textarea name="Size" rows="1" cols="160" placeholder="Size"></textarea></div>
+										<div><textarea name="Pages" rows="1" cols="160" placeholder="Pages"></textarea></div>
+										<div><textarea name="Link" rows="1" cols="160" placeholder="Link"></textarea></div>
+										<div><textarea name="ISBN" rows="1" cols="160" placeholder="ISBN"></textarea></div>
+										<div><textarea name="Year" rows="1" cols="160" placeholder="Year"></textarea></div>
+										<div><textarea name="Publisher" rows="1" cols="160" placeholder="Publisher"></textarea></div>
+										<div><textarea name="CoverUrl" rows="1" cols="160" placeholder="CoverUrl"></textarea></div>
+                    <div><textarea name="Description" rows="60" cols="160" placeholder="Description"></textarea></div>
+
                     <div><input type="submit" value="PUSH" /></div>
                 </form>
 
@@ -132,11 +140,19 @@ func handleDelete(_w http.ResponseWriter, _r *http.Request) {
 	datastore.DeleteMulti(cxt, keys)
 }
 
+
+
 type BreakingNews struct {
-	book_id string
-	title   string
-	desc    string
-	image   string
+	Name string
+	Author   string
+	Size    string
+	Pages   string
+	Link string
+	ISBN   string
+	Year    string
+	Publisher   string
+	CoverUrl string
+	Description   string
 }
 
 type Message struct {
@@ -167,8 +183,10 @@ func (this *PushMessage) newRequest(_msg *Message) *Request {
 	return &Request{"https://android.googleapis.com/gcm/send", "key=" + PUSH_KEY, "application/json", _msg}
 }
 
-func (this *PushMessage) newBreakingNews(_book_id string, _title string, _content string, _type string) *BreakingNews {
-	return &BreakingNews{_book_id, _title, _content, _type}
+
+
+func (this *PushMessage) newBreakingNews(name string, author string, size string, pages string,link string, isbn string, year string, publisher string, coverurl string, description string) *BreakingNews {
+	return &BreakingNews{name  , author  , size  , pages  ,link  , isbn  , year  , publisher  , coverurl  , description  }
 }
 
 func (this *PushMessage) newMessage(_regID []string, _breakingNews *BreakingNews) *Message {
@@ -188,7 +206,18 @@ func (this *PushMessage) body(_r *Request) (reader io.Reader) {
 		ids = ids[:len(ids)-1]
 	}
 
-	this.pushed = fmt.Sprintf(`{"registration_ids" : [%s],"data" : {"book_id": %s, "title": "%s", "desc": "%s", "image": "%s"}}`, ids, _r.message.data.book_id, _r.message.data.title, _r.message.data.desc, _r.message.data.image)
+	this.pushed = fmt.Sprintf(`{"registration_ids" : [%s],"data" : {"Name": "%s", "Author": "%s", "Size": "%s", "Pages": "%s","Link": "%s", "ISBN": "%s", "Year": "%s", "Publisher": "%s","CoverUrl": "%s","Description": "%s"}}`,
+													ids,
+													_r.message.data.Name,
+													_r.message.data.Author,
+													_r.message.data.Size,
+													_r.message.data.Pages,
+													_r.message.data.Link,
+													_r.message.data.ISBN,
+													_r.message.data.Year,
+													_r.message.data.Publisher,
+													_r.message.data.CoverUrl,
+													_r.message.data.Description)
 	reader = bytes.NewBufferString(this.pushed)
 	return
 }
@@ -212,7 +241,16 @@ var otherClients []OtherClient
 func (this *PushMessage) Push(_r *http.Request) {
 	otherClients = loadClients(_r)
 	this.request = _r
-	b := this.newBreakingNews(this.request.FormValue("book_id"), this.request.FormValue("title"), this.request.FormValue("desc"), this.request.FormValue("image"))
+	b := this.newBreakingNews(this.request.FormValue("Name"),
+													  this.request.FormValue("Author"),
+														this.request.FormValue("Size"),
+														this.request.FormValue("Pages"),
+														this.request.FormValue("Link"),
+														this.request.FormValue("ISBN"),
+														this.request.FormValue("Year"),
+														this.request.FormValue("Publisher"),
+														this.request.FormValue("CoverUrl"),
+														this.request.FormValue("Description"))
 	m := this.newMessage([]string{this.request.FormValue("registerID")}, b)
 	r := this.newRequest(m)
 	this.send(r)

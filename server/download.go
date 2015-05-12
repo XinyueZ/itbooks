@@ -8,7 +8,7 @@ import (
   "appengine/urlfetch"
 	"bytes"
 	"encoding/xml"
-	"encoding/json" 
+	"encoding/json"
 )
 
 type Error string
