@@ -163,7 +163,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginRight="24dp"
-        android:background="#303F9F"
+        android:background="#8BC34A"
         app:animate="true"
         app:iconDrawable="@drawable/ic_download" />
 

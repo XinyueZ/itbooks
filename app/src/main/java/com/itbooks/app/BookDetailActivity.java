@@ -155,6 +155,9 @@ public final class BookDetailActivity extends BaseActivity   {
 		mPublisherTv = (TextView) findViewById(R.id.detail_publisher_tv);
 
 		mOpenBtn = (ButtonFloat) findViewById(R.id.download_btn);
+		mOpenBtn.setBackgroundColor(getResources().getColor(R.color.common_green));
+
+
 		ViewHelper.setX(mOpenBtn, -10);
 		ViewHelper.setRotation(mOpenBtn, -360f * 4);
 		mOpenBtn.setOnClickListener(new OnViewAnimatedClickedListener() {

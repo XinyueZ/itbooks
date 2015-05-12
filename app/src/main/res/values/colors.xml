@@ -20,6 +20,7 @@
     <color name="teal_500">#009688</color>
     <color name="red">#F44336</color>
     <color name="pink">#E91E63</color>
+    <color name="green_mid">#4CAF50</color>
 
     <color name="common_black">#000000</color>
     <color name="common_white">#FFFFFF</color>
@@ -27,6 +28,7 @@
     <color name="common_transparent">@android:color/transparent</color>
     <color name="common_red">@color/red</color>
     <color name="common_pink">@color/pink</color>
+    <color name="common_green">@color/green_mid</color>
 
     <color name="text_common_black">@color/common_black</color>
     <color name="text_common_white">@color/common_white</color>

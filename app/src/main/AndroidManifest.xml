@@ -57,9 +57,6 @@
         <activity
             android:name=".app.BookDetailActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".app.DownloadWebViewActivity"
-            android:screenOrientation="portrait" />
 
         <activity
             android:name=".app.SettingActivity"
