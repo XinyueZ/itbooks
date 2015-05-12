@@ -84,7 +84,7 @@
     <string name="msg_unbookmark_the_book">Removed from bookmarks</string>
     <string name="msg_push_registering">Signing in push…</string>
     <string name="msg_push_unregistering">Signing out push…</string>
-    <string name="msg_ask_download">Do you want to open browser and be transferred to download this book?</string>
+    <string name="msg_ask_download">Do you want to download this book really?</string>
     <string name="msg_items_count">Find %s books.</string>
     <string name="msg_items_not_found">Can\'t find books you searched.</string>
     <string name="msg_refresh_fail">@string/msg_items_not_found</string>

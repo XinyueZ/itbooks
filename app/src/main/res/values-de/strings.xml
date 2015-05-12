@@ -59,7 +59,7 @@
     <string name="msg_unbookmark_the_book">Entfernt von der Merkliste</string>
     <string name="msg_push_registering">Anmeldung…</string>
     <string name="msg_push_unregistering">Abmeldung…</string>
-    <string name="msg_ask_download">Möchten Sie den Web-browser öffnen, dieses Buch herunterzuladen?</string>
+    <string name="msg_ask_download">Möchten Sie  dieses Buch gleich herunterzuladen?</string>
     <string name="msg_items_count">%s  wurden gefunden.</string>
     <string name="msg_items_not_found">Keine gewünschten Bücher wurden gefunden.</string>
 </resources>

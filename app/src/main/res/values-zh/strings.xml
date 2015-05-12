@@ -65,7 +65,7 @@
     <string name="msg_unbookmark_the_book">取消收藏</string>
     <string name="msg_push_registering">注册推送…</string>
     <string name="msg_push_unregistering">取消推送…</string>
-    <string name="msg_ask_download">打开浏览器来下载这本书吗？</string>
+    <string name="msg_ask_download">真打算下载这本书吗？</string>
     <string name="msg_items_count">搜索到 %s 本书。</string>
     <string name="msg_items_not_found">无法找到所需要的书籍。</string>
 </resources>

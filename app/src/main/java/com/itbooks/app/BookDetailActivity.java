@@ -1,9 +1,7 @@
 package com.itbooks.app;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -156,7 +154,7 @@ public final class BookDetailActivity extends BaseActivity   {
 		mPublisherTv = (TextView) findViewById(R.id.detail_publisher_tv);
 
 		mOpenBtn = (ButtonFloat) findViewById(R.id.download_btn);
-		mOpenBtn.setBackgroundColor(getResources().getColor(R.color.common_green));
+		mOpenBtn.setBackgroundColor(getResources().getColor(R.color.common_pink));
 
 
 		mOpenBtn.setOnClickListener(new OnClickListener() {
@@ -165,18 +163,17 @@ public final class BookDetailActivity extends BaseActivity   {
 				showDialogFragment(new DialogFragment() {
 					@Override
 					public Dialog onCreateDialog(Bundle savedInstanceState) {
-						AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-						builder.setMessage(R.string.msg_ask_download).setPositiveButton(R.string.btn_now_load,
-								new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog, int id) {
-										downloadBrowser();
-									}
-								}).setNegativeButton(R.string.btn_not_yet_load, new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int id) {
-								// User cancelled the dialog
+						com.gc.materialdesign.widgets.Dialog dialog = new com.gc.materialdesign.widgets.Dialog(
+								getActivity(), getString(R.string.application_name), getString(
+								R.string.msg_ask_download));
+						//						dialog.getButtonAccept().setText(getString(R.string.btn_confirm));
+						dialog.setOnAcceptButtonClickListener(new OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								downloadBrowser();
 							}
 						});
-						return builder.create();
+						return dialog;
 					}
 				}, "download ask");
 			}

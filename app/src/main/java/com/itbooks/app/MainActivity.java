@@ -167,7 +167,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener  {
 		initSlidingPanel();
 
 		View topV = findViewById(R.id.to_top_btn);
-		topV.setBackgroundColor(getResources().getColor(R.color.common_pink));
+		topV.setBackgroundColor(getResources().getColor(R.color.common_green));
 		topV.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
