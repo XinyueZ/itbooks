@@ -4,6 +4,19 @@
     tools:context="com.itbooks.app.MainActivity">
 
     <item
+        android:id="@+id/action_view_style_list"
+        android:icon="@drawable/ic_action_view_list"
+        android:title="@string/setting_view_style_list"
+        android:visible="false"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_view_style_grid"
+        android:icon="@drawable/ic_action_view_grid"
+        android:title="@string/setting_view_style_grid"
+        android:visible="false"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search"
         android:title="@string/lbl_search"
@@ -21,7 +34,7 @@
 
     <item
         android:id="@+id/action_setting"
-        android:title="@string/menu_setting"/>
+        android:title="@string/menu_setting" />
     <item
         android:id="@+id/action_about"
         android:title="@string/lbl_about"

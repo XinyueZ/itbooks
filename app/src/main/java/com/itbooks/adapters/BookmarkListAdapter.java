@@ -52,9 +52,9 @@ public final class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkList
 		RSBook book = bookmark.getBook();
 
 
-
-		Picasso.with(viewHolder.itemView.getContext())
-				.load(book.getCoverUrl())
+		Picasso picasso = Picasso.with(viewHolder.itemView.getContext());
+		picasso.setIndicatorsEnabled(true);
+		picasso.load(book.getCoverUrl())
 				.placeholder(R.drawable.ic_launcher)
 				.tag(viewHolder.itemView.getContext())
 				.into(viewHolder.mBookCoverIv);
@@ -80,8 +80,8 @@ public final class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkList
 
 	static class ViewHolder extends RecyclerView.ViewHolder {
 
-		ImageView mBookCoverIv;
-		Button mDeleteBtn;
+		private ImageView mBookCoverIv;
+		private Button mDeleteBtn;
 
 		ViewHolder(View convertView) {
 			super(convertView);

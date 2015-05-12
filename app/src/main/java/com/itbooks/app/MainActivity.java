@@ -13,6 +13,7 @@ import android.support.v4.widget.SlidingPaneLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -30,6 +31,8 @@ import com.chopping.net.GsonRequestTask;
 import com.chopping.net.TaskHelper;
 import com.gc.materialdesign.widgets.SnackBar;
 import com.itbooks.R;
+import com.itbooks.adapters.AbstractBookViewAdapter;
+import com.itbooks.adapters.BookGridAdapter;
 import com.itbooks.adapters.BookListAdapter;
 import com.itbooks.app.fragments.AboutDialogFragment;
 import com.itbooks.app.fragments.AppListImpFragment;
@@ -53,7 +56,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class MainActivity extends BaseActivity implements OnQueryTextListener  {
+public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	/**
 	 * Main layout for this component.
 	 */
@@ -64,7 +67,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener  {
 	private static final int MAIN_MENU = R.menu.main_menu;
 
 	private RecyclerView mRv;
-	private BookListAdapter mAdp;
 
 	private SearchRecentSuggestions mSuggestions;
 	private String mKeyword;
@@ -85,6 +87,9 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener  {
 	private ActionBarHelper mActionBarHelper;
 
 	private LinearLayoutManager mLayoutManager;
+
+	private static final int GRID_COL_COUNT =4;
+
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -156,9 +161,13 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener  {
 		mRefreshLayout.setRefreshing(true);
 
 		mRv = (RecyclerView) findViewById(R.id.books_rv);
-		mRv.setLayoutManager(mLayoutManager = new LinearLayoutManager(this));
-		mAdp = new BookListAdapter(null);
-		mRv.setAdapter(mAdp);
+		if (Prefs.getInstance(getApplicationContext()).getViewStyle() == 2) {
+			mRv.setLayoutManager(mLayoutManager = new LinearLayoutManager(this));
+			mRv.setAdapter(new BookListAdapter(null));
+		} else {
+			mRv.setLayoutManager(mLayoutManager = new GridLayoutManager(this, GRID_COL_COUNT));
+			mRv.setAdapter(new BookGridAdapter(null));
+		}
 
 		handleIntent(getIntent());
 
@@ -198,6 +207,14 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener  {
 		if (searchManager != null) {
 			SearchableInfo info = searchManager.getSearchableInfo(getComponentName());
 			mSearchView.setSearchableInfo(info);
+		}
+
+		if(Prefs.getInstance(getApplicationContext()).getViewStyle() == 2) {
+			menu.findItem(R.id.action_view_style_list).setVisible(false);
+			menu.findItem(R.id.action_view_style_grid).setVisible(true);
+		} else {
+			menu.findItem(R.id.action_view_style_list).setVisible(true);
+			menu.findItem(R.id.action_view_style_grid).setVisible(false);
 		}
 		return true;
 	}
@@ -247,11 +264,21 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener  {
 			});
 			break;
 
-				case R.id.action_setting:
-					SettingActivity.showInstance(this);
-					break;
-
-
+		case R.id.action_setting:
+			SettingActivity.showInstance(this);
+			break;
+		case R.id.action_view_style_list:
+			mRv.setLayoutManager(mLayoutManager = new LinearLayoutManager(this));
+			mRv.setAdapter(new BookListAdapter(((AbstractBookViewAdapter) mRv.getAdapter()).getData()));
+			Prefs.getInstance(getApplicationContext()).setViewStyle(2);
+			supportInvalidateOptionsMenu();
+			break;
+		case R.id.action_view_style_grid:
+			mRv.setLayoutManager(mLayoutManager = new GridLayoutManager(this, GRID_COL_COUNT));
+			mRv.setAdapter(new BookGridAdapter(((AbstractBookViewAdapter) mRv.getAdapter()).getData())  );
+			Prefs.getInstance(getApplicationContext()).setViewStyle(1);
+			supportInvalidateOptionsMenu();
+			break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -303,7 +330,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener  {
 	 * Load feed of books.
 	 */
 	private void loadBooks() {
-		if (mAdp.getItemCount() == 0) {
+		if (((AbstractBookViewAdapter)mRv.getAdapter()).getItemCount() == 0) {
 			findViewById(R.id.loading_pb).setVisibility(View.VISIBLE);
 		}
 		if (!TextUtils.isEmpty(mKeyword)) {
@@ -499,8 +526,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener  {
 	}
 
 
-
-
 	/**
 	 * Action bar helper for use on ICS and newer devices.
 	 */
@@ -563,8 +588,8 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener  {
 	public void showBookList(RSBookList bookList) {
 		if (bookList != null && bookList.getStatus() == 200 && bookList.getBooks() != null &&
 				bookList.getBooks().size() > 0) {
-			mAdp.setData(bookList.getBooks());
-			mAdp.notifyDataSetChanged();
+			((AbstractBookViewAdapter)mRv.getAdapter()).setData(bookList.getBooks());
+			mRv.getAdapter().notifyDataSetChanged();
 			setHasShownDataOnUI(true);
 			SnackBar snackbar = new SnackBar(this, String.format(getString(R.string.msg_items_count),
 					bookList.getBooks().size()));

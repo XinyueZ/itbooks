@@ -40,6 +40,7 @@
     <string name="lbl_unbookmark_the_book">Entferne von der Merkliste</string>
     <string name="lbl_bookmark_info">Merke dieses Buch mit Klicken auf dem Icon.</string>
     <string name="lbl_bookmark_info_never_show_again">Ich habe gewusst. Diese Info zeigt spät nie.</string>
+    <string name="lbl_by">Von %s</string>
 
     <string name="menu_forward">Vorwärts</string>
     <string name="menu_backward">Rückwärts</string>
@@ -51,6 +52,8 @@
     <string name="setting_push_cat">Benachrichtigungen</string>
     <string name="setting_push_off">Ein</string>
     <string name="setting_push_on">Aus</string>
+    <string name="setting_view_style_list">Listeansicht</string>
+    <string name="setting_view_style_grid">Gridansicht</string>
 
     <string name="btn_turn_on">Einschalten</string>
     <string name="lbl_turn_on_push_info">Möchtest Du Push-Benachrichtigungen empfangen? Damit können wir Dir einige neuen IT-eBooks regelmäßig informieren.</string>

@@ -8,8 +8,6 @@ import com.chopping.application.BasicPrefs;
  *
  */
 public final class Prefs extends BasicPrefs {
-	public static final String NA = "N/A";
-	public static final String API_LIMIT = "API limit exceeded!";
 	/**
 	 * Impl singleton pattern.
 	 */
@@ -22,6 +20,7 @@ public final class Prefs extends BasicPrefs {
 	private static final String KEY_APP_VERSION_FOR_PUSH ="key.app.version.push";
 	public static final String KEY_PUSH_SETTING = "key.push.setting";
 	private static final String KEY_SHOWN_DETAILS_TIMES = "key.details.shown.times";
+	private static final String KEY_VIEW_STYLE = "key.view.style";
 	private static final String KEY_SHOWN_DETAILS_ADS_TIMES = "ads";
 
 	/**
@@ -173,5 +172,21 @@ public final class Prefs extends BasicPrefs {
 
 	public String getRESTApi() {
 		return getString(REST_API, null);
+	}
+
+	/**
+	 * Set view style , default is list.
+	 * @param style {@code 1}: grid, {@code 2}:list.
+	 */
+	public void setViewStyle(int style) {
+		setInt(KEY_VIEW_STYLE, style);
+	}
+
+	/**
+	 *
+	 * @return The view style , default is list, {@code 1}: grid, {@code 2}:list.
+	 */
+	public int getViewStyle() {
+		return getInt(KEY_VIEW_STYLE, 2);
 	}
 }

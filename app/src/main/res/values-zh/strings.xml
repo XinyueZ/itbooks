@@ -38,7 +38,7 @@
     <string name="lbl_unbookmark_the_book">取消收藏</string>
     <string name="lbl_bookmark_info">点击工具栏上的这个按键来收藏这本书。</string>
     <string name="lbl_bookmark_info_never_show_again">知道了，不再显示。</string>
-
+    <string name="lbl_by">作者： %s</string>
 
     <string name="menu_forward">向前</string>
     <string name="menu_backward">向后</string>
@@ -56,6 +56,9 @@
     <string name="setting_push_cat">推送</string>
     <string name="setting_push_off">打开</string>
     <string name="setting_push_on">关闭</string>
+    <string name="setting_view_style_list">列表</string>
+    <string name="setting_view_style_grid">网格</string>
+
     <string name="menu_setting">设置</string>
 
     <string name="btn_turn_on">启动</string>
