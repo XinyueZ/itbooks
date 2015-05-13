@@ -19,10 +19,13 @@
     <color name="a400">#3D5AFE</color>
     <color name="a400_50">#803D5AFE</color>
     <color name="teal_500">#009688</color>
+    <color name="teal_500_90">#E6009688</color>
     <color name="red">#F44336</color>
     <color name="red_50">#B3F44336</color>
     <color name="pink">#E91E63</color>
     <color name="green_mid">#4CAF50</color>
+    <color name="orange_500">#FF9800</color>
+
 
     <color name="common_black">#000000</color>
     <color name="common_white">#FFFFFF</color>
@@ -42,6 +45,10 @@
 
     <color name="book_not_downloaded">@color/blue_grey_600_90</color>
     <color name="book_downloading">@color/red</color>
-    <color name="book_downloaded">@color/teal_500</color>
+    <color name="book_downloaded">@color/teal_500_90</color>
 
+
+    <color name="book_btn_not_downloaded">@color/teal_500</color>
+    <color name="book_btn_downloading">@color/orange_500</color>
+    <color name="book_btn_downloaded">@color/common_blue</color>
 </resources>

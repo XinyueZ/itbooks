@@ -64,4 +64,5 @@
     <string name="msg_push_unregistering">Abmeldung…</string>
     <string name="msg_items_count">%s  wurden gefunden.</string>
     <string name="msg_items_not_found">Keine gewünschten Bücher wurden gefunden.</string>
+    <string name="msg_no_reader">Du hast keine App, die PDF lesen zu können. Magst du eine App herunterladen?</string>
 </resources>

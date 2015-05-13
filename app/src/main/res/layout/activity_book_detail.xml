@@ -84,7 +84,7 @@
                         android:layout_width="fill_parent"
                         android:layout_height="@dimen/pb_height"
                         android:layout_gravity="bottom"
-                        android:background="@color/book_downloading"
+                        android:background="@color/orange_500"
                         android:visibility="gone" />
 
                 </com.itbooks.views.RevealLayout>

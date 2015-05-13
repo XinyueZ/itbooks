@@ -1,17 +1,21 @@
 package com.itbooks.app;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.os.AsyncTaskCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -34,6 +38,7 @@ import com.google.android.gms.ads.InterstitialAd;
 import com.itbooks.R;
 import com.itbooks.app.fragments.BookmarkInfoDialogFragment;
 import com.itbooks.bus.DownloadEndEvent;
+import com.itbooks.bus.DownloadOpenEvent;
 import com.itbooks.bus.DownloadStartEvent;
 import com.itbooks.data.DSBookmark;
 import com.itbooks.data.rest.RSBook;
@@ -84,7 +89,8 @@ public final class BookDetailActivity extends BaseActivity {
 
 	private ButtonFloat mOpenBtn;
 	private View mLoadingPb;
-	private View mHeadV;
+	private RevealLayout mHeadV;
+	private boolean mInProgress;
 
 	/**
 	 * The interstitial ad.
@@ -106,8 +112,12 @@ public final class BookDetailActivity extends BaseActivity {
 	 * 		Event {@link com.itbooks.bus.DownloadStartEvent}.
 	 */
 	public void onEvent(DownloadStartEvent e) {
-		mLoadingPb  .setVisibility(View.VISIBLE);
+		mInProgress = true;
+		mLoadingPb.setVisibility(View.VISIBLE);
 		mHeadV.setBackgroundResource(R.color.book_downloading);
+		mOpenBtn.setDrawableIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_file_cloud_download, null));
+		mOpenBtn.setBackgroundColor(getResources().getColor(R.color.book_btn_downloading));
+		mHeadV.show();
 	}
 
 
@@ -118,13 +128,62 @@ public final class BookDetailActivity extends BaseActivity {
 	 * 		Event {@link com.itbooks.bus.DownloadEndEvent}.
 	 */
 	public void onEvent(DownloadEndEvent e) {
-		if(e.getDownload().getBook().equals(mBook)) {
+		if (e.getDownload().getBook().equals(mBook)) {
 			mLoadingPb.setVisibility(View.GONE);
 			mHeadV.setBackgroundResource(R.color.book_downloaded);
+			mOpenBtn.setDrawableIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_reading, null));
+			mOpenBtn.setBackgroundColor(getResources().getColor(R.color.book_btn_downloaded));
+			mHeadV.show();
+		}
+		mInProgress = false;
+	}
+
+	/**
+	 * Handler for {@link com.itbooks.bus.DownloadOpenEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link com.itbooks.bus.DownloadOpenEvent}.
+	 */
+	public void onEvent(DownloadOpenEvent e) {
+		try {
+			Intent openFileIntent = new Intent(Intent.ACTION_VIEW);
+			openFileIntent.setDataAndType(Uri.fromFile(e.getFile()), "application/pdf");
+			openFileIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+			startActivity(openFileIntent);
+		} catch (Exception ex) {
+			//Download pdf-reader.
+			showDialogFragment(
+					new DialogFragment() {
+						@Override
+						public Dialog onCreateDialog(Bundle savedInstanceState) {
+							// Use the Builder class for convenient dialog construction
+							AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+							builder.setMessage(R.string.msg_no_reader)
+									.setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
+										public void onClick(DialogInterface dialog, int id) {
+											String pdfReader = "com.adobe.reader";
+											try {
+												startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
+														"market://details?id=" + pdfReader)));
+											} catch (android.content.ActivityNotFoundException exx) {
+												startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
+														"https://play.google.com/store/apps/details?id=" + pdfReader)));
+											}
+										}
+									})
+									.setNegativeButton(R.string.btn_not_yet_load, new DialogInterface.OnClickListener() {
+										public void onClick(DialogInterface dialog, int id) {
+											// User cancelled the dialog
+										}
+									});
+							// Create the AlertDialog object and return it
+							return builder.create();
+						}}, null);
 		}
 	}
 
 	//------------------------------------------------
+
 	/**
 	 * Show single instance of {@link com.itbooks.app.BookDetailActivity}.
 	 *
@@ -197,16 +256,17 @@ public final class BookDetailActivity extends BaseActivity {
 
 
 		mLoadingPb = findViewById(R.id.loading_pb);
-		mHeadV = findViewById(R.id.child_head_ll);
-		ViewCompat.setElevation(mHeadV, getResources().getDimensionPixelSize(
-				R.dimen.detail_head_elevation));
+		mHeadV = (RevealLayout) findViewById(R.id.child_head_ll);
+		ViewCompat.setElevation(mHeadV, getResources().getDimensionPixelSize(R.dimen.detail_head_elevation));
 		mOpenBtn = (ButtonFloat) findViewById(R.id.download_btn);
-		mOpenBtn.setBackgroundColor(getResources().getColor(R.color.teal_500));
+		mOpenBtn.setBackgroundColor(getResources().getColor(R.color.book_btn_not_downloaded));
 		mOpenBtn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Download download = new Download(mBook);
-				download.start(getApplicationContext());
+				if (!mInProgress) {
+					Download download = new Download(mBook);
+					download.start(getApplicationContext());
+				}
 			}
 		});
 
@@ -220,18 +280,19 @@ public final class BookDetailActivity extends BaseActivity {
 		childV.setOnTouchListener(touchParent);
 		ScreenSize su = DeviceUtils.getScreenSize(this);
 		childV.getLayoutParams().height =
-				su.Height - getSupportActionBar().getHeight() - getResources().getDimensionPixelSize(R.dimen.detail_head_height);
+				su.Height - getSupportActionBar().getHeight() - getResources().getDimensionPixelSize(
+						R.dimen.detail_head_height);
 
 		showBookDetail();
 	}
 
 	//For sticky affect.
 	private NestedScrollView mParentV;
-	private OnTouchListener touchParent= new OnTouchListener() {
+	private OnTouchListener touchParent = new OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
 			int y = mParentV.getScrollY();
-			if(y >= 0 && y <= 150) {
+			if (y >= 0 && y <= 150) {
 				showFab();
 			} else {
 				hideFab();
@@ -259,7 +320,8 @@ public final class BookDetailActivity extends BaseActivity {
 	 */
 	private void showBookDetail() {
 		if (!TextUtils.isEmpty(mBook.getCoverUrl())) {
-			Picasso.with(this).load(Utils.uriStr2URI(mBook.getCoverUrl()).toASCIIString()).placeholder(R.drawable.ic_launcher).into(mThumbIv);
+			Picasso.with(this).load(Utils.uriStr2URI(mBook.getCoverUrl()).toASCIIString()).placeholder(
+					R.drawable.ic_launcher).into(mThumbIv);
 		}
 		mTitleTv.setText(mBook.getName());
 		mDescriptionTv.setText(Html.fromHtml(mBook.getDescription()));
@@ -272,27 +334,18 @@ public final class BookDetailActivity extends BaseActivity {
 		new Handler().postDelayed(new Runnable() {
 			@Override
 			public void run() {
-				RevealLayout revealLayout = ((RevealLayout) findViewById(R.id.child_head_ll));
-				revealLayout.show();
+				mHeadV.show();
 			}
 		}, 500);
 
+		if(Download.exists(getApplicationContext(), mBook)) {
+			mHeadV.setBackgroundResource(R.color.book_downloaded);
+			mOpenBtn.setDrawableIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_reading, null));
+			mOpenBtn.setBackgroundColor(getResources().getColor(R.color.book_btn_downloaded));
+		}
 		ActivityCompat.invalidateOptionsMenu(this);
 	}
 
-
-	public void downloadBrowser() {
-		if (mBook != null && !TextUtils.isEmpty(mBook.getLink())) {
-			Intent i = new Intent(Intent.ACTION_VIEW);
-			i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			i.setData(Uri.parse(mBook.getLink()));
-			startActivity(i);
-
-			String msg = getString(R.string.lbl_download_path, new StringBuilder().append(
-					Environment.getExternalStorageDirectory()).append('/').append(Environment.DIRECTORY_DOWNLOADS));
-			Utils.showLongToast(getApplicationContext(), msg);
-		}
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {

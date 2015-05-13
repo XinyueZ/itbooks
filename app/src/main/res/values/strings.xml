@@ -89,4 +89,5 @@
     <string name="msg_items_count">Find %s books.</string>
     <string name="msg_items_not_found">Can\'t find books you searched.</string>
     <string name="msg_refresh_fail">@string/msg_items_not_found</string>
+    <string name="msg_no_reader">You don\'t have any 3rd application to read PDF, do you want to download a read?</string>
 </resources>

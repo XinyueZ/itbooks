@@ -10,6 +10,7 @@ import android.os.Environment;
 import com.chopping.utils.Utils;
 import com.itbooks.App;
 import com.itbooks.bus.DownloadEndEvent;
+import com.itbooks.bus.DownloadOpenEvent;
 import com.itbooks.bus.DownloadStartEvent;
 import com.itbooks.data.rest.RSBook;
 import com.itbooks.db.DB;
@@ -18,7 +19,15 @@ import de.greenrobot.event.EventBus;
 
 /**
  * Download ebook.
- *
+ * <p/>
+ * See events:
+ * <p/>
+ * {@link DownloadStartEvent}:Start downloading,
+ * <p/>
+ * {@link DownloadEndEvent}:End downloading,
+ * <p/>
+ * {@link DownloadOpenEvent}:Open downloaded file.
+ * <p/>
  * @author Xinyue Zhao
  */
 public final class Download {
@@ -53,18 +62,18 @@ public final class Download {
 	/**
 	 * Start downloading.
 	 * <p/>
-	 * When the file has been loaded, then directly to open it.
+	 * When the file has been loaded, then directly to end.
 	 *
 	 * @param cxt
 	 * 		{@link Context}.
 	 */
 	public void start(Context cxt) {
-		EventBus.getDefault().post(new DownloadStartEvent(this));
 		//To check whether we've loaded.
 		File to = new File(cxt.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), mTargetName);
 		if (to.exists()) {
-			end(cxt);
+			EventBus.getDefault().post(new DownloadOpenEvent(to));
 		} else {
+			EventBus.getDefault().post(new DownloadStartEvent(this));
 			DownloadManager downloadManager = (DownloadManager) cxt.getSystemService(Context.DOWNLOAD_SERVICE);
 			mTimeStamp = System.currentTimeMillis();
 
@@ -72,12 +81,24 @@ public final class Download {
 					Uri.parse(Utils.uriStr2URI(mBook.getLink()).toASCIIString()));
 			request.setDestinationInExternalFilesDir(cxt, Environment.DIRECTORY_DOWNLOADS, mTargetName);
 			request.setVisibleInDownloadsUi(true);//Can see the downloaded file in "download" app.
-			//			if (Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB) {
-			//				request.setNotificationVisibility(Request.VISIBILITY_HIDDEN);
-			//			}
+//			if (Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB) {
+//				request.setNotificationVisibility(Request.VISIBILITY_HIDDEN);
+//			}
 			mDownloadId = downloadManager.enqueue(request);
 			DB.getInstance(cxt).insertNewDownload(this);
 		}
+	}
+
+	/**
+	 * Test whether a book is already available local.
+	 * @param cxt {@link Context}.
+	 * @param book {@link RSBook} The book.
+	 * @return {@code true} if already exist to read.
+	 */
+	public static boolean exists(Context cxt, RSBook book) {
+		Download download  = new Download(book);
+		File to = new File(cxt.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), download.getTargetName());
+		return to.exists();
 	}
 
 	/**
@@ -87,7 +108,6 @@ public final class Download {
 	 * 		{@link Context}.
 	 */
 	public void end(Context cxt) {
-		//File to = new File(cxt.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), mTargetName);
 		EventBus.getDefault().post(new DownloadEndEvent(this));
 
 	}
