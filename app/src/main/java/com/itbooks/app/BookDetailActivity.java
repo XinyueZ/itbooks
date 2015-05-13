@@ -15,9 +15,12 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.chopping.utils.Utils;
@@ -154,7 +157,7 @@ public final class BookDetailActivity extends BaseActivity   {
 		mPublisherTv = (TextView) findViewById(R.id.detail_publisher_tv);
 
 		mOpenBtn = (ButtonFloat) findViewById(R.id.download_btn);
-		mOpenBtn.setBackgroundColor(getResources().getColor(R.color.common_pink));
+		mOpenBtn.setBackgroundColor(getResources().getColor(R.color.teal_500));
 
 
 		mOpenBtn.setOnClickListener(new OnClickListener() {
@@ -183,6 +186,14 @@ public final class BookDetailActivity extends BaseActivity   {
 			showDialogFragment(BookmarkInfoDialogFragment.newInstance(getApplication()), null);
 		}
 		showBookDetail();
+
+		findViewById(R.id.parent_sv ).setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				((ScrollView) findViewById(R.id.child_sv)).onTouchEvent(event);
+				return false;
+			}
+		});
 	}
 
 

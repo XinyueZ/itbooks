@@ -43,8 +43,8 @@
                     android:id="@+id/books_rv"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:paddingRight="@dimen/activity_horizontal_margin"
                     android:background="@color/common_transparent"
                     android:scrollbars="none" />
 
@@ -65,7 +65,7 @@
 
     </android.support.v4.widget.SlidingPaneLayout>
 
-    <com.chopping.utils.views.OneDirectionScrollView
+    <com.gc.materialdesign.views.ScrollView
         android:layout_width="250dp"
         android:layout_height="match_parent"
         android:layout_gravity="left"
@@ -155,7 +155,7 @@
                 android:layout_height="match_parent" />
 
         </LinearLayout>
-    </com.chopping.utils.views.OneDirectionScrollView>
+    </com.gc.materialdesign.views.ScrollView>
 
 
 </android.support.v4.widget.DrawerLayout>

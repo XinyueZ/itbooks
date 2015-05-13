@@ -44,7 +44,7 @@
     <string name="lbl_bookmark_info_never_show_again">I\'v known, never show this.</string>
     <string name="lbl_bookmark_empty">Bookmark-list is empty.</string>
     <string name="lbl_turn_on_push_info">Do you want to turn on push-messages? We can provide you much more information about many new IT-eBooks regularly.</string>
-    <string name="lbl_by">By %s</string>
+    <string name="lbl_by">By</string>
 
 
     <string name="menu_forward">Forward</string>

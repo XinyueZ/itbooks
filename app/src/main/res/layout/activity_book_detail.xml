@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout android:id="@id/error_content"
+<FrameLayout
+    android:id="@id/error_content"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,159 +9,190 @@
     tools:context="com.itbooks.app.BookDetailActivity">
 
 
-    <com.nirhart.parallaxscroll.views.ParallaxScrollView
-        android:id="@+id/content_psv"
+    <com.gc.materialdesign.views.ScrollView
+        android:id="@+id/parent_sv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:parallax_factor="1.8">
+        android:layout_height="match_parent">
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="5dp">
+            android:layout_height="match_parent">
 
             <com.itbooks.views.AdjustViewBoundsImageView
                 android:id="@+id/detail_thumb_iv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal" />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="200dp"
+                android:orientation="vertical">
 
-            <android.support.v7.widget.CardView style="@style/ListItemCardView">
-
-                <LinearLayout
+                <RelativeLayout
+                    android:id="@+id/child_head_ll"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="5dp">
-
-                    <TextView
-                        style="@style/BookDetailStyle.Property"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/lbl_description" />
-
-                    <TextView
-                        android:id="@+id/detail_description_tv"
-                        style="@style/BookDetailStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/lbl_description" />
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                style="@style/ListItemCardView"
-                android:layout_marginBottom="15dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="5dp">
-
-                    <TextView
-                        style="@style/BookDetailStyle.Property"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/lbl_title" />
-
+                    android:layout_height="120dp"
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:paddingRight="@dimen/activity_horizontal_margin"
+                    android:background="@color/blue_grey_50_50" >
 
                     <TextView
                         android:id="@+id/detail_title_tv"
-                        style="@style/BookDetailStyle"
+                        style="@style/BookDetailTitleStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/lbl_title" />
+                        android:text="@string/lbl_title"
+                        android:layout_centerVertical="true"
+                        android:textColor="@color/common_white" />
 
-
-
-
-
-                    <TextView
-                        style="@style/BookDetailStyle.Property"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_below="@+id/detail_title_tv"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/lbl_author" />
+                        android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/detail_author_tv"
-                        style="@style/BookDetailStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/lbl_author" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/lbl_by"
+                            android:textStyle="bold" android:layout_marginRight="@dimen/common_padding"
+                            android:textColor="@color/common_white" />
 
-                    <TextView
-                        style="@style/BookDetailStyle.Property"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/lbl_isbn" />
+                        <TextView
+                            android:id="@+id/detail_author_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/lbl_author"
+                            android:textColor="@color/common_white" />
+                    </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/detail_isbn_tv"
-                        style="@style/BookDetailStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/lbl_isbn" />
-
-                    <TextView
-                        style="@style/BookDetailStyle.Property"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/lbl_year" />
-
-                    <TextView
-                        android:id="@+id/detail_year_tv"
-                        style="@style/BookDetailStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/lbl_year" />
-
-                    <TextView
-                        style="@style/BookDetailStyle.Property"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/lbl_publisher" />
-
-                    <TextView
-                        android:id="@+id/detail_publisher_tv"
-                        style="@style/BookDetailStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/lbl_publisher" />
+                </RelativeLayout>
 
 
-                    <TextView
-                        style="@style/BookDetailStyle.Property"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/lbl_page" />
+                <com.gc.materialdesign.views.ScrollView
+                    android:id="@+id/child_sv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-                    <TextView
-                        android:id="@+id/detail_page_tv"
-                        style="@style/BookDetailStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/lbl_page" />
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
-
-        </LinearLayout>
-    </com.nirhart.parallaxscroll.views.ParallaxScrollView>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
 
 
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/common_white"
+                            android:paddingLeft="@dimen/activity_horizontal_margin"
+                            android:paddingRight="@dimen/activity_horizontal_margin"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/BookDetailStyle.Property"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/lbl_description" />
+
+                            <TextView
+                                android:id="@+id/detail_description_tv"
+                                style="@style/BookDetailStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/lbl_description" />
+                        </LinearLayout>
 
 
-    <com.gc.materialdesign.views.ButtonFloat
-        android:id="@+id/download_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginRight="24dp"
-        android:background="#8BC34A"
-        app:animate="true"
-        app:iconDrawable="@drawable/ic_download" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="@dimen/activity_horizontal_margin"
+                            android:paddingRight="@dimen/activity_horizontal_margin"
+                            android:background="@color/common_white"
+                            android:orientation="vertical">
+
+
+                            <TextView
+                                style="@style/BookDetailStyle.Property"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/lbl_isbn" />
+
+                            <TextView
+                                android:id="@+id/detail_isbn_tv"
+                                style="@style/BookDetailStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/lbl_isbn" />
+
+                            <TextView
+                                style="@style/BookDetailStyle.Property"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/lbl_year" />
+
+                            <TextView
+                                android:id="@+id/detail_year_tv"
+                                style="@style/BookDetailStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/lbl_year" />
+
+                            <TextView
+                                style="@style/BookDetailStyle.Property"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/lbl_publisher" />
+
+                            <TextView
+                                android:id="@+id/detail_publisher_tv"
+                                style="@style/BookDetailStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/lbl_publisher" />
+
+
+                            <TextView
+                                style="@style/BookDetailStyle.Property"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/lbl_page" />
+
+                            <TextView
+                                android:id="@+id/detail_page_tv"
+                                style="@style/BookDetailStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/lbl_page" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.gc.materialdesign.views.ScrollView>
+            </LinearLayout>
+
+
+            <com.gc.materialdesign.views.ButtonFloat
+                android:id="@+id/download_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"    android:layout_marginTop="200dp"
+                android:layout_marginRight="24dp"
+                android:background="#8BC34A"
+                app:animate="true"
+                app:iconDrawable="@drawable/ic_download" />
+        </FrameLayout>
+    </com.gc.materialdesign.views.ScrollView>
+
+
+    <!--<com.gc.materialdesign.views.ButtonFloat-->
+        <!--android:id="@+id/download_btn"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="bottom|end"-->
+        <!--android:layout_marginRight="24dp"-->
+        <!--android:background="#8BC34A"-->
+        <!--app:animate="true"-->
+        <!--app:iconDrawable="@drawable/ic_download" />-->
 
 </FrameLayout>

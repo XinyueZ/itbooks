@@ -53,7 +53,6 @@ public final class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkList
 
 
 		Picasso picasso = Picasso.with(viewHolder.itemView.getContext());
-		picasso.setIndicatorsEnabled(true);
 		picasso.load(book.getCoverUrl())
 				.placeholder(R.drawable.ic_launcher)
 				.tag(viewHolder.itemView.getContext())

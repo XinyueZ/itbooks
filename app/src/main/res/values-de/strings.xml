@@ -40,7 +40,7 @@
     <string name="lbl_unbookmark_the_book">Entferne von der Merkliste</string>
     <string name="lbl_bookmark_info">Merke dieses Buch mit Klicken auf dem Icon.</string>
     <string name="lbl_bookmark_info_never_show_again">Ich habe gewusst. Diese Info zeigt spät nie.</string>
-    <string name="lbl_by">Von %s</string>
+    <string name="lbl_by">Von</string>
 
     <string name="menu_forward">Vorwärts</string>
     <string name="menu_backward">Rückwärts</string>
