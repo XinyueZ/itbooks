@@ -7,10 +7,13 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.os.AsyncTaskCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.ViewCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -20,9 +23,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.chopping.utils.DeviceUtils;
+import com.chopping.utils.DeviceUtils.ScreenSize;
 import com.chopping.utils.Utils;
 import com.crashlytics.android.Crashlytics;
 import com.gc.materialdesign.views.ButtonFloat;
@@ -35,6 +39,8 @@ import com.itbooks.data.DSBookmark;
 import com.itbooks.data.rest.RSBook;
 import com.itbooks.db.DB;
 import com.itbooks.utils.Prefs;
+import com.itbooks.views.RevealLayout;
+import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -42,7 +48,7 @@ import com.squareup.picasso.Picasso;
  *
  * @author Xinyue Zhao
  */
-public final class BookDetailActivity extends BaseActivity   {
+public final class BookDetailActivity extends BaseActivity {
 
 	/**
 	 * Main layout for this component.
@@ -84,7 +90,6 @@ public final class BookDetailActivity extends BaseActivity   {
 
 	private boolean mBookmarked;
 	private MenuItem mBookmarkItem;
-
 
 	/**
 	 * Show single instance of {@link com.itbooks.app.BookDetailActivity}.
@@ -186,16 +191,30 @@ public final class BookDetailActivity extends BaseActivity   {
 			showDialogFragment(BookmarkInfoDialogFragment.newInstance(getApplication()), null);
 		}
 		showBookDetail();
+		ViewCompat.setElevation(findViewById(R.id.child_head_ll), getResources().getDimensionPixelSize(
+				R.dimen.common_elevation));
 
-		findViewById(R.id.parent_sv ).setOnTouchListener(new OnTouchListener() {
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				((ScrollView) findViewById(R.id.child_sv)).onTouchEvent(event);
-				return false;
-			}
-		});
+		mParentV = (NestedScrollView) findViewById(R.id.parent_sv);
+		mParentV.setOnTouchListener(touchParent);
+		NestedScrollView childV = (NestedScrollView) findViewById(R.id.child_sv);
+		childV.setOnTouchListener(touchParent);
+		ScreenSize su = DeviceUtils.getScreenSize(this);
+		childV.getLayoutParams().height =
+				su.Height - getSupportActionBar().getHeight() - getResources().getDimensionPixelSize(R.dimen.detail_head_height);
 	}
-
+	NestedScrollView mParentV;
+	OnTouchListener touchParent= new OnTouchListener() {
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			int y = mParentV.getScrollY();
+			if(y >= 0 && y <= 150) {
+				showFab();
+			} else {
+				hideFab();
+			}
+			return false;
+		}
+	};
 
 	@Override
 	protected void onNewIntent(Intent intent) {
@@ -216,10 +235,7 @@ public final class BookDetailActivity extends BaseActivity   {
 	 */
 	private void showBookDetail() {
 		if (!TextUtils.isEmpty(mBook.getCoverUrl())) {
-			Picasso.with(this)
-					.load(mBook.getCoverUrl())
-					.placeholder(R.drawable.ic_launcher)
-					.into(mThumbIv);
+			Picasso.with(this).load(mBook.getCoverUrl()).placeholder(R.drawable.ic_launcher).into(mThumbIv);
 		}
 		mTitleTv.setText(mBook.getName());
 		mDescriptionTv.setText(Html.fromHtml(mBook.getDescription()));
@@ -228,6 +244,14 @@ public final class BookDetailActivity extends BaseActivity   {
 		mYearTv.setText(mBook.getYear());
 		mPageTv.setText(mBook.getPages());
 		mPublisherTv.setText(mBook.getPublisher());
+
+		new Handler().postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				RevealLayout revealLayout = ((RevealLayout) findViewById(R.id.child_head_ll));
+				revealLayout.show();
+			}
+		}, 500);
 
 		ActivityCompat.invalidateOptionsMenu(this);
 	}
@@ -251,18 +275,18 @@ public final class BookDetailActivity extends BaseActivity   {
 		getMenuInflater().inflate(BOOK_DETAIL_MENU, menu);
 		mBookmarkItem = menu.findItem(R.id.action_bookmark);
 		AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Void>() {
-					@Override
-					protected Void doInBackground(Void... params) {
-						mBookmarked = DB.getInstance(getApplication()).isBookmarked(mBook);
-						return null;
-					}
+			@Override
+			protected Void doInBackground(Void... params) {
+				mBookmarked = DB.getInstance(getApplication()).isBookmarked(mBook);
+				return null;
+			}
 
-					@Override
-					protected void onPostExecute(Void aVoid) {
-						super.onPostExecute(aVoid);
-						mBookmarkItem.setIcon(mBookmarked ? R.drawable.ic_bookmarked : R.drawable.ic_not_bookmarked);
-					}
-				});
+			@Override
+			protected void onPostExecute(Void aVoid) {
+				super.onPostExecute(aVoid);
+				mBookmarkItem.setIcon(mBookmarked ? R.drawable.ic_bookmarked : R.drawable.ic_not_bookmarked);
+			}
+		});
 		return true;
 	}
 
@@ -324,5 +348,25 @@ public final class BookDetailActivity extends BaseActivity   {
 	@Override
 	public void onBackPressed() {
 		ActivityCompat.finishAfterTransition(this);
+	}
+
+	private boolean mFabIsShown;
+
+	private void showFab() {
+		if (!mFabIsShown) {
+			mOpenBtn.setEnabled(true);
+			ViewPropertyAnimator.animate(mOpenBtn).cancel();
+			ViewPropertyAnimator.animate(mOpenBtn).scaleX(1).scaleY(1).setDuration(200).start();
+			mFabIsShown = true;
+		}
+	}
+
+	private void hideFab() {
+		if (mFabIsShown) {
+			mOpenBtn.setEnabled(false);
+			ViewPropertyAnimator.animate(mOpenBtn).cancel();
+			ViewPropertyAnimator.animate(mOpenBtn).scaleX(0).scaleY(0).setDuration(200).start();
+			mFabIsShown = false;
+		}
 	}
 }

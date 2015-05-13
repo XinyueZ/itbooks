@@ -8,87 +8,98 @@
     android:layout_height="match_parent"
     tools:context="com.itbooks.app.BookDetailActivity">
 
+    <com.itbooks.views.AdjustViewBoundsImageView
+        android:id="@+id/detail_thumb_iv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal" />
 
-    <com.gc.materialdesign.views.ScrollView
+    <android.support.v4.widget.NestedScrollView
         android:id="@+id/parent_sv"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <com.itbooks.views.AdjustViewBoundsImageView
-                android:id="@+id/detail_thumb_iv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_horizontal" />
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="200dp"
                 android:orientation="vertical">
 
-                <RelativeLayout
+                <android.support.v4.widget.Space
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/detail_head_height" />
+
+
+                <com.itbooks.views.RevealLayout
                     android:id="@+id/child_head_ll"
                     android:layout_width="match_parent"
-                    android:layout_height="120dp"
-                    android:paddingLeft="@dimen/activity_horizontal_margin"
-                    android:paddingRight="@dimen/activity_horizontal_margin"
-                    android:background="@color/blue_grey_50_50" >
+                    android:layout_height="wrap_content"
+                    android:background="@color/blue_grey_600_90">
 
-                    <TextView
-                        android:id="@+id/detail_title_tv"
-                        style="@style/BookDetailTitleStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/lbl_title"
-                        android:layout_centerVertical="true"
-                        android:textColor="@color/common_white" />
-
-                    <LinearLayout
-                        android:layout_below="@+id/detail_title_tv"
+                    <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:layout_height="120dp"
+                        android:paddingLeft="@dimen/activity_horizontal_margin"
+                        android:paddingRight="@dimen/activity_horizontal_margin">
 
                         <TextView
+                            android:id="@+id/detail_title_tv"
+                            style="@style/BookDetailTitleStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/lbl_by"
-                            android:textStyle="bold" android:layout_marginRight="@dimen/common_padding"
+                            android:layout_gravity="center_vertical"
+                            android:text="@string/lbl_title"
                             android:textColor="@color/common_white" />
 
-                        <TextView
-                            android:id="@+id/detail_author_tv"
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/lbl_author"
-                            android:textColor="@color/common_white" />
-                    </LinearLayout>
+                            android:layout_gravity="bottom|end"
+                            android:layout_marginBottom="10dp"
+                            android:orientation="horizontal">
 
-                </RelativeLayout>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="@dimen/common_padding"
+                                android:text="@string/lbl_by"
+                                android:textColor="@color/common_white"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/detail_author_tv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/lbl_author"
+                                android:textColor="@color/common_white" />
+                        </LinearLayout>
+
+                    </FrameLayout>
+
+                </com.itbooks.views.RevealLayout>
 
 
-                <com.gc.materialdesign.views.ScrollView
+                <android.support.v4.widget.NestedScrollView
                     android:id="@+id/child_sv"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content"
+                    android:background="@color/common_white">
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:orientation="vertical">
 
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@color/common_white"
+                            android:orientation="vertical"
                             android:paddingLeft="@dimen/activity_horizontal_margin"
-                            android:paddingRight="@dimen/activity_horizontal_margin"
-                            android:orientation="vertical">
+                            android:paddingRight="@dimen/activity_horizontal_margin">
 
                             <TextView
                                 style="@style/BookDetailStyle.Property"
@@ -108,10 +119,9 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:orientation="vertical"
                             android:paddingLeft="@dimen/activity_horizontal_margin"
-                            android:paddingRight="@dimen/activity_horizontal_margin"
-                            android:background="@color/common_white"
-                            android:orientation="vertical">
+                            android:paddingRight="@dimen/activity_horizontal_margin">
 
 
                             <TextView
@@ -167,32 +177,26 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/lbl_page" />
                         </LinearLayout>
-                    </LinearLayout>
-                </com.gc.materialdesign.views.ScrollView>
-            </LinearLayout>
 
+                        <android.support.v4.widget.Space
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp" />
+                    </LinearLayout>
+                </android.support.v4.widget.NestedScrollView>
+            </LinearLayout>
 
             <com.gc.materialdesign.views.ButtonFloat
                 android:id="@+id/download_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"    android:layout_marginTop="200dp"
+                android:layout_gravity="end"
                 android:layout_marginRight="24dp"
+                android:layout_marginTop="200dp"
                 android:background="#8BC34A"
                 app:animate="true"
                 app:iconDrawable="@drawable/ic_download" />
         </FrameLayout>
-    </com.gc.materialdesign.views.ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 
-
-    <!--<com.gc.materialdesign.views.ButtonFloat-->
-        <!--android:id="@+id/download_btn"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="bottom|end"-->
-        <!--android:layout_marginRight="24dp"-->
-        <!--android:background="#8BC34A"-->
-        <!--app:animate="true"-->
-        <!--app:iconDrawable="@drawable/ic_download" />-->
 
 </FrameLayout>

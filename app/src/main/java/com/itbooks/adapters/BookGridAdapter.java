@@ -82,6 +82,7 @@ public final class BookGridAdapter extends AbstractBookViewAdapter<BookGridAdapt
 			}
 		}).placeholder(R.drawable.ic_launcher).tag(
 				holder.itemView.getContext()).into(holder.mBookThumbIv);
+
 		holder.itemView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
