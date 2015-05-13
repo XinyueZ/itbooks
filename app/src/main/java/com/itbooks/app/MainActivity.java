@@ -29,6 +29,8 @@ import android.view.inputmethod.InputMethodManager;
 import com.chopping.bus.CloseDrawerEvent;
 import com.chopping.net.GsonRequestTask;
 import com.chopping.net.TaskHelper;
+import com.chopping.utils.DeviceUtils;
+import com.chopping.utils.DeviceUtils.ScreenSize;
 import com.gc.materialdesign.widgets.SnackBar;
 import com.itbooks.R;
 import com.itbooks.adapters.AbstractBookViewAdapter;
@@ -88,7 +90,9 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 
 	private LinearLayoutManager mLayoutManager;
 
-	private static final int GRID_COL_COUNT =4;
+	private static final int GRID_COL_COUNT = 2;
+
+	private ScreenSize mScreenSize;
 
 	//------------------------------------------------
 	//Subscribes, event-handlers
@@ -151,7 +155,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(LAYOUT);
-
+		mScreenSize = DeviceUtils.getScreenSize(getApplicationContext());
 		mSuggestions = new SearchRecentSuggestions(this, SearchSuggestionProvider.AUTHORITY,
 				SearchSuggestionProvider.MODE);
 
@@ -166,7 +170,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 			mRv.setAdapter(new BookListAdapter(null));
 		} else {
 			mRv.setLayoutManager(mLayoutManager = new GridLayoutManager(this, GRID_COL_COUNT));
-			mRv.setAdapter(new BookGridAdapter(null));
+			mRv.setAdapter(new BookGridAdapter(null,GRID_COL_COUNT, mScreenSize));
 		}
 
 		handleIntent(getIntent());
@@ -275,7 +279,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 			break;
 		case R.id.action_view_style_grid:
 			mRv.setLayoutManager(mLayoutManager = new GridLayoutManager(this, GRID_COL_COUNT));
-			mRv.setAdapter(new BookGridAdapter(((AbstractBookViewAdapter) mRv.getAdapter()).getData())  );
+			mRv.setAdapter(new BookGridAdapter(((AbstractBookViewAdapter) mRv.getAdapter()).getData(), GRID_COL_COUNT, mScreenSize)  );
 			Prefs.getInstance(getApplicationContext()).setViewStyle(1);
 			supportInvalidateOptionsMenu();
 			break;

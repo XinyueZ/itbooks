@@ -43,7 +43,6 @@ public final class BookListAdapter extends AbstractBookViewAdapter<BookListAdapt
 	public void onBindViewHolder(ViewHolder holder, int position) {
 		final RSBook book = getData().get(position);
 		Picasso picasso = Picasso.with(holder.itemView.getContext());
-//		picasso.setIndicatorsEnabled(true);
 		picasso.load(book.getCoverUrl()).placeholder(R.drawable.ic_launcher).tag(
 				holder.itemView.getContext()).into(holder.mBookThumbIv);
 		holder.mBookTitleTv.setText(book.getName());
