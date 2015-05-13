@@ -65,4 +65,5 @@
     <string name="msg_items_count">%s  wurden gefunden.</string>
     <string name="msg_items_not_found">Keine gewünschten Bücher wurden gefunden.</string>
     <string name="msg_no_reader">Du hast keine App, die PDF lesen zu können. Magst du eine App herunterladen?</string>
+    <string name="msg_downloading_fail">Fehler, dieses Buch kann nicht heruntergeladen werden.</string>
 </resources>

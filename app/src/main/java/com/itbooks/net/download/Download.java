@@ -10,6 +10,7 @@ import android.os.Environment;
 import com.chopping.utils.Utils;
 import com.itbooks.App;
 import com.itbooks.bus.DownloadEndEvent;
+import com.itbooks.bus.DownloadFailedEvent;
 import com.itbooks.bus.DownloadOpenEvent;
 import com.itbooks.bus.DownloadStartEvent;
 import com.itbooks.data.rest.RSBook;
@@ -102,6 +103,18 @@ public final class Download {
 	}
 
 	/**
+	 * Test whether is being downloaded.
+	 * @param cxt {@link Context}.
+	 * @param book {@link RSBook} The book.
+	 * @return {@code true} if the book is being downloaded.
+	 */
+	public static boolean downloading(Context cxt, RSBook book) {
+		DownloadManager downloadManager = (DownloadManager) cxt.getSystemService(Context.DOWNLOAD_SERVICE);
+		return false;
+	}
+
+
+	/**
 	 * End of downloading.
 	 *
 	 * @param cxt
@@ -109,6 +122,17 @@ public final class Download {
 	 */
 	public void end(Context cxt) {
 		EventBus.getDefault().post(new DownloadEndEvent(this));
+
+	}
+
+	/**
+	 * Fail on downloading.
+	 *
+	 * @param cxt
+	 * 		{@link Context}.
+	 */
+	public void failed(Context cxt) {
+		EventBus.getDefault().post(new DownloadFailedEvent(this));
 
 	}
 

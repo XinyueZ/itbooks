@@ -19,16 +19,21 @@ public final class DownloadReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
 		Download download = DB.getInstance(context).getDownload(downloadId);
-		if(download != null) {
+		if (download != null) {
 			DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
 			DownloadManager.Query query = new DownloadManager.Query();
 			query.setFilterById(downloadId);
 			Cursor cursor = downloadManager.query(query);
-			if(cursor.moveToFirst()){
+			if (cursor.moveToFirst()) {
 				int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
 				int status = cursor.getInt(columnIndex);
-				if(status == DownloadManager.STATUS_SUCCESSFUL){
-					download.end(context );
+				switch (status) {
+				case DownloadManager.STATUS_SUCCESSFUL:
+					download.end(context);
+					break;
+				case DownloadManager.STATUS_FAILED:
+					download.failed(context);
+					break;
 				}
 			}
 		}

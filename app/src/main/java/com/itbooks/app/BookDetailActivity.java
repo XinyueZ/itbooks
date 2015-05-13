@@ -32,12 +32,14 @@ import com.chopping.utils.DeviceUtils.ScreenSize;
 import com.chopping.utils.Utils;
 import com.crashlytics.android.Crashlytics;
 import com.gc.materialdesign.views.ButtonFloat;
+import com.gc.materialdesign.widgets.SnackBar;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.itbooks.R;
 import com.itbooks.app.fragments.BookmarkInfoDialogFragment;
 import com.itbooks.bus.DownloadEndEvent;
+import com.itbooks.bus.DownloadFailedEvent;
 import com.itbooks.bus.DownloadOpenEvent;
 import com.itbooks.bus.DownloadStartEvent;
 import com.itbooks.data.DSBookmark;
@@ -113,12 +115,10 @@ public final class BookDetailActivity extends BaseActivity {
 	 */
 	public void onEvent(DownloadStartEvent e) {
 		mInProgress = true;
-		mLoadingPb.setVisibility(View.VISIBLE);
-		mHeadV.setBackgroundResource(R.color.book_downloading);
-		mOpenBtn.setDrawableIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_file_cloud_download, null));
-		mOpenBtn.setBackgroundColor(getResources().getColor(R.color.book_btn_downloading));
+		uiLoading();
 		mHeadV.show();
 	}
+
 
 
 	/**
@@ -129,14 +129,28 @@ public final class BookDetailActivity extends BaseActivity {
 	 */
 	public void onEvent(DownloadEndEvent e) {
 		if (e.getDownload().getBook().equals(mBook)) {
-			mLoadingPb.setVisibility(View.GONE);
-			mHeadV.setBackgroundResource(R.color.book_downloaded);
-			mOpenBtn.setDrawableIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_reading, null));
-			mOpenBtn.setBackgroundColor(getResources().getColor(R.color.book_btn_downloaded));
+			uiLoaded();
 			mHeadV.show();
 		}
 		mInProgress = false;
 	}
+
+
+	/**
+	 * Handler for {@link com.itbooks.bus.DownloadFailedEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link com.itbooks.bus.DownloadFailedEvent}.
+	 */
+	public void onEvent(DownloadFailedEvent e) {
+		if (e.getDownload().getBook().equals(mBook)) {
+			uiFailDownloading();
+			new SnackBar(this, getString(R.string.msg_downloading_fail)).show();
+		}
+		mInProgress = false;
+	}
+
+
 
 	/**
 	 * Handler for {@link com.itbooks.bus.DownloadOpenEvent}.
@@ -338,10 +352,14 @@ public final class BookDetailActivity extends BaseActivity {
 			}
 		}, 500);
 
+		//Try to find whether local has this book or not.
 		if(Download.exists(getApplicationContext(), mBook)) {
-			mHeadV.setBackgroundResource(R.color.book_downloaded);
-			mOpenBtn.setDrawableIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_reading, null));
-			mOpenBtn.setBackgroundColor(getResources().getColor(R.color.book_btn_downloaded));
+			uiLoaded();
+		} else {
+			//Whether is being downloaded.
+			if(Download.downloading(getApplicationContext(), mBook)) {
+				uiLoading();
+			}
 		}
 		ActivityCompat.invalidateOptionsMenu(this);
 	}
@@ -446,4 +464,34 @@ public final class BookDetailActivity extends BaseActivity {
 			mFabIsShown = false;
 		}
 	}
+
+	/**
+	 * Color on head changed while being loaded.
+	 */
+	private void uiLoading() {
+		mLoadingPb.setVisibility(View.VISIBLE);
+		mHeadV.setBackgroundResource(R.color.book_downloading);
+		mOpenBtn.setDrawableIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_file_cloud_download, null));
+		mOpenBtn.setBackgroundColor(getResources().getColor(R.color.book_btn_downloading));
+	}
+
+	/**
+	 * Color on head changed after being loaded..
+	 */
+	private void uiLoaded() {
+		mLoadingPb.setVisibility(View.GONE);
+		mHeadV.setBackgroundResource(R.color.book_downloaded);
+		mOpenBtn.setDrawableIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_reading, null));
+		mOpenBtn.setBackgroundColor(getResources().getColor(R.color.book_btn_downloaded));
+	}
+
+	/**
+	 * Color on head changed if download failed.
+	 */
+	private void uiFailDownloading() {
+		mLoadingPb.setVisibility(View.GONE);
+		mHeadV.setBackgroundResource(R.color.book_failed_downloaded);
+		mHeadV.show();
+	}
+
 }

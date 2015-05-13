@@ -595,18 +595,16 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 			((AbstractBookViewAdapter)mRv.getAdapter()).setData(bookList.getBooks());
 			mRv.getAdapter().notifyDataSetChanged();
 			setHasShownDataOnUI(true);
-			SnackBar snackbar = new SnackBar(this, String.format(getString(R.string.msg_items_count),
-					bookList.getBooks().size()));
-			snackbar.show();
+			new SnackBar(this, String.format(getString(R.string.msg_items_count),
+					bookList.getBooks().size())).show();
 		} else {
-			SnackBar snackbar = new SnackBar(this, getString(R.string.msg_refresh_fail), getString(R.string.btn_retry),
+			 new SnackBar(this, getString(R.string.msg_refresh_fail), getString(R.string.btn_retry),
 					new OnClickListener() {
 						@Override
 						public void onClick(View v) {
 							loadBooks();
 						}
-					});
-			snackbar.show();
+					}) .show();
 		}
 		findViewById(R.id.loading_pb).setVisibility(View.GONE);
 		mRefreshLayout.setRefreshing(false);
