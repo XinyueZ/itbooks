@@ -43,11 +43,16 @@ import com.facebook.stetho.Stetho;
  * @author Xinyue Zhao
  */
 public final class App extends Application {
+	/**
+	 * Our downloaded file is unique to other apps.
+	 */
+	public static final String PREFIX = "itbooks_";//Prefix of a downloaded file.
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
-        Stetho.initialize(Stetho.newInitializerBuilder(this).enableDumpapp(Stetho.defaultDumperPluginsProvider(
-                this)).enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this)).build());
+		Stetho.initialize(Stetho.newInitializerBuilder(this).enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+				.enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this)).build());
 		TaskHelper.init(getApplicationContext());
 	}
 }

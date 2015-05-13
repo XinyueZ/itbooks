@@ -4,6 +4,7 @@ package com.itbooks.data.rest;
 import java.io.Serializable;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -118,5 +119,20 @@ public final class RSBook implements Serializable {
 				bundle.getString("Description"),
 				bundle.getString("CoverUrl")
 		);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		RSBook other = (RSBook) o;
+		return TextUtils.equals(mName, other.mName) &&
+				TextUtils.equals(mAuthor, other.mAuthor) &&
+				TextUtils.equals(mSize, other.mSize) &&
+				TextUtils.equals(mPages, other.mPages) &&
+				TextUtils.equals(mLink, other.mLink) &&
+				TextUtils.equals(mISBN, other.mISBN) &&
+				TextUtils.equals(mYear, other.mYear) &&
+				TextUtils.equals(mPublisher, other.mPublisher) &&
+				TextUtils.equals(mDescription, other.mDescription) &&
+				TextUtils.equals(mCoverUrl, other.mCoverUrl);
 	}
 }

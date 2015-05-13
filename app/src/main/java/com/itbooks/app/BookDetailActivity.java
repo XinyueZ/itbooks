@@ -1,7 +1,6 @@
 package com.itbooks.app;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -9,7 +8,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.os.AsyncTaskCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewCompat;
@@ -35,9 +33,12 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.itbooks.R;
 import com.itbooks.app.fragments.BookmarkInfoDialogFragment;
+import com.itbooks.bus.DownloadEndEvent;
+import com.itbooks.bus.DownloadStartEvent;
 import com.itbooks.data.DSBookmark;
 import com.itbooks.data.rest.RSBook;
 import com.itbooks.db.DB;
+import com.itbooks.net.download.Download;
 import com.itbooks.utils.Prefs;
 import com.itbooks.views.RevealLayout;
 import com.nineoldandroids.view.ViewPropertyAnimator;
@@ -91,6 +92,34 @@ public final class BookDetailActivity extends BaseActivity {
 	private boolean mBookmarked;
 	private MenuItem mBookmarkItem;
 
+	//------------------------------------------------
+	//Subscribes, event-handlers
+	//------------------------------------------------
+
+	/**
+	 * Handler for {@link com.itbooks.bus.DownloadStartEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link com.itbooks.bus.DownloadStartEvent}.
+	 */
+	public void onEvent(DownloadStartEvent e) {
+		findViewById(R.id.loading_pb).setVisibility(View.VISIBLE);
+	}
+
+
+	/**
+	 * Handler for {@link com.itbooks.bus.DownloadEndEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link com.itbooks.bus.DownloadEndEvent}.
+	 */
+	public void onEvent(DownloadEndEvent e) {
+		if(e.getDownload().getBook().equals(mBook)) {
+			findViewById(R.id.loading_pb).setVisibility(View.GONE);
+		}
+	}
+
+	//------------------------------------------------
 	/**
 	 * Show single instance of {@link com.itbooks.app.BookDetailActivity}.
 	 *
@@ -168,22 +197,8 @@ public final class BookDetailActivity extends BaseActivity {
 		mOpenBtn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				showDialogFragment(new DialogFragment() {
-					@Override
-					public Dialog onCreateDialog(Bundle savedInstanceState) {
-						com.gc.materialdesign.widgets.Dialog dialog = new com.gc.materialdesign.widgets.Dialog(
-								getActivity(), getString(R.string.application_name), getString(
-								R.string.msg_ask_download));
-						//						dialog.getButtonAccept().setText(getString(R.string.btn_confirm));
-						dialog.setOnAcceptButtonClickListener(new OnClickListener() {
-							@Override
-							public void onClick(View v) {
-								downloadBrowser();
-							}
-						});
-						return dialog;
-					}
-				}, "download ask");
+				Download download = new Download(mBook);
+				download.start(getApplicationContext());
 			}
 		});
 
@@ -192,7 +207,7 @@ public final class BookDetailActivity extends BaseActivity {
 		}
 		showBookDetail();
 		ViewCompat.setElevation(findViewById(R.id.child_head_ll), getResources().getDimensionPixelSize(
-				R.dimen.common_elevation));
+				R.dimen.detail_head_elevation));
 
 		mParentV = (NestedScrollView) findViewById(R.id.parent_sv);
 		mParentV.setOnTouchListener(touchParent);

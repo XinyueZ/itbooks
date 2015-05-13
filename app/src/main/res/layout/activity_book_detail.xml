@@ -79,6 +79,16 @@
 
                     </FrameLayout>
 
+                    <com.gc.materialdesign.views.ProgressBarIndeterminate
+                        android:id="@+id/loading_pb"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:background="@color/red"
+                        android:visibility="gone" />
+
                 </com.itbooks.views.RevealLayout>
 
 

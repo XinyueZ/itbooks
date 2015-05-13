@@ -34,6 +34,7 @@ public final class DatabaseHelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL(BookmarksTbl.SQL_CREATE);
 		db.execSQL(LabelsTbl.SQL_CREATE);
+		db.execSQL(DownloadsTbl.SQL_CREATE);
 	}
 
 	@Override
