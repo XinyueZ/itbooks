@@ -7,6 +7,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Environment;
 
+import com.chopping.utils.Utils;
 import com.itbooks.App;
 import com.itbooks.bus.DownloadEndEvent;
 import com.itbooks.bus.DownloadStartEvent;
@@ -66,13 +67,14 @@ public final class Download {
 		} else {
 			DownloadManager downloadManager = (DownloadManager) cxt.getSystemService(Context.DOWNLOAD_SERVICE);
 			mTimeStamp = System.currentTimeMillis();
-			Uri downloadUri = Uri.parse(mBook.getLink());
-			DownloadManager.Request request = new DownloadManager.Request(downloadUri);
-			request.setVisibleInDownloadsUi(true);//Can   see the downloaded file in "download" app.
+
+			DownloadManager.Request request = new DownloadManager.Request(
+					Uri.parse(Utils.uriStr2URI(mBook.getLink()).toASCIIString()));
+			request.setDestinationInExternalFilesDir(cxt, Environment.DIRECTORY_DOWNLOADS, mTargetName);
+			request.setVisibleInDownloadsUi(true);//Can see the downloaded file in "download" app.
 			//			if (Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB) {
 			//				request.setNotificationVisibility(Request.VISIBILITY_HIDDEN);
 			//			}
-			request.setDestinationInExternalFilesDir(cxt, Environment.DIRECTORY_DOWNLOADS, mTargetName);
 			mDownloadId = downloadManager.enqueue(request);
 			DB.getInstance(cxt).insertNewDownload(this);
 		}

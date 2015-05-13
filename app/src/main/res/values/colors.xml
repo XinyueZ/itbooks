@@ -40,6 +40,8 @@
     <color name="primary_dark_color">@color/indigo_700</color>
     <color name="primary_accent">@color/teal_500</color>
 
-
+    <color name="book_not_downloaded">@color/blue_grey_600_90</color>
+    <color name="book_downloading">@color/red</color>
+    <color name="book_downloaded">@color/teal_500</color>
 
 </resources>

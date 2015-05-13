@@ -83,6 +83,8 @@ public final class BookDetailActivity extends BaseActivity {
 
 
 	private ButtonFloat mOpenBtn;
+	private View mLoadingPb;
+	private View mHeadV;
 
 	/**
 	 * The interstitial ad.
@@ -91,6 +93,7 @@ public final class BookDetailActivity extends BaseActivity {
 
 	private boolean mBookmarked;
 	private MenuItem mBookmarkItem;
+
 
 	//------------------------------------------------
 	//Subscribes, event-handlers
@@ -103,7 +106,8 @@ public final class BookDetailActivity extends BaseActivity {
 	 * 		Event {@link com.itbooks.bus.DownloadStartEvent}.
 	 */
 	public void onEvent(DownloadStartEvent e) {
-		findViewById(R.id.loading_pb).setVisibility(View.VISIBLE);
+		mLoadingPb  .setVisibility(View.VISIBLE);
+		mHeadV.setBackgroundResource(R.color.book_downloading);
 	}
 
 
@@ -115,7 +119,8 @@ public final class BookDetailActivity extends BaseActivity {
 	 */
 	public void onEvent(DownloadEndEvent e) {
 		if(e.getDownload().getBook().equals(mBook)) {
-			findViewById(R.id.loading_pb).setVisibility(View.GONE);
+			mLoadingPb.setVisibility(View.GONE);
+			mHeadV.setBackgroundResource(R.color.book_downloaded);
 		}
 	}
 
@@ -190,10 +195,13 @@ public final class BookDetailActivity extends BaseActivity {
 		mPageTv = (TextView) findViewById(R.id.detail_page_tv);
 		mPublisherTv = (TextView) findViewById(R.id.detail_publisher_tv);
 
+
+		mLoadingPb = findViewById(R.id.loading_pb);
+		mHeadV = findViewById(R.id.child_head_ll);
+		ViewCompat.setElevation(mHeadV, getResources().getDimensionPixelSize(
+				R.dimen.detail_head_elevation));
 		mOpenBtn = (ButtonFloat) findViewById(R.id.download_btn);
 		mOpenBtn.setBackgroundColor(getResources().getColor(R.color.teal_500));
-
-
 		mOpenBtn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -205,9 +213,6 @@ public final class BookDetailActivity extends BaseActivity {
 		if (!prefs.hasKnownBookmark()) {
 			showDialogFragment(BookmarkInfoDialogFragment.newInstance(getApplication()), null);
 		}
-		showBookDetail();
-		ViewCompat.setElevation(findViewById(R.id.child_head_ll), getResources().getDimensionPixelSize(
-				R.dimen.detail_head_elevation));
 
 		mParentV = (NestedScrollView) findViewById(R.id.parent_sv);
 		mParentV.setOnTouchListener(touchParent);
@@ -216,9 +221,13 @@ public final class BookDetailActivity extends BaseActivity {
 		ScreenSize su = DeviceUtils.getScreenSize(this);
 		childV.getLayoutParams().height =
 				su.Height - getSupportActionBar().getHeight() - getResources().getDimensionPixelSize(R.dimen.detail_head_height);
+
+		showBookDetail();
 	}
-	NestedScrollView mParentV;
-	OnTouchListener touchParent= new OnTouchListener() {
+
+	//For sticky affect.
+	private NestedScrollView mParentV;
+	private OnTouchListener touchParent= new OnTouchListener() {
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
 			int y = mParentV.getScrollY();
@@ -250,7 +259,7 @@ public final class BookDetailActivity extends BaseActivity {
 	 */
 	private void showBookDetail() {
 		if (!TextUtils.isEmpty(mBook.getCoverUrl())) {
-			Picasso.with(this).load(mBook.getCoverUrl()).placeholder(R.drawable.ic_launcher).into(mThumbIv);
+			Picasso.with(this).load(Utils.uriStr2URI(mBook.getCoverUrl()).toASCIIString()).placeholder(R.drawable.ic_launcher).into(mThumbIv);
 		}
 		mTitleTv.setText(mBook.getName());
 		mDescriptionTv.setText(Html.fromHtml(mBook.getDescription()));

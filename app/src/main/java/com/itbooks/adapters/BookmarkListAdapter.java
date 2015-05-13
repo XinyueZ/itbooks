@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.chopping.utils.Utils;
 import com.itbooks.R;
 import com.itbooks.bus.DeleteBookmarkEvent;
 import com.itbooks.bus.OpenBookmarkEvent;
@@ -53,7 +54,7 @@ public final class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkList
 
 
 		Picasso picasso = Picasso.with(viewHolder.itemView.getContext());
-		picasso.load(book.getCoverUrl())
+		picasso.load(Utils.uriStr2URI(book.getCoverUrl()).toASCIIString())
 				.placeholder(R.drawable.ic_launcher)
 				.tag(viewHolder.itemView.getContext())
 				.into(viewHolder.mBookCoverIv);

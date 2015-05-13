@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.chopping.utils.Utils;
 import com.itbooks.R;
 import com.itbooks.bus.OpenBookDetailEvent;
 import com.itbooks.data.rest.RSBook;
@@ -43,7 +44,7 @@ public final class BookListAdapter extends AbstractBookViewAdapter<BookListAdapt
 	public void onBindViewHolder(ViewHolder holder, int position) {
 		final RSBook book = getData().get(position);
 		Picasso picasso = Picasso.with(holder.itemView.getContext());
-		picasso.load(book.getCoverUrl()).placeholder(R.drawable.ic_launcher).tag(
+		picasso.load(Utils.uriStr2URI(book.getCoverUrl()).toASCIIString()).placeholder(R.drawable.ic_launcher).tag(
 				holder.itemView.getContext()).into(holder.mBookThumbIv);
 		holder.mBookTitleTv.setText(book.getName());
 		holder.mBookSubTitleTv.setText(book.getAuthor());
