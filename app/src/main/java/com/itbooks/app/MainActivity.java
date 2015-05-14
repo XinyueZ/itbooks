@@ -34,6 +34,7 @@ import com.chopping.net.GsonRequestTask;
 import com.chopping.net.TaskHelper;
 import com.chopping.utils.DeviceUtils;
 import com.chopping.utils.DeviceUtils.ScreenSize;
+import com.crashlytics.android.Crashlytics;
 import com.gc.materialdesign.widgets.SnackBar;
 import com.itbooks.R;
 import com.itbooks.adapters.AbstractBookViewAdapter;
@@ -179,6 +180,8 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(LAYOUT);
+		Crashlytics.start(this);
+
 		mScreenSize = DeviceUtils.getScreenSize(getApplicationContext());
 		mSuggestions = new SearchRecentSuggestions(this, SearchSuggestionProvider.AUTHORITY,
 				SearchSuggestionProvider.MODE);
