@@ -9,6 +9,7 @@
 
     <color name="indigo_300">#7986CB</color>
     <color name="indigo_500">#3F51B5</color>
+    <color name="indigo_500_25">#403F51B5</color>
     <color name="indigo_700">#303F9F</color>
     <color name="blue_grey_50">#607D8B</color>
     <color name="blue_grey_600">#546E7A</color>

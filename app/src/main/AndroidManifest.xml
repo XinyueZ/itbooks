@@ -58,7 +58,8 @@
 
         <activity
             android:name=".app.BookDetailActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppDetailTheme"/>
 
         <activity
             android:name=".app.SettingActivity"

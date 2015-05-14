@@ -206,5 +206,7 @@
         </FrameLayout>
     </android.support.v4.widget.NestedScrollView>
 
-
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="@style/ActionBar_ToolBar" />
 </FrameLayout>

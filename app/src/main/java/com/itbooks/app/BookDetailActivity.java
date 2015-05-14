@@ -16,6 +16,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -92,6 +93,7 @@ public final class BookDetailActivity extends BaseActivity {
 	private RevealLayout mHeadV;
 	private boolean mInProgress;
 
+
 	/**
 	 * The interstitial ad.
 	 */
@@ -100,6 +102,7 @@ public final class BookDetailActivity extends BaseActivity {
 	private boolean mBookmarked;
 	private MenuItem mBookmarkItem;
 
+	private Toolbar mToolbar;
 
 	//------------------------------------------------
 	//Subscribes, event-handlers
@@ -223,8 +226,6 @@ public final class BookDetailActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Crashlytics.start(this);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		Prefs prefs = Prefs.getInstance(getApplication());
 		int curTime = prefs.getShownDetailsTimes();
@@ -256,6 +257,12 @@ public final class BookDetailActivity extends BaseActivity {
 		}
 
 		setContentView(LAYOUT);
+
+		mToolbar = (Toolbar) findViewById(R.id.toolbar);
+		mToolbar.setBackgroundResource(R.color.indigo_500_25);
+		setSupportActionBar(mToolbar);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
 		mThumbIv = (ImageView) findViewById(R.id.detail_thumb_iv);
 		mTitleTv = (TextView) findViewById(R.id.detail_title_tv);
@@ -292,7 +299,7 @@ public final class BookDetailActivity extends BaseActivity {
 		childV.setOnTouchListener(touchParent);
 		ScreenSize su = DeviceUtils.getScreenSize(this);
 		childV.getLayoutParams().height =
-				su.Height - getSupportActionBar().getHeight() - getResources().getDimensionPixelSize(
+				su.Height  - getResources().getDimensionPixelSize(
 						R.dimen.detail_head_height);
 
 		showBookDetail();
@@ -452,6 +459,7 @@ public final class BookDetailActivity extends BaseActivity {
 			mOpenBtn.setEnabled(true);
 			ViewPropertyAnimator.animate(mOpenBtn).cancel();
 			ViewPropertyAnimator.animate(mOpenBtn).scaleX(1).scaleY(1).setDuration(200).start();
+			mToolbar.setBackgroundResource(R.color.indigo_500_25);
 			mFabIsShown = true;
 		}
 	}
@@ -461,6 +469,7 @@ public final class BookDetailActivity extends BaseActivity {
 			mOpenBtn.setEnabled(false);
 			ViewPropertyAnimator.animate(mOpenBtn).cancel();
 			ViewPropertyAnimator.animate(mOpenBtn).scaleX(0).scaleY(0).setDuration(200).start();
+			mToolbar.setBackgroundResource(R.color.primary_color);
 			mFabIsShown = false;
 		}
 	}

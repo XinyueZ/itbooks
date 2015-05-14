@@ -1,6 +1,7 @@
 <resources>
 
     <style name="AppTheme.Base" parent="@style/Theme.AppCompat.Light">
+        <item name="android:windowActionBarOverlay">false</item>
         <item name="android:actionBarStyle">@style/AbStyle</item>
         <item name="android:colorPrimary">@color/primary_color</item>
         <item name="android:colorPrimaryDark">@color/primary_dark_color</item>
@@ -17,6 +18,7 @@
         <item name="android:dropDownListViewStyle">@style/OverflowDropDown</item>
 
         <!--##########Support library compatibility##########-->
+        <item name="windowActionBarOverlay">false</item>
         <item name="colorPrimary">@color/primary_color</item>
         <item name="colorPrimaryDark">@color/primary_dark_color</item>
         <item name="colorAccent">@color/primary_accent</item>
@@ -37,6 +39,15 @@
     </style>
 
     <style name="AppTheme" parent="AppTheme.Base" />
+
+    <style name="AppDetailTheme" parent="AppTheme.Base" >
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowActionBarOverlay">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowActionBarOverlay">false</item>
+    </style>
 
     <style name="ActionBar_ToolBar">
         <item name="android:layout_height">wrap_content</item>
