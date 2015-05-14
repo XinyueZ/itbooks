@@ -31,7 +31,6 @@ import android.widget.TextView;
 import com.chopping.utils.DeviceUtils;
 import com.chopping.utils.DeviceUtils.ScreenSize;
 import com.chopping.utils.Utils;
-import com.crashlytics.android.Crashlytics;
 import com.gc.materialdesign.views.ButtonFloat;
 import com.gc.materialdesign.widgets.SnackBar;
 import com.google.android.gms.ads.AdListener;
@@ -300,7 +299,7 @@ public final class BookDetailActivity extends BaseActivity {
 		ScreenSize su = DeviceUtils.getScreenSize(this);
 		childV.getLayoutParams().height =
 				su.Height  - getResources().getDimensionPixelSize(
-						R.dimen.detail_head_height);
+						R.dimen.detail_head_to_top_distance);
 
 		showBookDetail();
 	}

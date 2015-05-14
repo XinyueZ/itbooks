@@ -3,7 +3,8 @@
     <dimen name="padding_eula">16dp</dimen>
     <dimen name="common_elevation">5dp</dimen>
     <dimen name="common_padding">5dp</dimen>
-    <dimen name="detail_head_height">200dp</dimen>
-    <dimen name="detail_head_elevation">10dp</dimen>
     <dimen name="pb_height">10dp</dimen>
+    <dimen name="detail_head_to_top_distance">200dp</dimen>
+    <dimen name="detail_head_height">120dp</dimen>
+    <dimen name="detail_head_elevation">10dp</dimen>
 </resources>
