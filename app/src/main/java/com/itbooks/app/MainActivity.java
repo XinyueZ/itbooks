@@ -1,11 +1,13 @@
 package com.itbooks.app;
 
+import android.app.Dialog;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.os.AsyncTaskCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -13,6 +15,7 @@ import android.support.v4.widget.SlidingPaneLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -42,12 +45,13 @@ import com.itbooks.app.fragments.PushInfoDialogFragment;
 import com.itbooks.bus.CleanBookmarkEvent;
 import com.itbooks.bus.EULAConfirmedEvent;
 import com.itbooks.bus.EULARejectEvent;
+import com.itbooks.bus.NewAPIVersionUpdateEvent;
 import com.itbooks.bus.OpenBookDetailEvent;
 import com.itbooks.bus.OpenBookmarkEvent;
 import com.itbooks.data.rest.RSBook;
 import com.itbooks.data.rest.RSBookList;
 import com.itbooks.data.rest.RSBookQuery;
-import com.itbooks.db.DB;
+import com.itbooks.db.DatabaseHelper;
 import com.itbooks.net.api.Api;
 import com.itbooks.net.api.ApiNotInitializedException;
 import com.itbooks.utils.Prefs;
@@ -97,6 +101,26 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
+
+	/**
+	 * Handler for {@link com.itbooks.bus.NewAPIVersionUpdateEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link com.itbooks.bus.NewAPIVersionUpdateEvent}.
+	 */
+	public void onEventMainThread(NewAPIVersionUpdateEvent e) {
+		showDialogFragment(
+				new DialogFragment() {
+					@Override
+					public Dialog onCreateDialog(Bundle savedInstanceState) {
+						// Use the Builder class for convenient dialog construction
+						AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+						builder.setMessage(R.string.msg_new_api_version_update)
+								.setPositiveButton(R.string.btn_ok, null);
+						// Create the AlertDialog object and return it
+						return builder.create();
+					}}, null);
+	}
 
 	/**
 	 * Handler for {@link com.itbooks.bus.OpenBookmarkEvent}.
@@ -188,6 +212,10 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 				getSupportActionBar().show();
 			}
 		});
+
+		if(getDatabasePath(DatabaseHelper.DATABASE_NAME) != null) {
+
+		}
 	}
 
 
@@ -255,7 +283,8 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 			AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Void>() {
 				@Override
 				protected Void doInBackground(Void... params) {
-					DB.getInstance(getApplication()).removeBookmarks();
+					//TODO Clear all bookmarks
+					//DB.getInstance(getApplication()).removeBookmarks();
 					return null;
 				}
 

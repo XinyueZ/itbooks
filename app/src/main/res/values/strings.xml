@@ -91,4 +91,5 @@
     <string name="msg_refresh_fail">@string/msg_items_not_found</string>
     <string name="msg_no_reader">You don\'t have any 3rd application to read PDF, do you want to download a read?</string>
     <string name="msg_downloading_fail">Failed, can not download this book.</string>
+    <string name="msg_new_api_version_update">Hi There, a good news including a bad one I have to info you that we now use new API to support direct download instead web, and bookmark is now in cloud so that don\'t worry about lost of them in the future. But, sorry, unfortunately, the former data must be removed from previous bookmark, I will appreciate your understanding and you support me ever.</string>
 </resources>

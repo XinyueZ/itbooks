@@ -18,7 +18,6 @@ import com.itbooks.adapters.BookmarkListAdapter;
 import com.itbooks.bus.DeleteBookmarkEvent;
 import com.itbooks.data.DSBookmark;
 import com.itbooks.db.DB;
-import com.itbooks.db.DB.Sort;
 import com.itbooks.utils.Prefs;
 import com.nineoldandroids.animation.ObjectAnimator;
 
@@ -118,7 +117,9 @@ public final class BookmarkListFragment extends BaseFragment {
 
 			@Override
 			protected LongSparseArray<DSBookmark> doInBackground(Void... params) {
-				return DB.getInstance(getActivity().getApplication()).getBookmarks(Sort.ASC, null);
+				return new LongSparseArray<>();
+				//TODO Get bookmark to load.
+				//return DB.getInstance(getActivity().getApplication()).getBookmarks(Sort.ASC, null);
 			}
 
 			@Override
@@ -155,8 +156,10 @@ public final class BookmarkListFragment extends BaseFragment {
 			protected LongSparseArray<DSBookmark> doInBackground(DSBookmark... params) {
 				DSBookmark bookmark = params[0];
 				DB db = DB.getInstance(getActivity().getApplication());
-				db.removeBookmark(bookmark);
-				return db.getBookmarks(Sort.ASC, null);
+				//TODO remove bookmark
+//				db.removeBookmark(bookmark);
+//				return db.getBookmarks(Sort.ASC, null);
+				return new LongSparseArray<>();
 			}
 
 			@Override

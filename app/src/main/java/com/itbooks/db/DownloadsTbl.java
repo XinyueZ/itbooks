@@ -27,7 +27,7 @@ public interface DownloadsTbl {
 	 * Init new table since {@link DatabaseHelper#DATABASE_VERSION} = {@code 1}.
 	 */
 	static final String SQL_CREATE =
-			"CREATE TABLE " + TABLE_NAME + " (" +
+			"CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" +
 					ID + " INTEGER PRIMARY KEY, " +
 					BOOK_NAME + " TEXT DEFAULT \"\", " +
 					BOOK_AUTH + " TEXT DEFAULT \"\", " +

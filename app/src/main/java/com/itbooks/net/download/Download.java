@@ -3,8 +3,11 @@ package com.itbooks.net.download;
 import java.io.File;
 
 import android.app.DownloadManager;
+import android.app.DownloadManager.Request;
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Build.VERSION_CODES;
 import android.os.Environment;
 
 import com.chopping.utils.Utils;
@@ -82,9 +85,9 @@ public final class Download {
 					Uri.parse(Utils.uriStr2URI(mBook.getLink()).toASCIIString()));
 			request.setDestinationInExternalFilesDir(cxt, Environment.DIRECTORY_DOWNLOADS, mTargetName);
 			request.setVisibleInDownloadsUi(true);//Can see the downloaded file in "download" app.
-//			if (Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB) {
-//				request.setNotificationVisibility(Request.VISIBILITY_HIDDEN);
-//			}
+			if (Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB) {
+				request.setNotificationVisibility(Request.VISIBILITY_HIDDEN);
+			}
 			mDownloadId = downloadManager.enqueue(request);
 			DB.getInstance(cxt).insertNewDownload(this);
 		}

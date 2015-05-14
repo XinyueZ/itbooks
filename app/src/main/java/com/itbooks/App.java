@@ -35,6 +35,7 @@ import android.app.Application;
 
 import com.chopping.net.TaskHelper;
 import com.facebook.stetho.Stetho;
+import com.itbooks.db.DB;
 
 
 /**
@@ -52,7 +53,8 @@ public final class App extends Application {
 	public void onCreate() {
 		super.onCreate();
 		Stetho.initialize(Stetho.newInitializerBuilder(this).enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
-				.enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this)).build());
+                .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this)).build());
 		TaskHelper.init(getApplicationContext());
+        DB.getInstance(this).open();
 	}
 }

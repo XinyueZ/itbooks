@@ -4,6 +4,10 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.itbooks.bus.NewAPIVersionUpdateEvent;
+
+import de.greenrobot.event.EventBus;
+
 /**
  * Classical helper pattern on Android DB ops.
  *
@@ -32,9 +36,7 @@ public final class DatabaseHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		db.execSQL(BookmarksTbl.SQL_CREATE);
-		db.execSQL(LabelsTbl.SQL_CREATE);
-		db.execSQL(DownloadsTbl.SQL_CREATE);
+		db.execSQL(DownloadsTbl.SQL_CREATE);//New table from v2, if user had never created bookmark-table or label-table, Android creates download-table for initialization.
 	}
 
 	@Override
@@ -43,6 +45,8 @@ public final class DatabaseHelper extends SQLiteOpenHelper {
 			//Have to delete old version because of new API.
 			db.execSQL(String.format("DROP TABLE IF EXISTS %s", BookmarksTbl.TABLE_NAME));
 			db.execSQL(String.format("DROP TABLE IF EXISTS %s", BookmarksTbl.TABLE_NAME));
+			db.execSQL(DownloadsTbl.SQL_CREATE);//New table for v2, if user had created bookmark-table or label-table, Android creates download-table for update.
+			EventBus.getDefault().postSticky(new NewAPIVersionUpdateEvent());
 		}
 	}
 }

@@ -42,9 +42,7 @@ import com.itbooks.bus.DownloadEndEvent;
 import com.itbooks.bus.DownloadFailedEvent;
 import com.itbooks.bus.DownloadOpenEvent;
 import com.itbooks.bus.DownloadStartEvent;
-import com.itbooks.data.DSBookmark;
 import com.itbooks.data.rest.RSBook;
-import com.itbooks.db.DB;
 import com.itbooks.net.download.Download;
 import com.itbooks.utils.Prefs;
 import com.itbooks.views.RevealLayout;
@@ -372,7 +370,8 @@ public final class BookDetailActivity extends BaseActivity {
 		AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Void>() {
 			@Override
 			protected Void doInBackground(Void... params) {
-				mBookmarked = DB.getInstance(getApplication()).isBookmarked(mBook);
+				//TODO Check if bookmarked in detail
+				//mBookmarked = DB.getInstance(getApplication()).isBookmarked(mBook);
 				return null;
 			}
 
@@ -393,13 +392,14 @@ public final class BookDetailActivity extends BaseActivity {
 				AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Void>() {
 					@Override
 					protected Void doInBackground(Void... params) {
-						DB db = DB.getInstance(getApplication());
-						if (mBookmarked) {
-							db.removeBookmark(mBook);
-						} else {
-							db.addBookmark(new DSBookmark(mBook));
-						}
-						mBookmarked = db.isBookmarked(mBook);
+						//TODO Do bookmark
+//						DB db = DB.getInstance(getApplication());
+//						if (mBookmarked) {
+//							db.removeBookmark(mBook);
+//						} else {
+//							db.addBookmark(new DSBookmark(mBook));
+//						}
+//						mBookmarked = db.isBookmarked(mBook);
 						return null;
 					}
 

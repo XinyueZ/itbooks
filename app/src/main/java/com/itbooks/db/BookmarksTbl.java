@@ -4,6 +4,7 @@ package com.itbooks.db;
  * All bookmarks.
  *
  * @author Xinyue Zhao
+ * @deprecated For cloud bookmark.
  */
 public interface BookmarksTbl {
 	public static final String DEF_LABEL_ID = "-1";
@@ -20,7 +21,6 @@ public interface BookmarksTbl {
 	static final String BOOK_COVER_URL = "_cover_url";
 
 
-
 	static final String LABEL_ID = "_label_id";
 	static final String EDIT_TIME = "_edited_time";
 	static final String TABLE_NAME = "bookmarks";
@@ -30,24 +30,23 @@ public interface BookmarksTbl {
 	/**
 	 * Init new table since {@link DatabaseHelper#DATABASE_VERSION} = {@code 1}.
 	 */
-	static final String SQL_CREATE =
-			"CREATE TABLE " + TABLE_NAME + " (" +
-					ID + " INTEGER PRIMARY KEY, " +
+	static final String SQL_CREATE = "CREATE TABLE " + TABLE_NAME + " (" +
+			ID + " INTEGER PRIMARY KEY, " +
 
 
-					BOOK_NAME + " TEXT DEFAULT \"\", " +
-					BOOK_AUTH + " TEXT DEFAULT \"\", " +
-					BOOK_SIZE + " TEXT DEFAULT \"\", " +
-					BOOK_PAGES + " TEXT DEFAULT \"\", " +
-					BOOK_LINK + " TEXT DEFAULT \"\", " +
-					BOOK_ISBN + " TEXT DEFAULT \"\", " +
-					BOOK_YEAR + " TEXT DEFAULT \"\", " +
-					BOOK_PUB + " TEXT DEFAULT \"\", " +
-					BOOK_DESC + " TEXT DEFAULT \"\", " +
-					BOOK_COVER_URL + " TEXT DEFAULT \"\", " +
+			BOOK_NAME + " TEXT DEFAULT \"\", " +
+			BOOK_AUTH + " TEXT DEFAULT \"\", " +
+			BOOK_SIZE + " TEXT DEFAULT \"\", " +
+			BOOK_PAGES + " TEXT DEFAULT \"\", " +
+			BOOK_LINK + " TEXT DEFAULT \"\", " +
+			BOOK_ISBN + " TEXT DEFAULT \"\", " +
+			BOOK_YEAR + " TEXT DEFAULT \"\", " +
+			BOOK_PUB + " TEXT DEFAULT \"\", " +
+			BOOK_DESC + " TEXT DEFAULT \"\", " +
+			BOOK_COVER_URL + " TEXT DEFAULT \"\", " +
 
 
-					LABEL_ID + " INTEGER DEFAULT " + DEF_LABEL_ID + ", " +
-					EDIT_TIME + " INTEGER" +
-					");";
+			LABEL_ID + " INTEGER DEFAULT " + DEF_LABEL_ID + ", " +
+			EDIT_TIME + " INTEGER" +
+			");";
 }
