@@ -38,12 +38,16 @@ import java.util.Properties;
 
 import android.app.Application;
 import android.support.annotation.Nullable;
+import android.support.v4.os.AsyncTaskCompat;
+import android.text.TextUtils;
 
 import com.chopping.net.TaskHelper;
 import com.facebook.stetho.Stetho;
 import com.itbooks.data.DSBookmark;
 import com.itbooks.data.rest.RSBook;
 import com.itbooks.db.DB;
+import com.itbooks.gcm.RegGCMTask;
+import com.itbooks.utils.Prefs;
 
 import cn.bmob.v3.Bmob;
 
@@ -78,6 +82,11 @@ public final class App extends Application {
 		}
 		TaskHelper.init(getApplicationContext());
 		DB.getInstance(this).open();
+
+		//Refresh push-id if user has used.
+		if(!TextUtils.isEmpty(Prefs.getInstance(this).getPushRegId())) {
+			AsyncTaskCompat.executeParallel(new RegGCMTask(this));
+		}
 	}
 
 	/**
