@@ -9,6 +9,8 @@ import android.util.Log;
 
 import com.itbooks.data.rest.RSBookList;
 import com.itbooks.data.rest.RSBookQuery;
+import com.itbooks.data.rest.RSPushClient;
+import com.itbooks.data.rest.RSResult;
 import com.squareup.okhttp.OkHttpClient;
 
 import retrofit.Callback;
@@ -84,7 +86,8 @@ public final class Api {
 	 */
 	private static void initInterfaces() {
 		RestAdapter adp = new RestAdapter.Builder().setClient(sClient).setEndpoint(sHost).build();
-		sApi = adp.create(BooksApi.class);
+		sBooksApi = adp.create(BooksApi.class);
+		sPushApi = adp.create(PushApi.class);
 	}
 
 	/**
@@ -122,11 +125,33 @@ public final class Api {
 		void getBooks(@Body RSBookQuery query,  Callback<RSBookList> callback);
 	}
 
-	private static BooksApi sApi;
+	private static BooksApi sBooksApi;
 
 
 	public static final void queryBooks(RSBookQuery query, Callback<RSBookList> callback) throws ApiNotInitializedException {
 		assertCall();
-		sApi.getBooks(query, callback);
+		sBooksApi.getBooks(query, callback);
+	}
+
+	//-----------------------------------------------------------------------------------------
+	//Push register and unregister.
+	//-----------------------------------------------------------------------------------------
+	interface PushApi {
+		@POST("/insert")
+		void reg(@Body RSPushClient client,  Callback<RSResult> callback);
+		@POST("/del")
+		void unreg(@Body RSPushClient client,  Callback<RSResult> callback);
+	}
+
+	private static PushApi sPushApi;
+
+	public static final void regPush(RSPushClient client, Callback<RSResult> callback) throws ApiNotInitializedException {
+		assertCall();
+		sPushApi.reg(client, callback);
+	}
+
+	public static final void unregPush(RSPushClient client, Callback<RSResult> callback) throws ApiNotInitializedException {
+		assertCall();
+		sPushApi.unreg(client, callback);
 	}
 }

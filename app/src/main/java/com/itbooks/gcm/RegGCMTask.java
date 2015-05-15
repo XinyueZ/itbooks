@@ -1,24 +1,22 @@
 package com.itbooks.gcm;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.security.NoSuchAlgorithmException;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.chopping.net.TaskHelper;
-import com.chopping.utils.NetworkUtils;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.itbooks.data.rest.RSPushClient;
+import com.itbooks.data.rest.RSResult;
+import com.itbooks.net.api.Api;
+import com.itbooks.net.api.ApiNotInitializedException;
+import com.itbooks.utils.DeviceUniqueUtil;
 import com.itbooks.utils.Prefs;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
 
 /**
  * Register GCM.
@@ -28,10 +26,16 @@ import com.itbooks.utils.Prefs;
 public   class RegGCMTask extends AsyncTask<Void, Void, String> {
 	private GoogleCloudMessaging mGCM;
 	private Prefs mPrefs;
+	private String mDeviceId;
 
 	public RegGCMTask(Context context) {
 		mGCM = GoogleCloudMessaging.getInstance(context);
 		mPrefs = Prefs.getInstance(context.getApplicationContext());
+		try {
+			mDeviceId = DeviceUniqueUtil.getDeviceIdent(context);
+		} catch (NoSuchAlgorithmException e) {
+			//TODO Error when can not get device id.
+		}
 	}
 
 	@Override
@@ -53,33 +57,28 @@ public   class RegGCMTask extends AsyncTask<Void, Void, String> {
 	protected void onPostExecute(final String regId) {
 		mPrefs.setKnownPush(true);
 		if (!TextUtils.isEmpty(regId)) {
-			StringRequest req = new StringRequest(Request.Method.POST, mPrefs.getPushBackendRegUrl(),
-				new Response.Listener<String>() {
-					@Override
-					public void onResponse(String response) {
-						mPrefs.setPushRegId(regId);
-					}
-				},
-				new Response.ErrorListener() {
-					@Override
-					public void onErrorResponse(VolleyError error) {
-						mPrefs.setPushRegId(null);
-					}
-			}) {
+			regOnRemote(regId);
+		}
+	}
+	/**
+	 * Refresh on server.
+	 * @param regId The registered-id.
+	 */
+	private void regOnRemote(final String regId) {
+		try {
+			Api.regPush(new RSPushClient(mDeviceId, regId), new Callback<RSResult>() {
 				@Override
-				public Map<String, String> getHeaders() throws AuthFailureError {
-					Map<String, String> headers = super.getHeaders();
-					if (headers == null || headers.equals(Collections.emptyMap())) {
-						headers = new HashMap<String, String>();
-					}
-					NetworkUtils.makeHttpHeaders(headers);
-					headers.put("Cookie","pushID=" + regId);
-					return headers;
+				public void success(RSResult rsBookList, retrofit.client.Response response) {
+					mPrefs.setPushRegId(regId);
 				}
-			};
-			req.setRetryPolicy(new DefaultRetryPolicy(120 * 1000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-					DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-			TaskHelper.getRequestQueue().add(req);
+
+				@Override
+				public void failure(RetrofitError error) {
+					regOnRemote(regId);
+				}
+			});
+		} catch (ApiNotInitializedException e) {
+			//Ignore.
 		}
 	}
 }

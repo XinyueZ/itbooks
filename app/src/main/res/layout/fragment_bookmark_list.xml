@@ -51,4 +51,12 @@
         android:background="#8BC34A"
         app:animate="true"
         app:iconDrawable="@drawable/ic_refresh" />
+
+
+    <com.gc.materialdesign.views.ProgressBarCircularIndeterminate
+        android:id="@+id/loading_pb"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:background="@color/common_green" />
 </FrameLayout>

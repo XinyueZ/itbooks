@@ -11,12 +11,7 @@ import (
 	"encoding/json"
 )
 
-type Error string
-
-func (e Error) Error() string {
-	return string(e)
-}
-
+ 
 func init() {
 	http.HandleFunc("/download", handleDownload)
 }

@@ -37,8 +37,6 @@ public final class Prefs extends BasicPrefs {
 	private static final String REST_API = "rest_api";
 	private static final String PUSH_HOST  = "push_host";
 	private static final String PUSH_SENDER_ID  = "push_sender_id";
-	private static final String PUSH_URL_INFO_BACKEND_REG = "push_url_info_backend_reg";
-	private static final String PUSH_URL_INFO_BACKEND_UNREG = "push_url_info_backend_unreg";
 
 	/**
 	 * Created a DeviceData storage.
@@ -148,13 +146,7 @@ public final class Prefs extends BasicPrefs {
 		return getLong(PUSH_SENDER_ID, -1);
 	}
 
-	public String getPushBackendRegUrl() {
-		return getPushHost() + getString(PUSH_URL_INFO_BACKEND_REG, null);
-	}
 
-	public String getPushBackendUnregUrl() {
-		return getPushHost() +  getString(PUSH_URL_INFO_BACKEND_UNREG, null);
-	}
 
 	public void turnOnPush() {
 		setBoolean(KEY_PUSH_SETTING, true);

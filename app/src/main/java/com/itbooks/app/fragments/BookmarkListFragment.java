@@ -36,14 +36,11 @@ public final class BookmarkListFragment extends BaseFragment {
 	 * Main layout for this component.
 	 */
 	private static final int LAYOUT = R.layout.fragment_bookmark_list;
-
 	private RecyclerView mBookmarksRv;
-
 	private BookmarkListAdapter mAdp;
-
 	private View mEmptyV;
-
 	private View mRefreshV;
+	private View mLoadingPb;
 
 	//------------------------------------------------
 	//Subscribes, event-handlers
@@ -88,6 +85,7 @@ public final class BookmarkListFragment extends BaseFragment {
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		setErrorHandlerAvailable(false);
+		mLoadingPb = view.findViewById(R.id.loading_pb);
 		mBookmarksRv = (RecyclerView) view.findViewById(R.id.bookmarks_rv);
 		StaggeredGridLayoutManager llmgr = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
 		mBookmarksRv.setLayoutManager(llmgr);
@@ -120,6 +118,7 @@ public final class BookmarkListFragment extends BaseFragment {
 			mAdp.notifyDataSetChanged();
 		}
 		mEmptyV.setVisibility(app.getBookmarksInCache().size() <= 0 ? View.VISIBLE : View.GONE);
+		mLoadingPb.setVisibility(View.GONE);
 	}
 
 

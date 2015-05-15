@@ -15,6 +15,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.BigTextStyle;
 import android.text.TextUtils;
 
+import com.chopping.utils.Utils;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.itbooks.R;
 import com.itbooks.app.BookDetailActivity;
@@ -86,7 +87,7 @@ public class GcmIntentService extends IntentService {
 
 	private void notify(String title, String desc, String image, PendingIntent contentIntent, Picasso picasso) throws
 			IOException {
-		Bitmap bitmap = picasso.load(image).get();
+		Bitmap bitmap = picasso.load(Utils.uriStr2URI(image).toASCIIString()).get();
 		mNotifyBuilder = new NotificationCompat.Builder(GcmIntentService.this).setWhen(
 				System.currentTimeMillis()).setSmallIcon(R.drawable.ic_launcher).setTicker(title)
 				.setContentTitle(title).setContentText(desc).setStyle(new BigTextStyle().bigText(desc)

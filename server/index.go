@@ -10,6 +10,8 @@ import (
 	"html/template"
 	"io"
 	"net/http"
+	"encoding/json"
+	"io/ioutil"
 )
 
 var debug bool = false
@@ -112,16 +114,81 @@ func handleDeleteAllUsers(_w http.ResponseWriter, _r *http.Request) {
 }
 
 type OtherClient struct {
-	PushID string
+	UID string `json:"uid"`
+	PushID string `json:"pushId"`
 }
 
-func handleInsert(_w http.ResponseWriter, _r *http.Request) {
-	cookies := _r.Cookies()
-	otherClient := &OtherClient{PushID: cookies[0].Value}
-	cxt := appengine.NewContext(_r)
-	datastore.Put(cxt, datastore.NewIncompleteKey(cxt, "OtherClient", nil), otherClient)
-	fmt.Fprintf(_w, otherClient.PushID)
+type Error string
+
+func (e Error) Error() string {
+	return string(e)
 }
+
+
+func handleInsert(w http.ResponseWriter, r *http.Request) {
+	cxt := appengine.NewContext(r)
+	defer func() {
+		if err := recover(); err != nil {
+			cxt.Errorf("handleInsert: %v", err)
+			w.Header().Set("Content-Type", "application/json")
+			fmt.Fprintf(w, `{"status":%d}`, 300)
+		}
+	}()
+
+	pOtherClient := new(OtherClient)
+	if bytes, e := ioutil.ReadAll(r.Body); e == nil {
+		if e := json.Unmarshal(bytes, pOtherClient); e == nil {
+			q := datastore.NewQuery("OtherClient").Filter("UID =", pOtherClient.UID)
+			clients := make([]OtherClient, 0)
+			keys, _ := q.GetAll(cxt, &clients)
+			if len(clients) > 0 {
+				//Delete old one if find a existed item.
+				datastore.DeleteMulti(cxt, keys)
+			}
+
+			datastore.Put(cxt, datastore.NewIncompleteKey(cxt, "OtherClient", nil), pOtherClient)
+			w.Header().Set("Content-Type", "application/json")
+			fmt.Fprintf(w, `{"status":%d}`, 200)
+		} else {
+			w.Header().Set("Content-Type", "application/json")
+			fmt.Fprintf(w, `{"status":%d}`, 300)
+		}
+	}else {
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprintf(w, `{"status":%d}`, 300)
+	}
+}
+
+func handleDelete(w http.ResponseWriter, r *http.Request) {
+	cxt := appengine.NewContext(r)
+	defer func() {
+		if err := recover(); err != nil {
+			cxt.Errorf("handleDelete: %v", err)
+			w.Header().Set("Content-Type", "application/json")
+			fmt.Fprintf(w, `{"status":%d}`, 300)
+		}
+	}()
+
+	pOtherClient := new(OtherClient)
+	if bytes, e := ioutil.ReadAll(r.Body); e == nil {
+		if e := json.Unmarshal(bytes, pOtherClient); e == nil {
+			q := datastore.NewQuery("OtherClient").Filter("UID =", pOtherClient.UID)
+			clients := make([]OtherClient, 0)
+			keys, _ := q.GetAll(cxt, &clients)
+			datastore.DeleteMulti(cxt, keys)
+			w.Header().Set("Content-Type", "application/json")
+			fmt.Fprintf(w, `{"status":%d}`, 200)
+		} else {
+			w.Header().Set("Content-Type", "application/json")
+			fmt.Fprintf(w, `{"status":%d}`, 300)
+		}
+	}else {
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprintf(w, `{"status":%d}`, 300)
+	}
+}
+
+
 
 func loadClients(_r *http.Request) (clients []OtherClient) {
 	cxt := appengine.NewContext(_r)
@@ -130,16 +197,6 @@ func loadClients(_r *http.Request) (clients []OtherClient) {
 	q.GetAll(cxt, &clients)
 	return
 }
-
-func handleDelete(_w http.ResponseWriter, _r *http.Request) {
-	cxt := appengine.NewContext(_r)
-	cookies := _r.Cookies()
-	q := datastore.NewQuery("OtherClient").Filter("PushID =", cookies[0].Value)
-	clients := make([]OtherClient, 0)
-	keys, _ := q.GetAll(cxt, &clients)
-	datastore.DeleteMulti(cxt, keys)
-}
-
 
 
 type BreakingNews struct {
