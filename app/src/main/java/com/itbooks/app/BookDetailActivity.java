@@ -42,6 +42,7 @@ import com.itbooks.bus.DownloadEndEvent;
 import com.itbooks.bus.DownloadFailedEvent;
 import com.itbooks.bus.DownloadOpenEvent;
 import com.itbooks.bus.DownloadStartEvent;
+import com.itbooks.bus.DownloadUnavailableEvent;
 import com.itbooks.data.rest.RSBook;
 import com.itbooks.net.download.Download;
 import com.itbooks.utils.Prefs;
@@ -172,7 +173,7 @@ public final class BookDetailActivity extends BaseActivity {
 						public Dialog onCreateDialog(Bundle savedInstanceState) {
 							// Use the Builder class for convenient dialog construction
 							AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-							builder.setMessage(R.string.msg_no_reader)
+							builder.setTitle(R.string.application_name).setMessage(R.string.msg_no_reader)
 									.setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
 										public void onClick(DialogInterface dialog, int id) {
 											String pdfReader = "com.adobe.reader";
@@ -194,6 +195,25 @@ public final class BookDetailActivity extends BaseActivity {
 							return builder.create();
 						}}, null);
 		}
+	}
+
+	/**
+	 * Handler for {@link DownloadUnavailableEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link DownloadUnavailableEvent}.
+	 */
+	public void onEvent(DownloadUnavailableEvent e) {
+		showDialogFragment(
+				new DialogFragment() {
+					@Override
+					public Dialog onCreateDialog(Bundle savedInstanceState) {
+						// Use the Builder class for convenient dialog construction
+						AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+						builder.setTitle(R.string.application_name).setMessage(
+								R.string.msg_require_external_storage).setPositiveButton(R.string.btn_ok,null);
+						return builder.create();
+					}}, null);
 	}
 
 	//------------------------------------------------

@@ -52,7 +52,6 @@ import com.itbooks.bus.OpenBookmarkEvent;
 import com.itbooks.data.rest.RSBook;
 import com.itbooks.data.rest.RSBookList;
 import com.itbooks.data.rest.RSBookQuery;
-import com.itbooks.db.DatabaseHelper;
 import com.itbooks.net.api.Api;
 import com.itbooks.net.api.ApiNotInitializedException;
 import com.itbooks.utils.Prefs;
@@ -110,17 +109,18 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	 * 		Event {@link com.itbooks.bus.NewAPIVersionUpdateEvent}.
 	 */
 	public void onEventMainThread(NewAPIVersionUpdateEvent e) {
-		showDialogFragment(
-				new DialogFragment() {
+		EventBus.getDefault().removeAllStickyEvents();
+		showDialogFragment(new DialogFragment() {
 					@Override
 					public Dialog onCreateDialog(Bundle savedInstanceState) {
 						// Use the Builder class for convenient dialog construction
 						AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-						builder.setMessage(R.string.msg_new_api_version_update)
-								.setPositiveButton(R.string.btn_ok, null);
+						builder.setTitle(R.string.application_name).setMessage(R.string.msg_new_api_version_update).setPositiveButton(
+								R.string.btn_ok, null);
 						// Create the AlertDialog object and return it
 						return builder.create();
-					}}, null);
+					}
+				}, null);
 	}
 
 	/**
@@ -215,10 +215,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 				getSupportActionBar().show();
 			}
 		});
-
-		if(getDatabasePath(DatabaseHelper.DATABASE_NAME) != null) {
-
-		}
 	}
 
 
