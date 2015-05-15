@@ -127,12 +127,10 @@ public final class RSBook implements Serializable {
 		return TextUtils.equals(mName, other.mName) &&
 				TextUtils.equals(mAuthor, other.mAuthor) &&
 				TextUtils.equals(mSize, other.mSize) &&
-				TextUtils.equals(mPages, other.mPages) &&
-				TextUtils.equals(mLink, other.mLink) &&
+				TextUtils.equals(mPages, other.mPages)&&
 				TextUtils.equals(mISBN, other.mISBN) &&
 				TextUtils.equals(mYear, other.mYear) &&
 				TextUtils.equals(mPublisher, other.mPublisher) &&
-				TextUtils.equals(mDescription, other.mDescription) &&
-				TextUtils.equals(mCoverUrl, other.mCoverUrl);
+				TextUtils.equals(mDescription, other.mDescription) ;
 	}
 }

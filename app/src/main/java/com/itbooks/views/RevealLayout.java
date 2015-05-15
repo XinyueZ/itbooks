@@ -139,6 +139,9 @@ public class RevealLayout extends FrameLayout{
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 mIsContentShown = true;
+                if(mOnRevealEndListener != null) {
+                    mOnRevealEndListener.onEnd();
+                }
             }
         });
         mAnimator.start();
@@ -167,6 +170,9 @@ public class RevealLayout extends FrameLayout{
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 mIsContentShown = false;
+                if(mOnRevealEndListener != null) {
+                    mOnRevealEndListener.onEnd();
+                }
             }
         });
         mAnimator.start();
@@ -209,4 +215,23 @@ public class RevealLayout extends FrameLayout{
         }
     }
 
+    /**
+     * Listener when the reveal effect finished.
+     */
+    public static interface OnRevealEndListener {
+        void onEnd();
+    }
+
+    /**
+     * Listener when the reveal effect finished.
+     */
+    private OnRevealEndListener mOnRevealEndListener;
+
+    /**
+     * Set the listener when the reveal effect finished.
+     * @param onRevealEndListener {@link OnRevealEndListener}, when the reveal effect finished.
+     */
+    public void setOnRevealEndListener(OnRevealEndListener onRevealEndListener) {
+        mOnRevealEndListener = onRevealEndListener;
+    }
 }

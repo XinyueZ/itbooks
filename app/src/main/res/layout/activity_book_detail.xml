@@ -51,7 +51,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:text="@string/lbl_title"
                             android:textColor="@color/common_white" />
 
                         <LinearLayout
@@ -73,7 +72,6 @@
                                 android:id="@+id/detail_author_tv"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/lbl_author"
                                 android:textColor="@color/common_white" />
                         </LinearLayout>
 

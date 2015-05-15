@@ -46,6 +46,7 @@ import com.itbooks.data.rest.RSBook;
 import com.itbooks.net.download.Download;
 import com.itbooks.utils.Prefs;
 import com.itbooks.views.RevealLayout;
+import com.itbooks.views.RevealLayout.OnRevealEndListener;
 import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.squareup.picasso.Picasso;
 
@@ -103,6 +104,7 @@ public final class BookDetailActivity extends BaseActivity {
 
 	private Toolbar mToolbar;
 
+	private static final int ANIM_DUR = 1000;
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -116,7 +118,6 @@ public final class BookDetailActivity extends BaseActivity {
 	public void onEvent(DownloadStartEvent e) {
 		mInProgress = true;
 		uiLoading();
-		mHeadV.show();
 	}
 
 
@@ -130,7 +131,6 @@ public final class BookDetailActivity extends BaseActivity {
 	public void onEvent(DownloadEndEvent e) {
 		if (e.getDownload().getBook().equals(mBook)) {
 			uiLoaded();
-			mHeadV.show();
 		}
 		mInProgress = false;
 	}
@@ -341,20 +341,28 @@ public final class BookDetailActivity extends BaseActivity {
 			Picasso.with(this).load(Utils.uriStr2URI(mBook.getCoverUrl()).toASCIIString()).placeholder(
 					R.drawable.ic_launcher).into(mThumbIv);
 		}
-		mTitleTv.setText(mBook.getName());
+
 		mDescriptionTv.setText(Html.fromHtml(mBook.getDescription()));
-		mAuthorTv.setText(mBook.getAuthor());
 		mISBNTv.setText(mBook.getISBN());
 		mYearTv.setText(mBook.getYear());
 		mPageTv.setText(mBook.getPages());
 		mPublisherTv.setText(mBook.getPublisher());
 
+		mHeadV.setOnRevealEndListener(new OnRevealEndListener() {
+			@Override
+			public void onEnd() {
+				mTitleTv.setText(mBook.getName());
+				mAuthorTv.setText(mBook.getAuthor());
+				mHeadV.setOnRevealEndListener(null);
+			}
+		});
 		new Handler().postDelayed(new Runnable() {
 			@Override
 			public void run() {
 				mHeadV.show();
 			}
-		}, 500);
+		}, ANIM_DUR);
+
 
 		//Try to find whether local has this book or not.
 		if(Download.exists(getApplicationContext(), mBook)) {
@@ -481,6 +489,7 @@ public final class BookDetailActivity extends BaseActivity {
 		mHeadV.setBackgroundResource(R.color.book_downloading);
 		mOpenBtn.setDrawableIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_file_cloud_download, null));
 		mOpenBtn.setBackgroundColor(getResources().getColor(R.color.book_btn_downloading));
+		mHeadV.next(ANIM_DUR);
 	}
 
 	/**
@@ -491,6 +500,7 @@ public final class BookDetailActivity extends BaseActivity {
 		mHeadV.setBackgroundResource(R.color.book_downloaded);
 		mOpenBtn.setDrawableIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_reading, null));
 		mOpenBtn.setBackgroundColor(getResources().getColor(R.color.book_btn_downloaded));
+		mHeadV.next(ANIM_DUR);
 	}
 
 	/**
@@ -499,7 +509,7 @@ public final class BookDetailActivity extends BaseActivity {
 	private void uiFailDownloading() {
 		mLoadingPb.setVisibility(View.GONE);
 		mHeadV.setBackgroundResource(R.color.book_failed_downloaded);
-		mHeadV.show();
+		mHeadV.next(ANIM_DUR);
 	}
 
 }
