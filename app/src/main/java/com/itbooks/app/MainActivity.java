@@ -23,6 +23,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.Menu;
@@ -265,7 +266,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		if (!TextUtils.isEmpty(mKeyword)) {
 			mSearchView.setQuery(mKeyword, false);
 		}
-
+		mSearchView.setQueryHint(Html.fromHtml("<font color = #ffffff>" + mKeyword + "</font>"));
 		mSearchView.setOnQueryTextListener(this);
 		SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
 		if (searchManager != null) {
@@ -429,9 +430,9 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	 * Load feed of books.
 	 */
 	private void loadBooks() {
-		if (((AbstractBookViewAdapter)mRv.getAdapter()).getItemCount() == 0) {
-			findViewById(R.id.loading_pb).setVisibility(View.VISIBLE);
-		}
+//		if (((AbstractBookViewAdapter)mRv.getAdapter()).getItemCount() == 0) {
+//			findViewById(R.id.loading_pb).setVisibility(View.VISIBLE);
+//		}
 		if (!TextUtils.isEmpty(mKeyword)) {
 			loadByKeyword();
 		} else {
