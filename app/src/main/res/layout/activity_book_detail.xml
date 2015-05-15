@@ -37,7 +37,7 @@
                     android:id="@+id/child_head_ll"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/book_not_downloaded">
+                    android:background="@drawable/bg_not_downloaded">
 
                     <FrameLayout
                         android:layout_width="match_parent"

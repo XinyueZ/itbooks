@@ -6,5 +6,5 @@
     <dimen name="pb_height">10dp</dimen>
     <dimen name="detail_head_to_top_distance">200dp</dimen>
     <dimen name="detail_head_height">120dp</dimen>
-    <dimen name="detail_head_elevation">10dp</dimen>
+    <dimen name="detail_head_elevation">20dp</dimen>
 </resources>
