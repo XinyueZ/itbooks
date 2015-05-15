@@ -120,16 +120,16 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	public void onEventMainThread(NewAPIVersionUpdateEvent e) {
 		EventBus.getDefault().removeAllStickyEvents();
 		showDialogFragment(new DialogFragment() {
-					@Override
-					public Dialog onCreateDialog(Bundle savedInstanceState) {
-						// Use the Builder class for convenient dialog construction
-						AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-						builder.setTitle(R.string.application_name).setMessage(R.string.msg_new_api_version_update).setPositiveButton(
-								R.string.btn_ok, null);
-						// Create the AlertDialog object and return it
-						return builder.create();
-					}
-				}, null);
+			@Override
+			public Dialog onCreateDialog(Bundle savedInstanceState) {
+				// Use the Builder class for convenient dialog construction
+				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+				builder.setTitle(R.string.application_name).setMessage(R.string.msg_new_api_version_update)
+						.setPositiveButton(R.string.btn_ok, null);
+				// Create the AlertDialog object and return it
+				return builder.create();
+			}
+		}, null);
 	}
 
 	/**
@@ -324,10 +324,34 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 				@Override
 				protected void onPostExecute(Void aVoid) {
 					super.onPostExecute(aVoid);
-					EventBus.getDefault().post(new CleanBookmarkEvent());
+
 					openBookmarkList();
 				}
 			});
+			App app = (App) getApplication();
+			app.getBookmarksInCache().clear();
+			openBookmarkList();
+			EventBus.getDefault().post(new CleanBookmarkEvent());
+			BmobQuery<DSBookmark> queryBookmarks = new BmobQuery<>();
+			try {
+				queryBookmarks.addWhereEqualTo("mUID", DeviceUniqueUtil.getDeviceIdent(getApplicationContext()));
+				queryBookmarks.findObjects(getApplicationContext(), new FindListener<DSBookmark>() {
+					@Override
+					public void onSuccess(List<DSBookmark> list) {
+						for(DSBookmark b : list) {
+							DSBookmark delBookmark = new DSBookmark(b.getBook());
+							delBookmark.setObjectId(b.getObjectId());
+							delBookmark.delete(getApplicationContext());
+						}
+					}
+
+					@Override
+					public void onError(int i, String s) {
+					}
+				});
+			} catch (NoSuchAlgorithmException e) {
+				//TODO Error when can not get device id.
+			}
 			break;
 
 		case R.id.action_setting:
