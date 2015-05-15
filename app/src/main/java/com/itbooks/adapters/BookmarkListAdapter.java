@@ -1,6 +1,7 @@
 package com.itbooks.adapters;
 
-import android.support.v4.util.LongSparseArray;
+import java.util.List;
+
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,13 +30,13 @@ public final class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkList
 	 * Main layout for this component.
 	 */
 	private static final int ITEM_LAYOUT = R.layout.item_bookmark_list;
-	private LongSparseArray<DSBookmark> mBookmarkList;
+	private List<DSBookmark> mBookmarkList;
 
-	public BookmarkListAdapter(LongSparseArray<DSBookmark> bookmarkList) {
+	public BookmarkListAdapter(List<DSBookmark> bookmarkList) {
 		mBookmarkList = bookmarkList;
 	}
 
-	public void setBookmarkList(LongSparseArray<DSBookmark> bookmarkList) {
+	public void setBookmarkList(List<DSBookmark> bookmarkList) {
 		mBookmarkList = bookmarkList;
 	}
 
@@ -48,11 +49,8 @@ public final class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkList
 
 	@Override
 	public void onBindViewHolder(final ViewHolder viewHolder, int position) {
-		long id = mBookmarkList.keyAt(position);
-		final DSBookmark bookmark = mBookmarkList.get(id);
+		final DSBookmark bookmark = mBookmarkList.get(position);
 		RSBook book = bookmark.getBook();
-
-
 		Picasso picasso = Picasso.with(viewHolder.itemView.getContext());
 		picasso.load(Utils.uriStr2URI(book.getCoverUrl()).toASCIIString())
 				.placeholder(R.drawable.ic_launcher)

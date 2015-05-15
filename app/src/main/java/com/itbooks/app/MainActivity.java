@@ -1,5 +1,8 @@
 package com.itbooks.app;
 
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
+
 import android.app.Dialog;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
@@ -36,12 +39,14 @@ import com.chopping.utils.DeviceUtils;
 import com.chopping.utils.DeviceUtils.ScreenSize;
 import com.crashlytics.android.Crashlytics;
 import com.gc.materialdesign.widgets.SnackBar;
+import com.itbooks.App;
 import com.itbooks.R;
 import com.itbooks.adapters.AbstractBookViewAdapter;
 import com.itbooks.adapters.BookGridAdapter;
 import com.itbooks.adapters.BookListAdapter;
 import com.itbooks.app.fragments.AboutDialogFragment;
 import com.itbooks.app.fragments.AppListImpFragment;
+import com.itbooks.app.fragments.BookmarkListFragment;
 import com.itbooks.app.fragments.PushInfoDialogFragment;
 import com.itbooks.bus.CleanBookmarkEvent;
 import com.itbooks.bus.EULAConfirmedEvent;
@@ -49,13 +54,17 @@ import com.itbooks.bus.EULARejectEvent;
 import com.itbooks.bus.NewAPIVersionUpdateEvent;
 import com.itbooks.bus.OpenBookDetailEvent;
 import com.itbooks.bus.OpenBookmarkEvent;
+import com.itbooks.data.DSBookmark;
 import com.itbooks.data.rest.RSBook;
 import com.itbooks.data.rest.RSBookList;
 import com.itbooks.data.rest.RSBookQuery;
 import com.itbooks.net.api.Api;
 import com.itbooks.net.api.ApiNotInitializedException;
+import com.itbooks.utils.DeviceUniqueUtil;
 import com.itbooks.utils.Prefs;
 
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.listener.FindListener;
 import de.greenrobot.event.EventBus;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -215,6 +224,31 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 				getSupportActionBar().show();
 			}
 		});
+
+		try {
+			BmobQuery<DSBookmark> queryBookmarks = new BmobQuery<>();
+			queryBookmarks.addWhereEqualTo("mUID", DeviceUniqueUtil.getDeviceIdent(getApplicationContext()));
+			queryBookmarks.findObjects(getApplicationContext(), new FindListener<DSBookmark>() {
+				@Override
+				public void onSuccess(List<DSBookmark> list) {
+					App app = (App) getApplication();
+					app.setBookmarksInCache(list);
+
+					getSupportFragmentManager().beginTransaction().replace(R.id.bookmark_list_container_fl, BookmarkListFragment
+							.newInstance(getApplicationContext()))
+							.commit();
+				}
+
+				@Override
+				public void onError(int i, String s) {
+					getSupportFragmentManager().beginTransaction().replace(R.id.bookmark_list_container_fl, BookmarkListFragment
+							.newInstance(getApplicationContext()))
+							.commit();
+				}
+			});
+		} catch (NoSuchAlgorithmException e) {
+			//TODO Error when can not get device id.
+		}
 	}
 
 

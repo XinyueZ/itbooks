@@ -8,7 +8,9 @@ import android.text.TextUtils;
 
 import com.google.gson.annotations.SerializedName;
 
-public final class RSBook implements Serializable {
+import cn.bmob.v3.BmobObject;
+
+public   class RSBook extends BmobObject implements Serializable {
 	@SerializedName("Name")
 	private String mName;
 	@SerializedName("Author")

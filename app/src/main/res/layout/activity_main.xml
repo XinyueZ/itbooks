@@ -12,12 +12,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <fragment
-            android:name="com.itbooks.app.fragments.BookmarkListFragment"
+        <FrameLayout
+            android:id="@+id/bookmark_list_container_fl"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="right"
             android:background="@color/grey_500" />
+
 
 
         <FrameLayout

@@ -1,17 +1,17 @@
 package com.itbooks.app;
 
+import java.security.NoSuchAlgorithmException;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.res.ResourcesCompat;
-import android.support.v4.os.AsyncTaskCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.NestedScrollView;
@@ -36,6 +36,7 @@ import com.gc.materialdesign.widgets.SnackBar;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
+import com.itbooks.App;
 import com.itbooks.R;
 import com.itbooks.app.fragments.BookmarkInfoDialogFragment;
 import com.itbooks.bus.DownloadEndEvent;
@@ -43,8 +44,10 @@ import com.itbooks.bus.DownloadFailedEvent;
 import com.itbooks.bus.DownloadOpenEvent;
 import com.itbooks.bus.DownloadStartEvent;
 import com.itbooks.bus.DownloadUnavailableEvent;
+import com.itbooks.data.DSBookmark;
 import com.itbooks.data.rest.RSBook;
 import com.itbooks.net.download.Download;
+import com.itbooks.utils.DeviceUniqueUtil;
 import com.itbooks.utils.Prefs;
 import com.itbooks.views.RevealLayout;
 import com.itbooks.views.RevealLayout.OnRevealEndListener;
@@ -100,7 +103,6 @@ public final class BookDetailActivity extends BaseActivity {
 	 */
 	private InterstitialAd mInterstitialAd;
 
-	private boolean mBookmarked;
 	private MenuItem mBookmarkItem;
 
 	private Toolbar mToolbar;
@@ -401,20 +403,8 @@ public final class BookDetailActivity extends BaseActivity {
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(BOOK_DETAIL_MENU, menu);
 		mBookmarkItem = menu.findItem(R.id.action_bookmark);
-		AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Void>() {
-			@Override
-			protected Void doInBackground(Void... params) {
-				//TODO Check if bookmarked in detail
-				//mBookmarked = DB.getInstance(getApplication()).isBookmarked(mBook);
-				return null;
-			}
-
-			@Override
-			protected void onPostExecute(Void aVoid) {
-				super.onPostExecute(aVoid);
-				mBookmarkItem.setIcon(mBookmarked ? R.drawable.ic_bookmarked : R.drawable.ic_not_bookmarked);
-			}
-		});
+		App app = (App) getApplication();
+		mBookmarkItem.setIcon(app.getBookmarked(mBook) != null ? R.drawable.ic_bookmarked : R.drawable.ic_not_bookmarked);
 		return true;
 	}
 
@@ -423,28 +413,28 @@ public final class BookDetailActivity extends BaseActivity {
 		switch (item.getItemId()) {
 		case R.id.action_bookmark:
 			if (mBook != null) {
-				AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Void>() {
-					@Override
-					protected Void doInBackground(Void... params) {
-						//TODO Do bookmark
-//						DB db = DB.getInstance(getApplication());
-//						if (mBookmarked) {
-//							db.removeBookmark(mBook);
-//						} else {
-//							db.addBookmark(new DSBookmark(mBook));
-//						}
-//						mBookmarked = db.isBookmarked(mBook);
-						return null;
+				App app = (App)getApplication();
+				DSBookmark foundBookmark = app.getBookmarked(mBook);
+				if(foundBookmark != null)  {
+					//Already in bookmark, then do remove.
+					app.removeFromBookmark(mBook);
+					DSBookmark delBookmark = new DSBookmark(mBook);
+					delBookmark.setObjectId(foundBookmark.getObjectId());
+					delBookmark.delete(app);
+					Utils.showShortToast(getApplicationContext(), R.string.msg_unbookmark_the_book);
+					mBookmarkItem.setIcon( R.drawable.ic_not_bookmarked);
+				} else {
+					//Not in , the do add.
+					try {
+						DSBookmark bookmark = new DSBookmark(mBook, DeviceUniqueUtil.getDeviceIdent(getApplicationContext()) );
+						app.addToBookmark(bookmark);
+						bookmark.save(app);
+						Utils.showShortToast(getApplicationContext(), R.string.msg_bookmark_the_book);
+						mBookmarkItem.setIcon(R.drawable.ic_bookmarked);
+					} catch (NoSuchAlgorithmException e) {
+						//TODO Error when can not get device id.
 					}
-
-					@Override
-					protected void onPostExecute(Void aVoid) {
-						super.onPostExecute(aVoid);
-						mBookmarkItem.setIcon(mBookmarked ? R.drawable.ic_bookmarked : R.drawable.ic_not_bookmarked);
-						Utils.showShortToast(getApplicationContext(), getString(
-								mBookmarked ? R.string.msg_bookmark_the_book : R.string.msg_unbookmark_the_book));
-					}
-				});
+				}
 			}
 			break;
 		}

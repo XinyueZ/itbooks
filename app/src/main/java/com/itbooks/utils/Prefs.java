@@ -22,7 +22,7 @@ public final class Prefs extends BasicPrefs {
 	private static final String KEY_SHOWN_DETAILS_TIMES = "key.details.shown.times";
 	private static final String KEY_VIEW_STYLE = "key.view.style";
 	private static final String KEY_SHOWN_DETAILS_ADS_TIMES = "ads";
-
+	private static final String KEY_DEVICE_IDENT = "key.device.ident";
 	/**
 	 * Storage. Whether the "End User License Agreement" has been shown and agreed at application's first start.
 	 * <p/>
@@ -188,5 +188,21 @@ public final class Prefs extends BasicPrefs {
 	 */
 	public int getViewStyle() {
 		return getInt(KEY_VIEW_STYLE, 2);
+	}
+	/**
+	 * Set device identifier for remote storage.
+	 *
+	 * @param ident
+	 * 		An identifier.
+	 */
+	public void setDeviceIdent(String ident) {
+		setString(KEY_DEVICE_IDENT, ident);
+	}
+
+	/**
+	 * @return The device identifier for remote storage.
+	 */
+	public String getDeviceIdent() {
+		return getString(KEY_DEVICE_IDENT, null);
 	}
 }
