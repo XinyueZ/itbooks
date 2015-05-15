@@ -430,9 +430,9 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	 * Load feed of books.
 	 */
 	private void loadBooks() {
-//		if (((AbstractBookViewAdapter)mRv.getAdapter()).getItemCount() == 0) {
-//			findViewById(R.id.loading_pb).setVisibility(View.VISIBLE);
-//		}
+		if (((AbstractBookViewAdapter)mRv.getAdapter()).getItemCount() == 0) {
+			findViewById(R.id.loading_pb).setVisibility(View.VISIBLE);
+		}
 		if (!TextUtils.isEmpty(mKeyword)) {
 			loadByKeyword();
 		} else {

@@ -13,7 +13,7 @@ import de.greenrobot.event.EventBus;
  *
  * @author Xinyue Zhao
  */
-public final class DatabaseHelper extends SQLiteOpenHelper {
+final class DatabaseHelper extends SQLiteOpenHelper {
 	/**
 	 * DB name.
 	 */

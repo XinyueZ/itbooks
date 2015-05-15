@@ -4,7 +4,6 @@ import java.security.NoSuchAlgorithmException;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -385,13 +384,14 @@ public final class BookDetailActivity extends BaseActivity {
 			}
 		}, ANIM_DUR);
 
-
-		//Try to find whether local has this book or not.
-		if (Download.exists(getApplicationContext(), mBook)) {
-			uiLoaded();
-		} else {
-			//Whether is being downloaded.
-			if (Download.downloading(getApplicationContext(), mBook)) {
+		boolean isLoading = Download.downloading(getApplicationContext(), mBook);
+		if (Download.exists(getApplicationContext(), mBook)  ) {
+			if(!isLoading) {
+				//Try to find whether local has this book or not.
+				uiLoaded();
+			} else {
+				//Whether is being downloaded.
+				mInProgress= true;
 				uiLoading();
 			}
 		}
@@ -404,8 +404,7 @@ public final class BookDetailActivity extends BaseActivity {
 		getMenuInflater().inflate(BOOK_DETAIL_MENU, menu);
 		mBookmarkItem = menu.findItem(R.id.action_bookmark);
 		App app = (App) getApplication();
-		mBookmarkItem.setIcon(app.getBookmarked(mBook) != null ? R.drawable.ic_bookmarked :
-				R.drawable.ic_not_bookmarked);
+		mBookmarkItem.setIcon(app.getBookmarked(mBook) != null ? R.drawable.ic_bookmarked : R.drawable.ic_not_bookmarked);
 		return true;
 	}
 

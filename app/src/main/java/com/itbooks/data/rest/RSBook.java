@@ -88,17 +88,15 @@ public   class RSBook extends BmobObject implements Serializable {
 	}
 
 	public String[] toArray() {
-		String[] array = new String[10];
+		String[] array = new String[8];
 		array[0] = mName;
 		array[1] = mAuthor;
 		array[2] = mSize;
 		array[3] = mPages;
-		array[4] = mLink;
-		array[5] = mISBN;
-		array[6] = mYear;
-		array[7] = mPublisher;
-		array[8] = mDescription;
-		array[9] = mCoverUrl;
+		array[4] = mISBN;
+		array[5] = mYear;
+		array[6] = mPublisher;
+		array[7] = mDescription;
 		return array;
 	}
 

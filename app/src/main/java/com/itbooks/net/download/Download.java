@@ -1,10 +1,12 @@
 package com.itbooks.net.download;
 
 import java.io.File;
+import java.util.List;
 
 import android.app.DownloadManager;
 import android.app.DownloadManager.Request;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
@@ -49,6 +51,9 @@ public final class Download {
 	 * The unique name when file saved.
 	 */
 	private String mTargetName;
+
+
+
 	/**
 	 * The ident given by android when start downloading.
 	 */
@@ -118,6 +123,22 @@ public final class Download {
 	 */
 	public static boolean downloading(Context cxt, RSBook book) {
 		DownloadManager downloadManager = (DownloadManager) cxt.getSystemService(Context.DOWNLOAD_SERVICE);
+		List<Download>  downloads = DB.getInstance(cxt).getDownloads(book);
+		for(Download download : downloads) {
+			DownloadManager.Query query = new DownloadManager.Query();
+			query.setFilterById(download.getDownloadId());
+			Cursor cursor = downloadManager.query(query);
+			if (cursor.moveToFirst()) {
+				int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
+				int status = cursor.getInt(columnIndex);
+				switch (status) {
+				case DownloadManager.STATUS_RUNNING:
+					return true;
+				default:
+					return false;
+				}
+			}
+		}
 		return false;
 	}
 
@@ -156,6 +177,13 @@ public final class Download {
 	 */
 	public long getDownloadId() {
 		return mDownloadId;
+	}
+
+	/**
+	 * Set ident given by android when start downloading.
+	 */
+	public void setDownloadId(long downloadId) {
+		mDownloadId = downloadId;
 	}
 
 	/**

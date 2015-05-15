@@ -6,7 +6,7 @@ package com.itbooks.db;
  * @author Xinyue Zhao
  * @deprecated For cloud bookmark.
  */
-public interface BookmarksTbl {
+interface BookmarksTbl {
 	public static final String DEF_LABEL_ID = "-1";
 	static final String ID = "_id";
 	static final String BOOK_NAME = "_name";

@@ -1,6 +1,9 @@
 package com.itbooks.db;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -184,5 +187,52 @@ public final class DB {
 			close();
 		}
 		return item;
+	}
+
+
+	/**
+	 * Get instances of download.
+	 *
+	 * @param book A book that might have being downloaded.
+	 *
+	 * @return A list of all {@link Download}s.
+	 */
+	public synchronized List<Download> getDownloads(RSBook book) {
+		if (mDB == null || !mDB.isOpen()) {
+			open();
+		}
+		Cursor c = null;
+		List<Download>  downloads = new ArrayList<>();
+		try {
+			String whereClause = DownloadsTbl.BOOK_NAME + "=? AND " +
+					DownloadsTbl.BOOK_AUTH + "=? AND " +
+					DownloadsTbl.BOOK_SIZE + "=? AND " +
+					DownloadsTbl.BOOK_PAGES + "=? AND " +
+					DownloadsTbl.BOOK_ISBN + "=? AND " +
+					DownloadsTbl.BOOK_YEAR + "=? AND " +
+					DownloadsTbl.BOOK_PUB + "=? AND " +
+					DownloadsTbl.BOOK_DESC + "=?  ";
+			String[] whereArgs = book.toArray();
+			c = mDB.query(DownloadsTbl.TABLE_NAME,null, whereClause,
+					whereArgs, null, null, null);
+
+			while (c.moveToNext()) {
+				Download item = new Download(new RSBook(c.getString(c.getColumnIndex(DownloadsTbl.BOOK_NAME)), c.getString(c.getColumnIndex(
+						DownloadsTbl.BOOK_AUTH)), c.getString(c.getColumnIndex(DownloadsTbl.BOOK_SIZE)), c.getString(
+						c.getColumnIndex(DownloadsTbl.BOOK_PAGES)), c.getString(c.getColumnIndex(
+						DownloadsTbl.BOOK_LINK)), c.getString(c.getColumnIndex(DownloadsTbl.BOOK_ISBN)), c.getString(
+						c.getColumnIndex(DownloadsTbl.BOOK_YEAR)), c.getString(c.getColumnIndex(DownloadsTbl.BOOK_PUB)),
+						c.getString(c.getColumnIndex(DownloadsTbl.BOOK_DESC)), c.getString(c.getColumnIndex(
+						DownloadsTbl.BOOK_COVER_URL))));
+				item.setDownloadId(c.getLong(c.getColumnIndex(DownloadsTbl.DOWNLOAD_ID)));
+				downloads.add(item);
+			}
+		} finally {
+			if (c != null) {
+				c.close();
+			}
+			close();
+		}
+		return downloads;
 	}
 }

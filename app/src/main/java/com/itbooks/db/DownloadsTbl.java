@@ -5,7 +5,7 @@ package com.itbooks.db;
  *
  * @author Xinyue Zhao
  */
-public interface DownloadsTbl {
+interface DownloadsTbl {
 	static final String ID = "_id";
 	static final String BOOK_NAME = "_name";
 	static final String BOOK_AUTH = "_auth";
