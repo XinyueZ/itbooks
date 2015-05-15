@@ -7,11 +7,13 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.os.AsyncTaskCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.NestedScrollView;
@@ -380,20 +382,66 @@ public final class BookDetailActivity extends BaseActivity {
 		new Handler().postDelayed(new Runnable() {
 			@Override
 			public void run() {
-				mHeadV.show();
+				mHeadV.next();
 			}
 		}, ANIM_DUR);
 
-		boolean isLoading = Download.downloading(getApplicationContext(), mBook);
 		if (Download.exists(getApplicationContext(), mBook)  ) {
-			if(!isLoading) {
-				//Try to find whether local has this book or not.
-				uiLoaded();
-			} else {
-				//Whether is being downloaded.
-				mInProgress= true;
-				uiLoading();
-			}
+			AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Boolean>() {
+				@Override
+				protected Boolean doInBackground(Void... params) {
+					try {
+						return Download.downloading(getApplicationContext(), mBook);
+					} catch (IllegalStateException e) {
+						return null;
+					}
+				}
+
+				@Override
+				protected void onPostExecute(Boolean isLoading) {
+					super.onPostExecute(isLoading);
+					if(isLoading != null) {
+						if (isLoading) {
+							mInProgress = true;
+							uiLoading();
+						} else {
+							mInProgress = false;
+							uiLoaded();
+						}
+					} else {
+						mInProgress = false;
+						uiFailDownloading();
+					}
+				}
+			});
+		} else {
+			AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Boolean>() {
+				@Override
+				protected Boolean doInBackground(Void... params) {
+					try {
+						return Download.downloading(getApplicationContext(), mBook);
+					} catch (IllegalStateException e) {
+						return null;
+					}
+				}
+
+				@Override
+				protected void onPostExecute(Boolean isLoading) {
+					super.onPostExecute(isLoading);
+					mInProgress = false;
+					if(isLoading != null) {
+						if (isLoading) {
+							mInProgress = true;
+							uiLoading();
+						} else {
+							mInProgress = false;
+						}
+					} else {
+						mInProgress = false;
+						uiFailDownloading();
+					}
+				}
+			});
 		}
 		ActivityCompat.invalidateOptionsMenu(this);
 	}

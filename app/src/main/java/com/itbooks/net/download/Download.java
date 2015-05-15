@@ -36,6 +36,7 @@ import de.greenrobot.event.EventBus;
  * <p/>
  * {@link DownloadOpenEvent}:Open downloaded file.
  * <p/>
+ *
  * @author Xinyue Zhao
  */
 public final class Download {
@@ -51,7 +52,6 @@ public final class Download {
 	 * The unique name when file saved.
 	 */
 	private String mTargetName;
-
 
 
 	/**
@@ -84,14 +84,15 @@ public final class Download {
 		if (to.exists()) {
 			EventBus.getDefault().post(new DownloadOpenEvent(to));
 		} else {
-			if(TextUtils.equals(Environment.getExternalStorageState() , Environment.MEDIA_REMOVED)) {
-				EventBus.getDefault().post(new DownloadUnavailableEvent( ));
+			if (TextUtils.equals(Environment.getExternalStorageState(), Environment.MEDIA_REMOVED)) {
+				EventBus.getDefault().post(new DownloadUnavailableEvent());
 			} else {
 				EventBus.getDefault().post(new DownloadStartEvent(this));
 				DownloadManager downloadManager = (DownloadManager) cxt.getSystemService(Context.DOWNLOAD_SERVICE);
 				mTimeStamp = System.currentTimeMillis();
 
-				DownloadManager.Request request = new DownloadManager.Request(Uri.parse(Utils.uriStr2URI(mBook.getLink()).toASCIIString()));
+				DownloadManager.Request request = new DownloadManager.Request(Uri.parse(Utils.uriStr2URI(
+						mBook.getLink()).toASCIIString()));
 				request.setDestinationInExternalFilesDir(cxt, Environment.DIRECTORY_DOWNLOADS, mTargetName);
 				request.setVisibleInDownloadsUi(true);//Can see the downloaded file in "download" app.
 				if (Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB) {
@@ -105,40 +106,50 @@ public final class Download {
 
 	/**
 	 * Test whether a book is already available local.
-	 * @param cxt {@link Context}.
-	 * @param book {@link RSBook} The book.
+	 *
+	 * @param cxt
+	 * 		{@link Context}.
+	 * @param book
+	 * 		{@link RSBook} The book.
+	 *
 	 * @return {@code true} if already exist to read.
 	 */
 	public static boolean exists(Context cxt, RSBook book) {
-		Download download  = new Download(book);
+		Download download = new Download(book);
 		File to = new File(cxt.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), download.getTargetName());
 		return to.exists();
 	}
 
 	/**
 	 * Test whether is being downloaded.
-	 * @param cxt {@link Context}.
-	 * @param book {@link RSBook} The book.
+	 *
+	 * @param cxt
+	 * 		{@link Context}.
+	 * @param book
+	 * 		{@link RSBook} The book.
+	 *
 	 * @return {@code true} if the book is being downloaded.
+	 *
+	 * @throws IllegalStateException
+	 * 		For error status {@link DownloadManager#STATUS_FAILED}.
 	 */
-	public static boolean downloading(Context cxt, RSBook book) {
+	public static boolean downloading(Context cxt, RSBook book) throws IllegalStateException {
 		DownloadManager downloadManager = (DownloadManager) cxt.getSystemService(Context.DOWNLOAD_SERVICE);
-		List<Download>  downloads = DB.getInstance(cxt).getDownloads(book);
-		for(Download download : downloads) {
+		List<Download> downloads = DB.getInstance(cxt).getDownloads(book);
+		for (Download download : downloads) {
 			DownloadManager.Query query = new DownloadManager.Query();
 			query.setFilterById(download.getDownloadId());
 			Cursor cursor = downloadManager.query(query);
 			if (cursor.moveToFirst()) {
 				int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
 				int status = cursor.getInt(columnIndex);
-				switch (status) {
-				case DownloadManager.STATUS_RUNNING:
-					return true;
-				default:
-					return false;
+				if (status == DownloadManager.STATUS_FAILED) {
+					throw new IllegalStateException();
 				}
+				return status != DownloadManager.STATUS_SUCCESSFUL;
 			}
 		}
+
 		return false;
 	}
 
