@@ -4,6 +4,7 @@ import java.security.NoSuchAlgorithmException;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -53,6 +54,9 @@ import com.itbooks.views.RevealLayout;
 import com.itbooks.views.RevealLayout.OnRevealEndListener;
 import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.squareup.picasso.Picasso;
+
+import cn.bmob.v3.listener.DeleteListener;
+import cn.bmob.v3.listener.SaveListener;
 
 /**
  * Details of book.
@@ -124,7 +128,6 @@ public final class BookDetailActivity extends BaseActivity {
 	}
 
 
-
 	/**
 	 * Handler for {@link com.itbooks.bus.DownloadEndEvent}.
 	 *
@@ -154,7 +157,6 @@ public final class BookDetailActivity extends BaseActivity {
 	}
 
 
-
 	/**
 	 * Handler for {@link com.itbooks.bus.DownloadOpenEvent}.
 	 *
@@ -169,33 +171,32 @@ public final class BookDetailActivity extends BaseActivity {
 			startActivity(openFileIntent);
 		} catch (Exception ex) {
 			//Download pdf-reader.
-			showDialogFragment(
-					new DialogFragment() {
-						@Override
-						public Dialog onCreateDialog(Bundle savedInstanceState) {
-							// Use the Builder class for convenient dialog construction
-							AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-							builder.setTitle(R.string.application_name).setMessage(R.string.msg_no_reader)
-									.setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
-										public void onClick(DialogInterface dialog, int id) {
-											String pdfReader = "com.adobe.reader";
-											try {
-												startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
-														"market://details?id=" + pdfReader)));
-											} catch (android.content.ActivityNotFoundException exx) {
-												startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
-														"https://play.google.com/store/apps/details?id=" + pdfReader)));
-											}
-										}
-									})
-									.setNegativeButton(R.string.btn_not_yet_load, new DialogInterface.OnClickListener() {
-										public void onClick(DialogInterface dialog, int id) {
-											// User cancelled the dialog
-										}
-									});
-							// Create the AlertDialog object and return it
-							return builder.create();
-						}}, null);
+			showDialogFragment(new DialogFragment() {
+				@Override
+				public Dialog onCreateDialog(Bundle savedInstanceState) {
+					// Use the Builder class for convenient dialog construction
+					AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+					builder.setTitle(R.string.application_name).setMessage(R.string.msg_no_reader).setPositiveButton(
+							R.string.btn_ok, new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							String pdfReader = "com.adobe.reader";
+							try {
+								startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
+										"market://details?id=" + pdfReader)));
+							} catch (android.content.ActivityNotFoundException exx) {
+								startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
+										"https://play.google.com/store/apps/details?id=" + pdfReader)));
+							}
+						}
+					}).setNegativeButton(R.string.btn_not_yet_load, new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog, int id) {
+									// User cancelled the dialog
+								}
+							});
+					// Create the AlertDialog object and return it
+					return builder.create();
+				}
+			}, null);
 		}
 	}
 
@@ -206,16 +207,16 @@ public final class BookDetailActivity extends BaseActivity {
 	 * 		Event {@link DownloadUnavailableEvent}.
 	 */
 	public void onEvent(DownloadUnavailableEvent e) {
-		showDialogFragment(
-				new DialogFragment() {
-					@Override
-					public Dialog onCreateDialog(Bundle savedInstanceState) {
-						// Use the Builder class for convenient dialog construction
-						AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-						builder.setTitle(R.string.application_name).setMessage(
-								R.string.msg_require_external_storage).setPositiveButton(R.string.btn_ok,null);
-						return builder.create();
-					}}, null);
+		showDialogFragment(new DialogFragment() {
+			@Override
+			public Dialog onCreateDialog(Bundle savedInstanceState) {
+				// Use the Builder class for convenient dialog construction
+				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+				builder.setTitle(R.string.application_name).setMessage(R.string.msg_require_external_storage)
+						.setPositiveButton(R.string.btn_ok, null);
+				return builder.create();
+			}
+		}, null);
 	}
 
 	//------------------------------------------------
@@ -319,9 +320,8 @@ public final class BookDetailActivity extends BaseActivity {
 		NestedScrollView childV = (NestedScrollView) findViewById(R.id.child_sv);
 		childV.setOnTouchListener(touchParent);
 		ScreenSize su = DeviceUtils.getScreenSize(this);
-		childV.getLayoutParams().height =
-				su.Height  - getResources().getDimensionPixelSize(
-						R.dimen.detail_head_to_top_distance);
+		childV.getLayoutParams().height = su.Height - getResources().getDimensionPixelSize(
+				R.dimen.detail_head_to_top_distance);
 
 		showBookDetail();
 	}
@@ -387,11 +387,11 @@ public final class BookDetailActivity extends BaseActivity {
 
 
 		//Try to find whether local has this book or not.
-		if(Download.exists(getApplicationContext(), mBook)) {
+		if (Download.exists(getApplicationContext(), mBook)) {
 			uiLoaded();
 		} else {
 			//Whether is being downloaded.
-			if(Download.downloading(getApplicationContext(), mBook)) {
+			if (Download.downloading(getApplicationContext(), mBook)) {
 				uiLoading();
 			}
 		}
@@ -404,7 +404,8 @@ public final class BookDetailActivity extends BaseActivity {
 		getMenuInflater().inflate(BOOK_DETAIL_MENU, menu);
 		mBookmarkItem = menu.findItem(R.id.action_bookmark);
 		App app = (App) getApplication();
-		mBookmarkItem.setIcon(app.getBookmarked(mBook) != null ? R.drawable.ic_bookmarked : R.drawable.ic_not_bookmarked);
+		mBookmarkItem.setIcon(app.getBookmarked(mBook) != null ? R.drawable.ic_bookmarked :
+				R.drawable.ic_not_bookmarked);
 		return true;
 	}
 
@@ -413,24 +414,23 @@ public final class BookDetailActivity extends BaseActivity {
 		switch (item.getItemId()) {
 		case R.id.action_bookmark:
 			if (mBook != null) {
-				App app = (App)getApplication();
+				App app = (App) getApplication();
 				DSBookmark foundBookmark = app.getBookmarked(mBook);
-				if(foundBookmark != null)  {
+				if (foundBookmark != null) {
 					//Already in bookmark, then do remove.
 					app.removeFromBookmark(mBook);
-					DSBookmark delBookmark = new DSBookmark(mBook);
-					delBookmark.setObjectId(foundBookmark.getObjectId());
-					delBookmark.delete(app);
 					Utils.showShortToast(getApplicationContext(), R.string.msg_unbookmark_the_book);
-					mBookmarkItem.setIcon( R.drawable.ic_not_bookmarked);
+					mBookmarkItem.setIcon(R.drawable.ic_not_bookmarked);
+					removeRemoteBookmark(app, foundBookmark);
 				} else {
 					//Not in , the do add.
 					try {
-						DSBookmark bookmark = new DSBookmark(mBook, DeviceUniqueUtil.getDeviceIdent(getApplicationContext()) );
+						DSBookmark bookmark = new DSBookmark(mBook, DeviceUniqueUtil.getDeviceIdent(
+								getApplicationContext()));
 						app.addToBookmark(bookmark);
-						bookmark.save(app);
 						Utils.showShortToast(getApplicationContext(), R.string.msg_bookmark_the_book);
 						mBookmarkItem.setIcon(R.drawable.ic_bookmarked);
+						addRemoteBookmark(app, bookmark);
 					} catch (NoSuchAlgorithmException e) {
 						//TODO Error when can not get device id.
 					}
@@ -439,6 +439,85 @@ public final class BookDetailActivity extends BaseActivity {
 			break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+
+
+
+	/**
+	 * Add bookmark in net.
+	 *
+	 * @param app
+	 * @param bookmark
+	 */
+	private void addRemoteBookmark(App app, final DSBookmark bookmark) {
+		openPb();
+		bookmark.save(app, new SaveListener() {
+			@Override
+			public void onSuccess() {
+				closePb();
+			}
+
+			@Override
+			public void onFailure(int i, String s) {
+				closePb();
+				showDialogFragment(new DialogFragment() {
+					@Override
+					public Dialog onCreateDialog(Bundle savedInstanceState) {
+						// Use the Builder class for convenient dialog construction
+						AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+						builder.setCancelable(false).setTitle(R.string.application_name).setMessage(
+								R.string.msg_op_fail).setPositiveButton(R.string.btn_retry,
+								new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog, int id) {
+										addRemoteBookmark((App) getApplication(), bookmark);
+									}
+								});
+						// Create the AlertDialog object and return it
+						return builder.create();
+					}
+				}, null);
+			}
+		});
+	}
+
+	/**
+	 * Remove bookmark in net.
+	 *
+	 * @param app
+	 * @param foundBookmark
+	 */
+	private void removeRemoteBookmark(App app, final DSBookmark foundBookmark) {
+		final DSBookmark delBookmark = new DSBookmark(mBook);
+		delBookmark.setObjectId(foundBookmark.getObjectId());
+		openPb();
+		delBookmark.delete(app, new DeleteListener() {
+			@Override
+			public void onSuccess() {
+				closePb();
+			}
+
+			@Override
+			public void onFailure(int i, String s) {
+				closePb();
+				showDialogFragment(new DialogFragment() {
+					@Override
+					public Dialog onCreateDialog(Bundle savedInstanceState) {
+						// Use the Builder class for convenient dialog construction
+						AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+						builder.setCancelable(false).setTitle(R.string.application_name).setMessage(
+								R.string.msg_op_fail).setPositiveButton(R.string.btn_retry,
+								new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog, int id) {
+										removeRemoteBookmark((App) getApplication(), foundBookmark);
+									}
+								});
+						// Create the AlertDialog object and return it
+						return builder.create();
+					}
+				}, null);
+			}
+		});
 	}
 
 	@Override

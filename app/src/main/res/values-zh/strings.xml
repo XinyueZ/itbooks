@@ -74,4 +74,6 @@
     <string name="msg_downloading_fail">无法下载这本书。</string>
     <string name="msg_new_api_version_update">您好，一个好，但也遗憾的消息。我必须告知您，我现在正使用新的API为您提供数据并支持直接下载，收藏夹将改为网络存储，这样您不用担心将来数据丢失。遗憾的是，旧的本地书签会因此次升级而遗憾丢失，希望您能谅解并一贯支持我，谢谢！</string>
     <string name="msg_require_external_storage">请检查SD卡是否已经插入，因为应用需要大存储空间，比方说SD卡或者内置大存储设备，您的空间不够。</string>
+    <string name="msg_op_fail">操作没有完全成功。</string>
+    <string name="msg_op">操作中…</string>
 </resources>

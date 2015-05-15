@@ -6,12 +6,11 @@ import java.util.List;
 import android.app.Dialog;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.os.AsyncTaskCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SlidingPaneLayout;
@@ -313,45 +312,11 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 			showDialogFragment(AboutDialogFragment.newInstance(this), null);
 			break;
 		case R.id.action_clear_bookmarks:
-			AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Void>() {
-				@Override
-				protected Void doInBackground(Void... params) {
-					//TODO Clear all bookmarks
-					//DB.getInstance(getApplication()).removeBookmarks();
-					return null;
-				}
-
-				@Override
-				protected void onPostExecute(Void aVoid) {
-					super.onPostExecute(aVoid);
-
-					openBookmarkList();
-				}
-			});
 			App app = (App) getApplication();
 			app.getBookmarksInCache().clear();
 			openBookmarkList();
 			EventBus.getDefault().post(new CleanBookmarkEvent());
-			BmobQuery<DSBookmark> queryBookmarks = new BmobQuery<>();
-			try {
-				queryBookmarks.addWhereEqualTo("mUID", DeviceUniqueUtil.getDeviceIdent(getApplicationContext()));
-				queryBookmarks.findObjects(getApplicationContext(), new FindListener<DSBookmark>() {
-					@Override
-					public void onSuccess(List<DSBookmark> list) {
-						for(DSBookmark b : list) {
-							DSBookmark delBookmark = new DSBookmark(b.getBook());
-							delBookmark.setObjectId(b.getObjectId());
-							delBookmark.delete(getApplicationContext());
-						}
-					}
-
-					@Override
-					public void onError(int i, String s) {
-					}
-				});
-			} catch (NoSuchAlgorithmException e) {
-				//TODO Error when can not get device id.
-			}
+			removeAllRemoteBookmarks();
 			break;
 
 		case R.id.action_setting:
@@ -371,6 +336,50 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 			break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	/**
+	 * Delete bookmarks in net.
+	 */
+	private void removeAllRemoteBookmarks() {
+		try {
+			BmobQuery<DSBookmark> queryBookmarks = new BmobQuery<>();
+			queryBookmarks.addWhereEqualTo("mUID", DeviceUniqueUtil.getDeviceIdent(getApplicationContext()));
+			openPb();
+			queryBookmarks.findObjects(getApplicationContext(), new FindListener<DSBookmark>() {
+				@Override
+				public void onSuccess(List<DSBookmark> list) {
+					for(DSBookmark b : list) {
+						DSBookmark delBookmark = new DSBookmark(b.getBook());
+						delBookmark.setObjectId(b.getObjectId());
+						delBookmark.delete(getApplicationContext());
+					}
+					closePb();
+				}
+
+				@Override
+				public void onError(int i, String s) {
+					closePb();
+					showDialogFragment(
+							new DialogFragment() {
+								@Override
+								public Dialog onCreateDialog(Bundle savedInstanceState) {
+									// Use the Builder class for convenient dialog construction
+									AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+									builder.setCancelable(false).setTitle(R.string.application_name).setMessage(R.string.msg_op_fail)
+											.setPositiveButton(R.string.btn_retry, new DialogInterface.OnClickListener() {
+												public void onClick(DialogInterface dialog, int id) {
+													removeAllRemoteBookmarks();
+												}
+											}) ;
+									// Create the AlertDialog object and return it
+									return builder.create();
+								}}, null);
+				}
+			});
+		} catch (NoSuchAlgorithmException e) {
+			//TODO Error when can not get device id.
+		}
 	}
 
 	/**

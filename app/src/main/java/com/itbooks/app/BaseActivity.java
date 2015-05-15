@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 
 import android.app.AlertDialog;
 import android.app.DownloadManager;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -98,7 +99,7 @@ public abstract class BaseActivity extends com.chopping.activities.BaseActivity 
 	 * 		Tag name for dialog, default is "dlg". To grantee that only one instance of {@link
 	 * 		android.support.v4.app.DialogFragment} can been seen.
 	 */
-	protected void showDialogFragment(DialogFragment _dlgFrg, String _tagName) {
+	public void showDialogFragment(DialogFragment _dlgFrg, String _tagName) {
 		try {
 			if (_dlgFrg != null) {
 				DialogFragment dialogFragment = _dlgFrg;
@@ -152,5 +153,18 @@ public abstract class BaseActivity extends com.chopping.activities.BaseActivity 
 			return i;
 		}
 		return null;
+	}
+
+	private ProgressDialog mProgressDialog;
+
+	public void openPb() {
+		mProgressDialog = ProgressDialog.show(this, null, getString(R.string.msg_op));
+		mProgressDialog.setCancelable(false);
+	}
+
+	public void closePb() {
+		if (mProgressDialog != null && mProgressDialog.isShowing()) {
+			mProgressDialog.dismiss();
+		}
 	}
 }

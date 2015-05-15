@@ -13,7 +13,7 @@
     <string name="lbl_about">About</string>
     <string name="lbl_share_app">Teilen</string>
     <string name="lbl_share_book">Teile dieses Buch</string>
-    <string name="lbl_share_app_content">Hallo!\n\nsuchst du jetzt mehr IT-Bücher?\n\nDownload:
+    <string name="lbl_share_app_content">Hallo!\n\nsuchen Sie jetzt mehr IT-Bücher?\n\nDownload:
         http://tinyurl.com/kto2y59</string>
     <string name="lbl_share_book_content">Hallo!\n\nich habe ein gutes IT-Buch
         gefunden.\n\n\"%1$s\"\n\nAutor:%2$s\n\nHerunterladen: %3$s\n\nApp herunterladen: http://tinyurl.com/kto2y59</string>
@@ -64,8 +64,10 @@
     <string name="msg_push_unregistering">Abmeldung…</string>
     <string name="msg_items_count">%s  wurden gefunden.</string>
     <string name="msg_items_not_found">Keine gewünschten Bücher wurden gefunden.</string>
-    <string name="msg_no_reader">Du hast keine App, die PDF lesen zu können. Magst du eine App herunterladen?</string>
+    <string name="msg_no_reader">Du hast keine App, die PDF lesen zu können. Möchten Sie eine App herunterladen?</string>
     <string name="msg_downloading_fail">Fehler, dieses Buch kann nicht heruntergeladen werden.</string>
     <string name="msg_new_api_version_update">Hallo,  ich habe gute und schlechte Neuigkeiten: Ich nutze nun eine neue API, um direkte Downloads an Stelle des Webs zu verwenden. Lesezeichen werden nun in der Cloud gespeichert, um Datenverlust vorzubeugen.   Dafür müssen vorherige Lesezeichen leider verworfen werden. Ich danke für Ihr Verständnis und für Ihre Unterstützung.</string>
     <string name="msg_require_external_storage">Sie müssen durchsuchen, ob Sie eine SD-Karte schon genutzt haben oder nicht, weil die App unbedingt einen großen Speicherpltz braucht.</string>
+    <string name="msg_op_fail">Die Operation ist noch nicht komplete durchgeführt worden.</string>
+    <string name="msg_op">Bearbeite…</string>
 </resources>
