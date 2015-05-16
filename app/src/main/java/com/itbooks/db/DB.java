@@ -138,9 +138,43 @@ public final class DB {
 			v.put(DownloadsTbl.BOOK_DESC, book.getDescription());
 			v.put(DownloadsTbl.BOOK_COVER_URL, book.getCoverUrl());
 			v.put(DownloadsTbl.DOWNLOAD_ID, download.getDownloadId());
+			v.put(DownloadsTbl.DOWNLOAD_STATUS, download.getStatus());
 			v.put(DownloadsTbl.EDIT_TIME, download.getTimeStamp());
 
 			rowId = mDB.insert(DownloadsTbl.TABLE_NAME, null, v);
+			success = rowId != -1;
+		} finally {
+			close();
+		}
+		return success;
+	}
+
+	/**
+	 * Update the status of download instance.
+	 * @param download An instance of {@link Download}.
+	 * @return {@code  true} if success.
+	 */
+	public synchronized boolean updateDownloadStatus(Download download) {
+		if (mDB == null || !mDB.isOpen()) {
+			open();
+		}
+		boolean success = false;
+		try {
+			long rowId;
+			ContentValues v = new ContentValues();
+
+			v.put(DownloadsTbl.DOWNLOAD_STATUS, download.getStatus());
+			String whereClause =
+					DownloadsTbl.BOOK_NAME + "=? AND " +
+					DownloadsTbl.BOOK_AUTH + "=? AND " +
+					DownloadsTbl.BOOK_SIZE + "=? AND " +
+					DownloadsTbl.BOOK_PAGES + "=? AND " +
+					DownloadsTbl.BOOK_ISBN + "=? AND " +
+					DownloadsTbl.BOOK_YEAR + "=? AND " +
+					DownloadsTbl.BOOK_PUB + "=? AND " +
+					DownloadsTbl.BOOK_DESC + "=?  ";
+			String[] whereArgs = download.getBook().toArray();
+			rowId = mDB.update(DownloadsTbl.TABLE_NAME, v, whereClause, whereArgs);
 			success = rowId != -1;
 		} finally {
 			close();
@@ -156,7 +190,7 @@ public final class DB {
 	 *
 	 * @return {@link Download}.
 	 */
-	public
+	public synchronized
 	@Nullable
 	Download getDownload(long downloadId) {
 		if (mDB == null || !mDB.isOpen()) {
@@ -179,6 +213,8 @@ public final class DB {
 						DownloadsTbl.BOOK_COVER_URL)));
 
 				item = new Download(book);
+				item.setDownloadId(c.getLong(c.getColumnIndex(DownloadsTbl.DOWNLOAD_ID)));
+				item.setStatus(c.getInt(c.getColumnIndex(DownloadsTbl.DOWNLOAD_STATUS)));
 			}
 		} finally {
 			if (c != null) {
@@ -225,6 +261,7 @@ public final class DB {
 						c.getString(c.getColumnIndex(DownloadsTbl.BOOK_DESC)), c.getString(c.getColumnIndex(
 						DownloadsTbl.BOOK_COVER_URL))));
 				item.setDownloadId(c.getLong(c.getColumnIndex(DownloadsTbl.DOWNLOAD_ID)));
+				item.setStatus(c.getInt(c.getColumnIndex(DownloadsTbl.DOWNLOAD_STATUS)));
 				downloads.add(item);
 			}
 		} finally {

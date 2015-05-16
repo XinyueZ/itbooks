@@ -27,6 +27,7 @@ public final class DownloadReceiver extends BroadcastReceiver {
 			if (cursor.moveToFirst()) {
 				int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
 				int status = cursor.getInt(columnIndex);
+				download.setStatus(context, status);
 				switch (status) {
 				case DownloadManager.STATUS_SUCCESSFUL:
 					download.end(context);

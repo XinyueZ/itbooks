@@ -6,7 +6,6 @@ import java.util.List;
 import android.app.DownloadManager;
 import android.app.DownloadManager.Request;
 import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
@@ -52,8 +51,10 @@ public final class Download {
 	 * The unique name when file saved.
 	 */
 	private String mTargetName;
-
-
+	/**
+	 * Equivalent to   {@link DownloadManager}STATUS_*
+	 */
+	private int mStatus;
 	/**
 	 * The ident given by android when start downloading.
 	 */
@@ -98,7 +99,8 @@ public final class Download {
 				if (Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB) {
 					request.setNotificationVisibility(Request.VISIBILITY_HIDDEN);
 				}
-				mDownloadId = downloadManager.enqueue(request);
+				setDownloadId(downloadManager.enqueue(request));
+				setStatus(DownloadManager.STATUS_RUNNING);
 				DB.getInstance(cxt).insertNewDownload(this);
 			}
 		}
@@ -134,22 +136,13 @@ public final class Download {
 	 * 		For error status {@link DownloadManager#STATUS_FAILED}.
 	 */
 	public static boolean downloading(Context cxt, RSBook book) throws IllegalStateException {
-		DownloadManager downloadManager = (DownloadManager) cxt.getSystemService(Context.DOWNLOAD_SERVICE);
 		List<Download> downloads = DB.getInstance(cxt).getDownloads(book);
 		for (Download download : downloads) {
-			DownloadManager.Query query = new DownloadManager.Query();
-			query.setFilterById(download.getDownloadId());
-			Cursor cursor = downloadManager.query(query);
-			if (cursor.moveToFirst()) {
-				int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
-				int status = cursor.getInt(columnIndex);
-				if (status == DownloadManager.STATUS_FAILED) {
-					throw new IllegalStateException();
-				}
-				return status != DownloadManager.STATUS_SUCCESSFUL;
+			if (download.getStatus() == DownloadManager.STATUS_FAILED) {
+				throw new IllegalStateException();
 			}
+			return download.getStatus() != DownloadManager.STATUS_SUCCESSFUL;
 		}
-
 		return false;
 	}
 
@@ -209,5 +202,31 @@ public final class Download {
 	 */
 	public RSBook getBook() {
 		return mBook;
+	}
+
+	/**
+	 * Get status of download, equivalent to   {@link DownloadManager}STATUS_*
+	 * @return The status of download.
+	 */
+	public int getStatus() {
+		return mStatus;
+	}
+
+	/**
+	 * Set status of downloading, update database.
+	 * @param cxt {@link Context}.
+	 * @param status The status that equivalents to   {@link DownloadManager}STATUS_*
+	 */
+	public void setStatus(Context cxt, int status) {
+		mStatus = status;
+		DB.getInstance(cxt.getApplicationContext()).updateDownloadStatus(this);
+	}
+
+	/**
+	 * Set status of downloading. Do not update database.
+	 * @param status The status that equivalents to   {@link DownloadManager}STATUS_*
+	 */
+	public void setStatus(  int status) {
+		mStatus = status;
 	}
 }

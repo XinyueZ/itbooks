@@ -18,6 +18,7 @@ interface DownloadsTbl {
 	static final String BOOK_DESC = "_desc";
 	static final String BOOK_COVER_URL = "_cover_url";
 	static final String DOWNLOAD_ID = "_id_download";
+	static final String DOWNLOAD_STATUS = "_status";//DownloadManager#STATUS_*
 	static final String EDIT_TIME = "_edited_time";
 	static final String TABLE_NAME = "downloads";
 
@@ -39,6 +40,7 @@ interface DownloadsTbl {
 					BOOK_PUB + " TEXT DEFAULT \"\", " +
 					BOOK_DESC + " TEXT DEFAULT \"\", " +
 					BOOK_COVER_URL + " TEXT DEFAULT \"\", " +
+					DOWNLOAD_STATUS+ " INTEGER DEFAULT 0, " +
 					DOWNLOAD_ID + " INTEGER DEFAULT 0, " +
 					EDIT_TIME + " INTEGER" +
 					");";
