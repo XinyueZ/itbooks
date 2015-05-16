@@ -1,12 +1,8 @@
 package com.itbooks.app;
 
-import java.security.NoSuchAlgorithmException;
-import java.util.List;
-
 import android.app.Dialog;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
@@ -39,7 +35,6 @@ import com.chopping.utils.DeviceUtils;
 import com.chopping.utils.DeviceUtils.ScreenSize;
 import com.crashlytics.android.Crashlytics;
 import com.gc.materialdesign.widgets.SnackBar;
-import com.itbooks.App;
 import com.itbooks.R;
 import com.itbooks.adapters.AbstractBookViewAdapter;
 import com.itbooks.adapters.BookGridAdapter;
@@ -48,23 +43,22 @@ import com.itbooks.app.fragments.AboutDialogFragment;
 import com.itbooks.app.fragments.AppListImpFragment;
 import com.itbooks.app.fragments.BookmarkListFragment;
 import com.itbooks.app.fragments.PushInfoDialogFragment;
+import com.itbooks.bus.BookmarksLoadedEvent;
 import com.itbooks.bus.CleanBookmarkEvent;
 import com.itbooks.bus.EULAConfirmedEvent;
 import com.itbooks.bus.EULARejectEvent;
 import com.itbooks.bus.NewAPIVersionUpdateEvent;
 import com.itbooks.bus.OpenBookDetailEvent;
 import com.itbooks.bus.OpenBookmarkEvent;
-import com.itbooks.data.DSBookmark;
+import com.itbooks.bus.RefreshBookmarksEvent;
 import com.itbooks.data.rest.RSBook;
 import com.itbooks.data.rest.RSBookList;
 import com.itbooks.data.rest.RSBookQuery;
 import com.itbooks.net.api.Api;
 import com.itbooks.net.api.ApiNotInitializedException;
-import com.itbooks.utils.DeviceUniqueUtil;
+import com.itbooks.net.bookmark.BookmarkManger;
 import com.itbooks.utils.Prefs;
 
-import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.listener.FindListener;
 import de.greenrobot.event.EventBus;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -183,6 +177,28 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		openBookDetail(e.getBook());
 	}
 
+	/**
+	 * Handler for {@link com.itbooks.bus.RefreshBookmarksEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link com.itbooks.bus.RefreshBookmarksEvent}.
+	 */
+	public void onEvent(RefreshBookmarksEvent e) {
+		getBookmarks();
+	}
+
+
+	/**
+	 * Handler for {@link com.itbooks.bus.BookmarksLoadedEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link com.itbooks.bus.BookmarksLoadedEvent}.
+	 */
+	public void onEvent(BookmarksLoadedEvent e) {
+		getSupportFragmentManager().beginTransaction().replace(R.id.bookmark_list_container_fl, BookmarkListFragment
+				.newInstance(getApplicationContext()))
+				.commit();
+	}
 	//------------------------------------------------
 
 	@Override
@@ -225,30 +241,14 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 			}
 		});
 
-		try {
-			BmobQuery<DSBookmark> queryBookmarks = new BmobQuery<>();
-			queryBookmarks.addWhereEqualTo("mUID", DeviceUniqueUtil.getDeviceIdent(getApplicationContext()));
-			queryBookmarks.findObjects(getApplicationContext(), new FindListener<DSBookmark>() {
-				@Override
-				public void onSuccess(List<DSBookmark> list) {
-					App app = (App) getApplication();
-					app.setBookmarksInCache(list);
+		getBookmarks();
+	}
 
-					getSupportFragmentManager().beginTransaction().replace(R.id.bookmark_list_container_fl, BookmarkListFragment
-							.newInstance(getApplicationContext()))
-							.commit();
-				}
-
-				@Override
-				public void onError(int i, String s) {
-					getSupportFragmentManager().beginTransaction().replace(R.id.bookmark_list_container_fl, BookmarkListFragment
-							.newInstance(getApplicationContext()))
-							.commit();
-				}
-			});
-		} catch (NoSuchAlgorithmException e) {
-			//TODO Error when can not get device id.
-		}
+	/**
+	 * Get and load all bookmarks.
+	 */
+	private void getBookmarks() {
+		BookmarkManger.getInstance().loadAllBookmarks( );
 	}
 
 
@@ -313,11 +313,9 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 			showDialogFragment(AboutDialogFragment.newInstance(this), null);
 			break;
 		case R.id.action_clear_bookmarks:
-			App app = (App) getApplication();
-			app.getBookmarksInCache().clear();
+			BookmarkManger.getInstance().removeAllRemoteBookmarks();
 			openBookmarkList();
 			EventBus.getDefault().post(new CleanBookmarkEvent());
-			removeAllRemoteBookmarks();
 			break;
 
 		case R.id.action_setting:
@@ -339,49 +337,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		return super.onOptionsItemSelected(item);
 	}
 
-	/**
-	 * Delete bookmarks in net.
-	 */
-	private void removeAllRemoteBookmarks() {
-		try {
-			BmobQuery<DSBookmark> queryBookmarks = new BmobQuery<>();
-			queryBookmarks.addWhereEqualTo("mUID", DeviceUniqueUtil.getDeviceIdent(getApplicationContext()));
-			openPb();
-			queryBookmarks.findObjects(getApplicationContext(), new FindListener<DSBookmark>() {
-				@Override
-				public void onSuccess(List<DSBookmark> list) {
-					for(DSBookmark b : list) {
-						DSBookmark delBookmark = new DSBookmark(b.getBook());
-						delBookmark.setObjectId(b.getObjectId());
-						delBookmark.delete(getApplicationContext());
-					}
-					closePb();
-				}
 
-				@Override
-				public void onError(int i, String s) {
-					closePb();
-					showDialogFragment(
-							new DialogFragment() {
-								@Override
-								public Dialog onCreateDialog(Bundle savedInstanceState) {
-									// Use the Builder class for convenient dialog construction
-									AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-									builder.setCancelable(false).setTitle(R.string.application_name).setMessage(R.string.msg_op_fail)
-											.setPositiveButton(R.string.btn_retry, new DialogInterface.OnClickListener() {
-												public void onClick(DialogInterface dialog, int id) {
-													removeAllRemoteBookmarks();
-												}
-											}) ;
-									// Create the AlertDialog object and return it
-									return builder.create();
-								}}, null);
-				}
-			});
-		} catch (NoSuchAlgorithmException e) {
-			//TODO Error when can not get device id.
-		}
-	}
 
 	/**
 	 * Open the bookmark-list.

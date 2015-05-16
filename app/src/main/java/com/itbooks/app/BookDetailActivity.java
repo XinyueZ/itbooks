@@ -1,7 +1,5 @@
 package com.itbooks.app;
 
-import java.security.NoSuchAlgorithmException;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -38,7 +36,6 @@ import com.gc.materialdesign.widgets.SnackBar;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
-import com.itbooks.App;
 import com.itbooks.R;
 import com.itbooks.app.fragments.BookmarkInfoDialogFragment;
 import com.itbooks.bus.DownloadEndEvent;
@@ -46,18 +43,14 @@ import com.itbooks.bus.DownloadFailedEvent;
 import com.itbooks.bus.DownloadOpenEvent;
 import com.itbooks.bus.DownloadStartEvent;
 import com.itbooks.bus.DownloadUnavailableEvent;
-import com.itbooks.data.DSBookmark;
 import com.itbooks.data.rest.RSBook;
+import com.itbooks.net.bookmark.BookmarkManger;
 import com.itbooks.net.download.Download;
-import com.itbooks.utils.DeviceUniqueUtil;
 import com.itbooks.utils.Prefs;
 import com.itbooks.views.RevealLayout;
 import com.itbooks.views.RevealLayout.OnRevealEndListener;
 import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.squareup.picasso.Picasso;
-
-import cn.bmob.v3.listener.DeleteListener;
-import cn.bmob.v3.listener.SaveListener;
 
 /**
  * Details of book.
@@ -107,11 +100,10 @@ public final class BookDetailActivity extends BaseActivity {
 	 * The interstitial ad.
 	 */
 	private InterstitialAd mInterstitialAd;
-
 	private MenuItem mBookmarkItem;
-
 	private Toolbar mToolbar;
 
+	private boolean mBookmarked;
 	private static final int ANIM_DUR = 1000;
 	//------------------------------------------------
 	//Subscribes, event-handlers
@@ -242,6 +234,7 @@ public final class BookDetailActivity extends BaseActivity {
 	 */
 	public void displayInterstitial() {
 		if (mInterstitialAd.isLoaded()) {
+			closeTroubleUI();
 			mInterstitialAd.show();
 		}
 	}
@@ -451,8 +444,9 @@ public final class BookDetailActivity extends BaseActivity {
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		getMenuInflater().inflate(BOOK_DETAIL_MENU, menu);
 		mBookmarkItem = menu.findItem(R.id.action_bookmark);
-		App app = (App) getApplication();
-		mBookmarkItem.setIcon(app.getBookmarked(mBook) != null ? R.drawable.ic_bookmarked : R.drawable.ic_not_bookmarked);
+		mBookmarked = BookmarkManger.getInstance().getBookmarked(mBook) != null;
+		mBookmarkItem.setIcon(mBookmarked ? R.drawable.ic_bookmarked :
+				R.drawable.ic_not_bookmarked);
 		return true;
 	}
 
@@ -461,26 +455,16 @@ public final class BookDetailActivity extends BaseActivity {
 		switch (item.getItemId()) {
 		case R.id.action_bookmark:
 			if (mBook != null) {
-				App app = (App) getApplication();
-				DSBookmark foundBookmark = app.getBookmarked(mBook);
-				if (foundBookmark != null) {
-					//Already in bookmark, then do remove.
-					app.removeFromBookmark(mBook);
+				if(mBookmarked) {
+					BookmarkManger.getInstance().removeBookmark(mBook);
 					Utils.showShortToast(getApplicationContext(), R.string.msg_unbookmark_the_book);
 					mBookmarkItem.setIcon(R.drawable.ic_not_bookmarked);
-					removeRemoteBookmark(app, foundBookmark);
+					mBookmarked = false;
 				} else {
-					//Not in , the do add.
-					try {
-						DSBookmark bookmark = new DSBookmark(mBook, DeviceUniqueUtil.getDeviceIdent(
-								getApplicationContext()));
-						app.addToBookmark(bookmark);
-						Utils.showShortToast(getApplicationContext(), R.string.msg_bookmark_the_book);
-						mBookmarkItem.setIcon(R.drawable.ic_bookmarked);
-						addRemoteBookmark(app, bookmark);
-					} catch (NoSuchAlgorithmException e) {
-						//TODO Error when can not get device id.
-					}
+					BookmarkManger.getInstance().addBookmark(mBook);
+					Utils.showShortToast(getApplicationContext(), R.string.msg_bookmark_the_book);
+					mBookmarkItem.setIcon(R.drawable.ic_bookmarked);
+					mBookmarked = true;
 				}
 			}
 			break;
@@ -490,82 +474,6 @@ public final class BookDetailActivity extends BaseActivity {
 
 
 
-
-	/**
-	 * Add bookmark in net.
-	 *
-	 * @param app
-	 * @param bookmark
-	 */
-	private void addRemoteBookmark(App app, final DSBookmark bookmark) {
-		openPb();
-		bookmark.save(app, new SaveListener() {
-			@Override
-			public void onSuccess() {
-				closePb();
-			}
-
-			@Override
-			public void onFailure(int i, String s) {
-				closePb();
-				showDialogFragment(new DialogFragment() {
-					@Override
-					public Dialog onCreateDialog(Bundle savedInstanceState) {
-						// Use the Builder class for convenient dialog construction
-						AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-						builder.setCancelable(false).setTitle(R.string.application_name).setMessage(
-								R.string.msg_op_fail).setPositiveButton(R.string.btn_retry,
-								new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog, int id) {
-										addRemoteBookmark((App) getApplication(), bookmark);
-									}
-								});
-						// Create the AlertDialog object and return it
-						return builder.create();
-					}
-				}, null);
-			}
-		});
-	}
-
-	/**
-	 * Remove bookmark in net.
-	 *
-	 * @param app
-	 * @param foundBookmark
-	 */
-	private void removeRemoteBookmark(App app, final DSBookmark foundBookmark) {
-		final DSBookmark delBookmark = new DSBookmark(mBook);
-		delBookmark.setObjectId(foundBookmark.getObjectId());
-		openPb();
-		delBookmark.delete(app, new DeleteListener() {
-			@Override
-			public void onSuccess() {
-				closePb();
-			}
-
-			@Override
-			public void onFailure(int i, String s) {
-				closePb();
-				showDialogFragment(new DialogFragment() {
-					@Override
-					public Dialog onCreateDialog(Bundle savedInstanceState) {
-						// Use the Builder class for convenient dialog construction
-						AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-						builder.setCancelable(false).setTitle(R.string.application_name).setMessage(
-								R.string.msg_op_fail).setPositiveButton(R.string.btn_retry,
-								new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog, int id) {
-										removeRemoteBookmark((App) getApplication(), foundBookmark);
-									}
-								});
-						// Create the AlertDialog object and return it
-						return builder.create();
-					}
-				}, null);
-			}
-		});
-	}
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {

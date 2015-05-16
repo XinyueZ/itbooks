@@ -1,12 +1,8 @@
 package com.itbooks.app.fragments;
 
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
@@ -16,15 +12,17 @@ import android.view.ViewGroup;
 
 import com.chopping.application.BasicPrefs;
 import com.chopping.fragments.BaseFragment;
-import com.itbooks.App;
 import com.itbooks.R;
 import com.itbooks.adapters.BookmarkListAdapter;
-import com.itbooks.app.BaseActivity;
+import com.itbooks.bus.BookmarksLoadedEvent;
 import com.itbooks.bus.DeleteBookmarkEvent;
+import com.itbooks.bus.RefreshBookmarksEvent;
 import com.itbooks.data.DSBookmark;
+import com.itbooks.net.bookmark.BookmarkManger;
 import com.itbooks.utils.Prefs;
+import com.nineoldandroids.animation.ObjectAnimator;
 
-import cn.bmob.v3.listener.DeleteListener;
+import de.greenrobot.event.EventBus;
 
 /**
  * Show list of all bookmarks.
@@ -53,7 +51,9 @@ public final class BookmarkListFragment extends BaseFragment {
 	 */
 	public void onEvent(DeleteBookmarkEvent e) {
 		DSBookmark bookmark = e.getBookmark();
-		deleteBookmark(bookmark);
+		BookmarkManger.getInstance().removeBookmark(bookmark.getBook());
+		mAdp.notifyDataSetChanged();
+		mEmptyV.setVisibility(BookmarkManger.getInstance().getBookmarksInCache().size() <= 0 ? View.VISIBLE : View.GONE);
 	}
 
 	/**
@@ -68,17 +68,29 @@ public final class BookmarkListFragment extends BaseFragment {
 		mEmptyV.setVisibility(View.VISIBLE);
 	}
 
+	/**
+	 * Handler for {@link com.itbooks.bus.BookmarksLoadedEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link com.itbooks.bus.BookmarksLoadedEvent}.
+	 */
+	public void onEvent(BookmarksLoadedEvent e) {
+		if(mObjectAnimator != null) {
+			mObjectAnimator.cancel();
+		}
+	}
 	//------------------------------------------------
 
-	public static Fragment newInstance(Context context ) {
-		return  BookmarkListFragment.instantiate(context, BookmarkListFragment.class.getName()  );
+	public static Fragment newInstance(Context context) {
+		return BookmarkListFragment.instantiate(context, BookmarkListFragment.class.getName());
 	}
-
 
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(LAYOUT, container, false);
 	}
+
+	private ObjectAnimator mObjectAnimator;
 
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -93,11 +105,14 @@ public final class BookmarkListFragment extends BaseFragment {
 		mRefreshV.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				loadBookmarks();
+				mObjectAnimator = ObjectAnimator.ofFloat(mRefreshV, "rotation", 0, 360f);
+				mObjectAnimator.setDuration(800);
+				mObjectAnimator.setRepeatCount(ObjectAnimator.INFINITE);
+				mObjectAnimator.start();
+				EventBus.getDefault().post(new RefreshBookmarksEvent());
 			}
 		});
-
-
+		mRefreshV.setBackgroundColor(getResources().getColor(R.color.common_red));
 	}
 
 	@Override
@@ -106,66 +121,21 @@ public final class BookmarkListFragment extends BaseFragment {
 		loadBookmarks();
 	}
 
+	/**
+	 * Get all bookmarks to show.
+	 */
 	private void loadBookmarks() {
-		App app = (App) getActivity().getApplication();
-		if(mAdp == null) {
-			mAdp = new BookmarkListAdapter(app.getBookmarksInCache());
+		if (mAdp == null) {
+			mAdp = new BookmarkListAdapter(BookmarkManger.getInstance().getBookmarksInCache());
 			mBookmarksRv.setAdapter(mAdp);
 		} else {
-			mAdp.setBookmarkList(app.getBookmarksInCache());
+			mAdp.setBookmarkList(BookmarkManger.getInstance().getBookmarksInCache());
 			mAdp.notifyDataSetChanged();
 		}
-		mEmptyV.setVisibility(app.getBookmarksInCache().size() <= 0 ? View.VISIBLE : View.GONE);
+		mEmptyV.setVisibility(
+				BookmarkManger.getInstance().getCount() <= 0 ? View.VISIBLE : View.GONE);
 	}
 
-
-	private void deleteBookmark(DSBookmark bookmark) {
-		App app = (App) getActivity().getApplication();
-		removeBookmarkInNet(app, bookmark );
-		app.removeFromBookmark(bookmark.getBook());
-		mAdp.notifyDataSetChanged();
-		mEmptyV.setVisibility(app.getBookmarksInCache().size() <= 0 ? View.VISIBLE : View.GONE);
-	}
-	/**
-	 * Remove bookmark in net.
-	 * @param app
-	 * @param bookmark
-	 */
-	private void removeBookmarkInNet( App app , final DSBookmark bookmark ) {
-		DSBookmark delBookmark = new DSBookmark(bookmark.getBook());
-		delBookmark.setObjectId(bookmark.getObjectId());
-		BaseActivity baseActivity = (BaseActivity) getActivity();
-		baseActivity.openPb();
-		delBookmark.delete(app, new DeleteListener() {
-			@Override
-			public void onSuccess() {
-				BaseActivity baseActivity = (BaseActivity) getActivity();
-				baseActivity.closePb();
-			}
-
-			@Override
-			public void onFailure(int i, String s) {
-				BaseActivity baseActivity = (BaseActivity) getActivity();
-				baseActivity.closePb();
-				((BaseActivity) getActivity()).showDialogFragment(new DialogFragment() {
-					@Override
-					public Dialog onCreateDialog(Bundle savedInstanceState) {
-						// Use the Builder class for convenient dialog construction
-						AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-						builder.setCancelable(false).setTitle(R.string.application_name).setMessage(
-								R.string.msg_op_fail).setPositiveButton(R.string.btn_retry,
-								new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog, int id) {
-										removeBookmarkInNet((App) getActivity().getApplication(), bookmark);
-									}
-								});
-						// Create the AlertDialog object and return it
-						return builder.create();
-					}
-				}, null);
-			}
-		});
-	}
 
 
 	@Override

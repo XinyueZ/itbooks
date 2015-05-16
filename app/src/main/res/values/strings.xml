@@ -93,6 +93,5 @@
     <string name="msg_downloading_fail">Failed, can not download this book.</string>
     <string name="msg_new_api_version_update">Hi There, a good news including a bad one I have to info you that we now use new API to support direct download instead web, and bookmark is now in cloud so that don\'t worry about lost of them in the future. But, sorry, unfortunately, the former data must be removed from previous bookmark, I will appreciate your understanding and you support me ever.</string>
     <string name="msg_require_external_storage">The downloading requires external storage or large built-in storage on the device, please check whether you have inserted SD card or not.</string>
-    <string name="msg_op_fail">The operation has not been completed completely.</string>
     <string name="msg_op">Operating…</string>
 </resources>

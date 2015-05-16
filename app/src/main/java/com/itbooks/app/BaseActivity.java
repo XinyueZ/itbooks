@@ -25,6 +25,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.itbooks.R;
 import com.itbooks.app.fragments.AboutDialogFragment;
+import com.itbooks.bus.CloseProgressDialogEvent;
+import com.itbooks.bus.OpenProgressDialogEvent;
 import com.itbooks.net.download.DownloadReceiver;
 import com.itbooks.utils.Prefs;
 
@@ -34,6 +36,40 @@ public abstract class BaseActivity extends com.chopping.activities.BaseActivity 
 	 * Receiver for downloading reports.
 	 */
 	private DownloadReceiver mDownloadReceiver;
+
+	private ProgressDialog mProgressDialog;
+
+
+	//------------------------------------------------
+	//Subscribes, event-handlers
+	//------------------------------------------------
+
+	/**
+	 * Handler for {@link com.itbooks.bus.OpenProgressDialogEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link  com.itbooks.bus.OpenProgressDialogEvent}.
+	 */
+	public void onEvent(OpenProgressDialogEvent e) {
+		mProgressDialog = ProgressDialog.show(this, null, getString(R.string.msg_op));
+		mProgressDialog.setCancelable(true);
+	}
+
+	/**
+	 * Handler for {@link com.itbooks.bus.CloseProgressDialogEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link  com.itbooks.bus.CloseProgressDialogEvent}.
+	 */
+	public void onEvent(CloseProgressDialogEvent e) {
+		if (mProgressDialog != null && mProgressDialog.isShowing()) {
+			mProgressDialog.dismiss();
+		}
+	}
+
+	//------------------------------------------------
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -66,8 +102,7 @@ public abstract class BaseActivity extends com.chopping.activities.BaseActivity 
 	@Override
 	public void onResume() {
 		super.onResume();
-		IntentFilter intentFilter
-				= new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+		IntentFilter intentFilter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
 		registerReceiver(mDownloadReceiver = new DownloadReceiver(), intentFilter);
 		final int isFound = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
 		if (isFound == ConnectionResult.SUCCESS ||
@@ -78,15 +113,15 @@ public abstract class BaseActivity extends com.chopping.activities.BaseActivity 
 			}
 		} else {
 			new AlertDialog.Builder(this).setTitle(R.string.application_name).setMessage(R.string.lbl_play_service)
-				.setCancelable(false).setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int whichButton) {
-							dialog.dismiss();
-							Intent intent = new Intent(Intent.ACTION_VIEW);
-							intent.setData(Uri.parse(getString(R.string.play_service_url)));
-							startActivity(intent);
-							finish();
-						}
-					}).create().show();
+					.setCancelable(false).setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					dialog.dismiss();
+					Intent intent = new Intent(Intent.ACTION_VIEW);
+					intent.setData(Uri.parse(getString(R.string.play_service_url)));
+					startActivity(intent);
+					finish();
+				}
+			}).create().show();
 		}
 	}
 
@@ -123,7 +158,6 @@ public abstract class BaseActivity extends com.chopping.activities.BaseActivity 
 	}
 
 
-
 	@Override
 	protected BasicPrefs getPrefs() {
 		return Prefs.getInstance(getApplication());
@@ -155,14 +189,10 @@ public abstract class BaseActivity extends com.chopping.activities.BaseActivity 
 		return null;
 	}
 
-	private ProgressDialog mProgressDialog;
-
-	public void openPb() {
-		mProgressDialog = ProgressDialog.show(this, null, getString(R.string.msg_op));
-		mProgressDialog.setCancelable(false);
-	}
-
-	public void closePb() {
+	/**
+	 * Close UI that should be closed for some reasons.
+	 */
+	protected void closeTroubleUI() {
 		if (mProgressDialog != null && mProgressDialog.isShowing()) {
 			mProgressDialog.dismiss();
 		}

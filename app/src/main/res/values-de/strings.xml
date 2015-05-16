@@ -68,6 +68,5 @@
     <string name="msg_downloading_fail">Fehler, dieses Buch kann nicht heruntergeladen werden.</string>
     <string name="msg_new_api_version_update">Hallo,  ich habe gute und schlechte Neuigkeiten: Ich nutze nun eine neue API, um direkte Downloads an Stelle des Webs zu verwenden. Lesezeichen werden nun in der Cloud gespeichert, um Datenverlust vorzubeugen.   Dafür müssen vorherige Lesezeichen leider verworfen werden. Ich danke für Ihr Verständnis und für Ihre Unterstützung.</string>
     <string name="msg_require_external_storage">Sie müssen durchsuchen, ob Sie eine SD-Karte schon genutzt haben oder nicht, weil die App unbedingt einen großen Speicherpltz braucht.</string>
-    <string name="msg_op_fail">Die Operation ist noch nicht komplete durchgeführt worden.</string>
     <string name="msg_op">Bearbeite…</string>
 </resources>
