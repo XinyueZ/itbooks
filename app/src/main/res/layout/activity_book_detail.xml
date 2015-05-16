@@ -207,4 +207,15 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         style="@style/ActionBar_ToolBar" />
+
+    <TextView
+        android:id="@+id/book_size_tv"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/text_common_white"
+        android:background="@color/primary_color"
+        android:textStyle="bold"
+        android:text="23MB"
+        android:layout_gravity="bottom|right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </FrameLayout>

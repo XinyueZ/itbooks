@@ -555,6 +555,13 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 					mDrawerLayout.closeDrawer(Gravity.LEFT);
 				}
 			});
+			findViewById(R.id.open_history_ll).setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					//TODO open history UI
+					mDrawerLayout.closeDrawer(Gravity.LEFT);
+				}
+			});
 			findViewById(R.id.open_setting_ll).setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {

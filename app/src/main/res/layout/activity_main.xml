@@ -115,6 +115,46 @@
                 </LinearLayout>
             </com.itbooks.views.MaterialRippleLayout>
 
+
+
+            <com.itbooks.views.MaterialRippleLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/common_transparent"
+                app:mrl_rippleAlpha="0.2"
+                app:mrl_rippleColor="@color/common_blue"
+                app:mrl_rippleDelayClick="true"
+                app:mrl_rippleHover="true"
+                app:mrl_rippleOverlay="true">
+
+                <LinearLayout
+                    android:id="@+id/open_history_ll"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/common_transparent"
+                        android:src="@drawable/ic_history" />
+
+
+                    <com.itbooks.views.FontTextView
+                        font="thin"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="10dp"
+                        android:gravity="left|center_vertical"
+                        android:text="@string/lbl_history"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/text_common_black" />
+                </LinearLayout>
+            </com.itbooks.views.MaterialRippleLayout>
+
+
+
+
             <com.itbooks.views.MaterialRippleLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

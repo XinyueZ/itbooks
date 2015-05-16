@@ -88,6 +88,7 @@ public final class BookDetailActivity extends BaseActivity {
 	private TextView mYearTv;
 	private TextView mPageTv;
 	private TextView mPublisherTv;
+	private TextView mSizeTv;
 
 
 	private ButtonFloat mOpenBtn;
@@ -288,7 +289,7 @@ public final class BookDetailActivity extends BaseActivity {
 		mYearTv = (TextView) findViewById(R.id.detail_year_tv);
 		mPageTv = (TextView) findViewById(R.id.detail_page_tv);
 		mPublisherTv = (TextView) findViewById(R.id.detail_publisher_tv);
-
+		mSizeTv = (TextView) findViewById(R.id.book_size_tv);
 
 		mLoadingPb = findViewById(R.id.loading_pb);
 		mHeadV = (RevealLayout) findViewById(R.id.child_head_ll);
@@ -363,6 +364,7 @@ public final class BookDetailActivity extends BaseActivity {
 		mYearTv.setText(mBook.getYear());
 		mPageTv.setText(mBook.getPages());
 		mPublisherTv.setText(mBook.getPublisher());
+		mSizeTv.setText(mBook.getSize());
 
 		mHeadV.setOnRevealEndListener(new OnRevealEndListener() {
 			@Override

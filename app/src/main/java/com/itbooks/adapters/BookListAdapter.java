@@ -49,6 +49,7 @@ public final class BookListAdapter extends AbstractBookViewAdapter<BookListAdapt
 		holder.mBookTitleTv.setText(book.getName());
 		holder.mBookSubTitleTv.setText(book.getAuthor());
 		holder.mISBNTv.setText(String.format("ISBN: %s", book.getISBN()));
+		holder.mSizeTv.setText(book.getSize());
 		holder.itemView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -63,6 +64,7 @@ public final class BookListAdapter extends AbstractBookViewAdapter<BookListAdapt
 		private TextView mBookTitleTv;
 		private TextView mBookSubTitleTv;
 		private TextView mISBNTv;
+		private TextView mSizeTv;
 
 		/**
 		 * Constructor of {@link com.itbooks.adapters.BookListAdapter.ViewHolder}.
@@ -76,6 +78,7 @@ public final class BookListAdapter extends AbstractBookViewAdapter<BookListAdapt
 			mBookTitleTv = (TextView) convertView.findViewById(R.id.book_title_tv);
 			mBookSubTitleTv = (TextView) convertView.findViewById(R.id.book_subtitle_tv);
 			mISBNTv = (TextView) convertView.findViewById(R.id.book_isbn_tv);
+			mSizeTv  = (TextView) convertView.findViewById(R.id.book_size_tv);
 		}
 	}
 }
