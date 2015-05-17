@@ -70,4 +70,5 @@
     <string name="msg_require_external_storage">Sie müssen durchsuchen, ob Sie eine SD-Karte schon genutzt haben oder nicht, weil die App unbedingt einen großen Speicherpltz braucht.</string>
     <string name="msg_op">Bearbeite…</string>
     <string name="lbl_history">Verlauf</string>
+    <string name="lbl_history_empty">Keine Downloads</string>
 </resources>

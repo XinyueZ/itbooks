@@ -32,6 +32,9 @@ public   class RSBook extends BmobObject implements Serializable {
 	@SerializedName("CoverUrl")
 	private String mCoverUrl;
 
+	protected RSBook() {
+
+	}
 
 	public RSBook(String name, String author, String size, String pages, String link, String ISBN, String year,
 			String publisher, String description, String coverUrl) {

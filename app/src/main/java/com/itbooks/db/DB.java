@@ -183,7 +183,7 @@ public final class DB {
 	}
 
 	/**
-	 * Get instance of download.
+	 * Get an instance of download associates with the download-id.
 	 *
 	 * @param downloadId
 	 * 		The id provided by Android when started downloading.
@@ -215,6 +215,7 @@ public final class DB {
 				item = new Download(book);
 				item.setDownloadId(c.getLong(c.getColumnIndex(DownloadsTbl.DOWNLOAD_ID)));
 				item.setStatus(c.getInt(c.getColumnIndex(DownloadsTbl.DOWNLOAD_STATUS)));
+				item.setTimeStamp(c.getLong(c.getColumnIndex(DownloadsTbl.EDIT_TIME)));
 			}
 		} finally {
 			if (c != null) {
@@ -231,7 +232,7 @@ public final class DB {
 	 *
 	 * @param book A book that might have being downloaded.
 	 *
-	 * @return A list of all {@link Download}s.
+	 * @return A list of  {@link Download}s that associates with the {@code book}.
 	 */
 	public synchronized List<Download> getDownloads(RSBook book) {
 		if (mDB == null || !mDB.isOpen()) {
@@ -262,6 +263,44 @@ public final class DB {
 						DownloadsTbl.BOOK_COVER_URL))));
 				item.setDownloadId(c.getLong(c.getColumnIndex(DownloadsTbl.DOWNLOAD_ID)));
 				item.setStatus(c.getInt(c.getColumnIndex(DownloadsTbl.DOWNLOAD_STATUS)));
+				item.setTimeStamp(c.getLong(c.getColumnIndex(DownloadsTbl.EDIT_TIME)));
+				downloads.add(item);
+			}
+		} finally {
+			if (c != null) {
+				c.close();
+			}
+			close();
+		}
+		return downloads;
+	}
+
+	/**
+	 * Get all instances of download.
+	 *
+	 * @return A list of all {@link Download}s.
+	 */
+	public synchronized List<Download> getDownloads() {
+		if (mDB == null || !mDB.isOpen()) {
+			open();
+		}
+		Cursor c = null;
+		List<Download>  downloads = new ArrayList<>();
+		try {
+			c = mDB.query(DownloadsTbl.TABLE_NAME,null, null,
+					null, null, null, DownloadsTbl.EDIT_TIME +  " DESC");
+
+			while (c.moveToNext()) {
+				Download item = new Download(new RSBook(c.getString(c.getColumnIndex(DownloadsTbl.BOOK_NAME)), c.getString(c.getColumnIndex(
+						DownloadsTbl.BOOK_AUTH)), c.getString(c.getColumnIndex(DownloadsTbl.BOOK_SIZE)), c.getString(
+						c.getColumnIndex(DownloadsTbl.BOOK_PAGES)), c.getString(c.getColumnIndex(
+						DownloadsTbl.BOOK_LINK)), c.getString(c.getColumnIndex(DownloadsTbl.BOOK_ISBN)), c.getString(
+						c.getColumnIndex(DownloadsTbl.BOOK_YEAR)), c.getString(c.getColumnIndex(DownloadsTbl.BOOK_PUB)),
+						c.getString(c.getColumnIndex(DownloadsTbl.BOOK_DESC)), c.getString(c.getColumnIndex(
+						DownloadsTbl.BOOK_COVER_URL))));
+				item.setDownloadId(c.getLong(c.getColumnIndex(DownloadsTbl.DOWNLOAD_ID)));
+				item.setStatus(c.getInt(c.getColumnIndex(DownloadsTbl.DOWNLOAD_STATUS)));
+				item.setTimeStamp(c.getLong(c.getColumnIndex(DownloadsTbl.EDIT_TIME)));
 				downloads.add(item);
 			}
 		} finally {

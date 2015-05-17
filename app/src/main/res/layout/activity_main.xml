@@ -20,7 +20,6 @@
             android:background="@color/grey_500" />
 
 
-
         <FrameLayout
             android:id="@id/error_content"
             android:layout_width="match_parent"
@@ -44,9 +43,9 @@
                     android:id="@+id/books_rv"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:background="@color/common_transparent"
                     android:paddingLeft="@dimen/activity_horizontal_margin"
                     android:paddingRight="@dimen/activity_horizontal_margin"
-                    android:background="@color/common_transparent"
                     android:scrollbars="none" />
 
 
@@ -69,7 +68,7 @@
     <com.gc.materialdesign.views.ScrollView
         android:layout_width="250dp"
         android:layout_height="match_parent"
-        android:layout_gravity="left"
+        android:layout_gravity="start"
         android:background="@android:color/white"
         android:scrollbars="none">
 
@@ -81,9 +80,9 @@
             android:orientation="vertical">
 
             <com.itbooks.views.MaterialRippleLayout
-                android:layout_marginTop="@dimen/common_padding"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/common_padding"
                 android:background="@color/common_transparent"
                 app:mrl_rippleAlpha="0.2"
                 app:mrl_rippleColor="@color/common_blue"
@@ -115,7 +114,6 @@
                         android:textColor="@color/text_common_black" />
                 </LinearLayout>
             </com.itbooks.views.MaterialRippleLayout>
-
 
 
             <com.itbooks.views.MaterialRippleLayout
@@ -152,8 +150,6 @@
                         android:textColor="@color/text_common_black" />
                 </LinearLayout>
             </com.itbooks.views.MaterialRippleLayout>
-
-
 
 
             <com.itbooks.views.MaterialRippleLayout
@@ -199,5 +195,14 @@
         </LinearLayout>
     </com.gc.materialdesign.views.ScrollView>
 
-
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:background="@android:color/white">
+        <fragment
+            android:name="com.itbooks.app.fragments.HistoryFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"  />
+    </FrameLayout>
 </android.support.v4.widget.DrawerLayout>

@@ -58,6 +58,13 @@ public final class App extends Application {
 	 * Our downloaded file is unique to other apps.
 	 */
 	public static final String PREFIX = "itbooks_";//Prefix of a downloaded file.
+	/**
+	 * Application's instance.
+	 */
+	public static App Instance;
+	{
+		Instance = this;
+	}
 
 	@Override
 	public void onCreate() {

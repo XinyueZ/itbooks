@@ -38,7 +38,7 @@ import de.greenrobot.event.EventBus;
  *
  * @author Xinyue Zhao
  */
-public final class Download {
+public final class Download extends RSBook {
 	/**
 	 * The file to load.
 	 */
@@ -90,7 +90,7 @@ public final class Download {
 			} else {
 				EventBus.getDefault().post(new DownloadStartEvent(this));
 				DownloadManager downloadManager = (DownloadManager) cxt.getSystemService(Context.DOWNLOAD_SERVICE);
-				mTimeStamp = System.currentTimeMillis();
+				setTimeStamp(System.currentTimeMillis());
 
 				DownloadManager.Request request = new DownloadManager.Request(Uri.parse(Utils.uriStr2URI(
 						mBook.getLink()).toASCIIString()));
@@ -228,5 +228,13 @@ public final class Download {
 	 */
 	public void setStatus(  int status) {
 		mStatus = status;
+	}
+
+	/**
+	 * Set the  time that loaded file. {@link com.itbooks.db.DownloadsTbl#EDIT_TIME}.
+	 * @param timeStamp  Time that loaded file. {@link com.itbooks.db.DownloadsTbl#EDIT_TIME}.
+	 */
+	public void setTimeStamp(long timeStamp) {
+		mTimeStamp = timeStamp;
 	}
 }

@@ -100,7 +100,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	private static final int GRID_COL_COUNT = 2;
 
 	private ScreenSize mScreenSize;
-
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -195,9 +194,8 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	 * 		Event {@link com.itbooks.bus.BookmarksLoadedEvent}.
 	 */
 	public void onEvent(BookmarksLoadedEvent e) {
-		getSupportFragmentManager().beginTransaction().replace(R.id.bookmark_list_container_fl, BookmarkListFragment
-				.newInstance(getApplicationContext()))
-				.commit();
+		getSupportFragmentManager().beginTransaction().replace(R.id.bookmark_list_container_fl,
+				BookmarkListFragment.newInstance(getApplicationContext())).commit();
 	}
 	//------------------------------------------------
 
@@ -222,8 +220,9 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 			mRv.setAdapter(new BookListAdapter(null));
 		} else {
 			mRv.setLayoutManager(mLayoutManager = new GridLayoutManager(this, GRID_COL_COUNT));
-			mRv.setAdapter(new BookGridAdapter(null,GRID_COL_COUNT, mScreenSize));
+			mRv.setAdapter(new BookGridAdapter(null, GRID_COL_COUNT, mScreenSize));
 		}
+
 
 		handleIntent(getIntent());
 
@@ -244,11 +243,12 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		getBookmarks();
 	}
 
+
 	/**
 	 * Get and load all bookmarks.
 	 */
 	private void getBookmarks() {
-		BookmarkManger.getInstance().loadAllBookmarks( );
+		BookmarkManger.getInstance().loadAllBookmarks();
 	}
 
 
@@ -274,7 +274,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 			mSearchView.setSearchableInfo(info);
 		}
 
-		if(Prefs.getInstance(getApplicationContext()).getViewStyle() == 2) {
+		if (Prefs.getInstance(getApplicationContext()).getViewStyle() == 2) {
 			menu.findItem(R.id.action_view_style_list).setVisible(false);
 			menu.findItem(R.id.action_view_style_grid).setVisible(true);
 		} else {
@@ -329,14 +329,14 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 			break;
 		case R.id.action_view_style_grid:
 			mRv.setLayoutManager(mLayoutManager = new GridLayoutManager(this, GRID_COL_COUNT));
-			mRv.setAdapter(new BookGridAdapter(((AbstractBookViewAdapter) mRv.getAdapter()).getData(), GRID_COL_COUNT, mScreenSize)  );
+			mRv.setAdapter(new BookGridAdapter(((AbstractBookViewAdapter) mRv.getAdapter()).getData(), GRID_COL_COUNT,
+					mScreenSize));
 			Prefs.getInstance(getApplicationContext()).setViewStyle(1);
 			supportInvalidateOptionsMenu();
 			break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
 
 
 	/**
@@ -386,7 +386,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	 * Load feed of books.
 	 */
 	private void loadBooks() {
-		if (((AbstractBookViewAdapter)mRv.getAdapter()).getItemCount() == 0) {
+		if (((AbstractBookViewAdapter) mRv.getAdapter()).getItemCount() == 0) {
 			findViewById(R.id.loading_pb).setVisibility(View.VISIBLE);
 		}
 		if (!TextUtils.isEmpty(mKeyword)) {
@@ -558,7 +558,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 			findViewById(R.id.open_history_ll).setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					//TODO open history UI
+					mDrawerLayout.openDrawer(Gravity.RIGHT);
 					mDrawerLayout.closeDrawer(Gravity.LEFT);
 				}
 			});
@@ -651,19 +651,18 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	public void showBookList(RSBookList bookList) {
 		if (bookList != null && bookList.getStatus() == 200 && bookList.getBooks() != null &&
 				bookList.getBooks().size() > 0) {
-			((AbstractBookViewAdapter)mRv.getAdapter()).setData(bookList.getBooks());
+			((AbstractBookViewAdapter) mRv.getAdapter()).setData(bookList.getBooks());
 			mRv.getAdapter().notifyDataSetChanged();
 			setHasShownDataOnUI(true);
-			new SnackBar(this, String.format(getString(R.string.msg_items_count),
-					bookList.getBooks().size())).show();
+			new SnackBar(this, String.format(getString(R.string.msg_items_count), bookList.getBooks().size())).show();
 		} else {
-			 new SnackBar(this, getString(R.string.msg_refresh_fail), getString(R.string.btn_retry),
+			new SnackBar(this, getString(R.string.msg_refresh_fail), getString(R.string.btn_retry),
 					new OnClickListener() {
 						@Override
 						public void onClick(View v) {
 							loadBooks();
 						}
-					}) .show();
+					}).show();
 		}
 		findViewById(R.id.loading_pb).setVisibility(View.GONE);
 		mRefreshLayout.setRefreshing(false);

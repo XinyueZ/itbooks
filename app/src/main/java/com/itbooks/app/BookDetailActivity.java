@@ -564,7 +564,7 @@ public final class BookDetailActivity extends BaseActivity {
 	private void uiLoading() {
 		mDownloadStatus =1;
 		mLoadingPb.setVisibility(View.VISIBLE);
-		mHeadV.setBackgroundResource(R.drawable.bg_downloading);
+		mHeadV.setBackgroundResource(mFabIsShown ? R.drawable.bg_downloading :R.color.book_downloading_full );
 		mOpenBtn.setDrawableIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_file_cloud_download, null));
 		mOpenBtn.setBackgroundColor(getResources().getColor(R.color.book_btn_downloading));
 		mHeadV.next(ANIM_DUR);
@@ -576,7 +576,7 @@ public final class BookDetailActivity extends BaseActivity {
 	private void uiLoaded() {
 		mDownloadStatus = 2;
 		mLoadingPb.setVisibility(View.GONE);
-		mHeadV.setBackgroundResource(R.drawable.bg_downloaded);
+		mHeadV.setBackgroundResource(mFabIsShown ?R.drawable.bg_downloaded : R.color.book_downloaded_full);
 		mOpenBtn.setDrawableIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_reading, null));
 		mOpenBtn.setBackgroundColor(getResources().getColor(R.color.book_btn_downloaded));
 		mHeadV.next(ANIM_DUR);
@@ -589,7 +589,7 @@ public final class BookDetailActivity extends BaseActivity {
 		mDownloadStatus = 3;
 		mLoadingPb.setVisibility(View.GONE);
 		mOpenBtn.setDrawableIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_download, null));
-		mHeadV.setBackgroundResource(R.drawable.bg_failed_downloaded);
+		mHeadV.setBackgroundResource(mFabIsShown ? R.drawable.bg_failed_downloaded : R.color.book_failed_downloaded_full);
 		mHeadV.next(ANIM_DUR);
 	}
 

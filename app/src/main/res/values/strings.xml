@@ -46,6 +46,7 @@
     <string name="lbl_turn_on_push_info">Do you want to turn on push-messages? We can provide you much more information about many new IT-eBooks regularly.</string>
     <string name="lbl_by">By</string>
     <string name="lbl_history">History</string>
+    <string name="lbl_history_empty">No downloads</string>
 
 
     <string name="menu_forward">Forward</string>
