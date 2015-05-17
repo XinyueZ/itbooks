@@ -81,6 +81,7 @@
             android:orientation="vertical">
 
             <com.itbooks.views.MaterialRippleLayout
+                android:layout_marginTop="@dimen/common_padding"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/common_transparent"

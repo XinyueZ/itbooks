@@ -23,7 +23,7 @@ import com.squareup.picasso.Transformation;
 import de.greenrobot.event.EventBus;
 
 
-public final class BookGridAdapter extends AbstractBookViewAdapter<BookGridAdapter.ViewHolder> {
+public final class BookGridAdapter extends AbstractBookViewAdapter<BookGridAdapter.ViewHolder, RSBook> {
 	/**
 	 * Main layout for this component.
 	 */

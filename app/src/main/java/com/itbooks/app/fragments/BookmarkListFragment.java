@@ -63,7 +63,7 @@ public final class BookmarkListFragment extends BaseFragment {
 	 * 		Event {@link com.itbooks.bus.CleanBookmarkEvent}.
 	 */
 	public void onEvent(com.itbooks.bus.CleanBookmarkEvent e) {
-		mAdp.setBookmarkList(null);
+		mAdp.setData(null);
 		mAdp.notifyDataSetChanged();
 		mEmptyV.setVisibility(View.VISIBLE);
 	}
@@ -129,7 +129,7 @@ public final class BookmarkListFragment extends BaseFragment {
 			mAdp = new BookmarkListAdapter(BookmarkManger.getInstance().getBookmarksInCache());
 			mBookmarksRv.setAdapter(mAdp);
 		} else {
-			mAdp.setBookmarkList(BookmarkManger.getInstance().getBookmarksInCache());
+			mAdp.setData(BookmarkManger.getInstance().getBookmarksInCache());
 			mAdp.notifyDataSetChanged();
 		}
 		mEmptyV.setVisibility(

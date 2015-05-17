@@ -588,6 +588,7 @@ public final class BookDetailActivity extends BaseActivity {
 	private void uiFailDownloading() {
 		mDownloadStatus = 3;
 		mLoadingPb.setVisibility(View.GONE);
+		mOpenBtn.setDrawableIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_download, null));
 		mHeadV.setBackgroundResource(R.drawable.bg_failed_downloaded);
 		mHeadV.next(ANIM_DUR);
 	}

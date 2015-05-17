@@ -25,20 +25,15 @@ import de.greenrobot.event.EventBus;
  *
  * @author Xinyue Zhao
  */
-public final class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkListAdapter.ViewHolder> {
+public final class BookmarkListAdapter extends AbstractBookViewAdapter<BookmarkListAdapter.ViewHolder, DSBookmark> {
 	/**
 	 * Main layout for this component.
 	 */
 	private static final int ITEM_LAYOUT = R.layout.item_bookmark_list;
-	private List<DSBookmark> mBookmarkList;
-
 	public BookmarkListAdapter(List<DSBookmark> bookmarkList) {
-		mBookmarkList = bookmarkList;
+		setData(bookmarkList);
 	}
 
-	public void setBookmarkList(List<DSBookmark> bookmarkList) {
-		mBookmarkList = bookmarkList;
-	}
 
 	@Override
 	public BookmarkListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -49,7 +44,7 @@ public final class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkList
 
 	@Override
 	public void onBindViewHolder(final ViewHolder viewHolder, int position) {
-		final DSBookmark bookmark = mBookmarkList.get(position);
+		final DSBookmark bookmark = getData().get(position);
 		RSBook book = bookmark.getBook();
 		Picasso picasso = Picasso.with(viewHolder.itemView.getContext());
 		picasso.load(Utils.uriStr2URI(book.getCoverUrl()).toASCIIString())
@@ -71,10 +66,6 @@ public final class BookmarkListAdapter extends RecyclerView.Adapter<BookmarkList
 		});
 	}
 
-	@Override
-	public int getItemCount() {
-		return mBookmarkList == null ? 0 : mBookmarkList.size();
-	}
 
 	static class ViewHolder extends RecyclerView.ViewHolder {
 
