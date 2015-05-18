@@ -141,7 +141,7 @@ public final class BookDetailActivity extends BaseActivity {
 	public void onEvent(DownloadFailedEvent e) {
 		if (e.getDownload().getBook().equals(mBook)) {
 			uiFailDownloading();
-			//new SnackBar(this, getString(R.string.msg_downloading_fail)).show();
+			showInfoToast(getString(R.string.msg_downloading_fail));
 		}
 		mInProgress = false;
 	}

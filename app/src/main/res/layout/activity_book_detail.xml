@@ -204,18 +204,31 @@
         </FrameLayout>
     </android.support.v4.widget.NestedScrollView>
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        style="@style/ActionBar_ToolBar" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            style="@style/ActionBar_ToolBar" />
+
+        <LinearLayout
+            android:id="@+id/card_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:background="@color/common_white"
+            android:orientation="vertical" />
+    </FrameLayout>
 
     <TextView
         android:id="@+id/book_size_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:background="@color/primary_color"
+        android:text="23MB"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@color/text_common_white"
-        android:background="@color/primary_color"
-        android:textStyle="bold"
-        android:text="23MB"
-        android:layout_gravity="bottom|right"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:textStyle="bold" />
 </FrameLayout>

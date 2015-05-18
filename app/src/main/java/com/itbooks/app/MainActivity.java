@@ -1,11 +1,15 @@
 package com.itbooks.app;
 
+import java.io.File;
+
 import android.app.Dialog;
 import android.app.DownloadManager;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Parcelable;
 import android.provider.SearchRecentSuggestions;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.os.AsyncTaskCompat;
@@ -37,6 +41,7 @@ import com.chopping.utils.DeviceUtils;
 import com.chopping.utils.DeviceUtils.ScreenSize;
 import com.chopping.utils.Utils;
 import com.crashlytics.android.Crashlytics;
+import com.github.johnpersano.supertoasts.SuperToast;
 import com.itbooks.R;
 import com.itbooks.adapters.AbstractBookViewAdapter;
 import com.itbooks.adapters.BookGridAdapter;
@@ -47,6 +52,8 @@ import com.itbooks.app.fragments.BookmarkListFragment;
 import com.itbooks.app.fragments.PushInfoDialogFragment;
 import com.itbooks.bus.BookmarksLoadedEvent;
 import com.itbooks.bus.CleanBookmarkEvent;
+import com.itbooks.bus.DownloadCompleteEvent;
+import com.itbooks.bus.DownloadOpenEvent;
 import com.itbooks.bus.EULAConfirmedEvent;
 import com.itbooks.bus.EULARejectEvent;
 import com.itbooks.bus.NewAPIVersionUpdateEvent;
@@ -107,6 +114,22 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
+	/**
+	 * Handler for {@link com.itbooks.bus.DownloadCompleteEvent}.
+	 * @param e Event {@link com.itbooks.bus.DownloadCompleteEvent}.
+	 */
+	public void onEventMainThread(final DownloadCompleteEvent e) {
+		showWarningToast(getString(R.string.msg_one_book_downloaded), new SuperToast.OnClickListener() {
+			@Override
+			public void onClick(View view, Parcelable parcelable) {
+				File to = new File(getExternalFilesDir(
+						Environment.DIRECTORY_DOWNLOADS), e.getDownload().getTargetName());
+				if (to.exists()) {
+					EventBus.getDefault().post(new DownloadOpenEvent(to));
+				}
+			}
+		});
+	}
 
 	/**
 	 * Handler for {@link com.itbooks.bus.NewAPIVersionUpdateEvent}.
@@ -687,15 +710,14 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 			((AbstractBookViewAdapter) mRv.getAdapter()).setData(bookList.getBooks());
 			mRv.getAdapter().notifyDataSetChanged();
 			setHasShownDataOnUI(true);
-			//new SnackBar(this, String.format(getString(R.string.msg_items_count), bookList.getBooks().size())).show();
+			showInfoToast(String.format(getString(R.string.msg_items_count), bookList.getBooks().size()));
 		} else {
-//			new SnackBar(this, getString(R.string.msg_refresh_fail), getString(R.string.btn_retry),
-//					new OnClickListener() {
-//						@Override
-//						public void onClick(View v) {
-//							loadBooks();
-//						}
-//					}).show();
+			showErrorToast(getString(R.string.msg_refresh_fail), new SuperToast.OnClickListener() {
+				@Override
+				public void onClick(View view, Parcelable parcelable) {
+					loadBooks();
+				}
+			});
 		}
 		findViewById(R.id.loading_pb).setVisibility(View.GONE);
 		mRefreshLayout.setRefreshing(false);

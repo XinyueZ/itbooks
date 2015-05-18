@@ -41,6 +41,6 @@ public final class DownloadReceiver extends BroadcastReceiver {
 				}
 			}
 		}
-		EventBus.getDefault().post(new DownloadCompleteEvent());
+		EventBus.getDefault().post(new DownloadCompleteEvent(download));
 	}
 }

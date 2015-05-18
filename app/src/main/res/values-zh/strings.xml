@@ -7,6 +7,7 @@
     <string name="btn_confirm">确认</string>
     <string name="btn_cancel">取消</string>
     <string name="btn_ok">@string/btn_confirm</string>
+    <string name="btn_open">打开</string>
     <string name="btn_agree">同意</string>
     <string name="btn_not_agree">拒绝</string>
 
@@ -85,4 +86,5 @@
     <string name="lbl_history_empty">无下载记录</string>
     <string name="msg_welcome_2_0">欢迎使用 2.0…</string>
     <string name="msg_welcome">欢迎…</string>
+    <string name="msg_one_book_downloaded">有本书已经下载好了，请检查下。</string>
 </resources>

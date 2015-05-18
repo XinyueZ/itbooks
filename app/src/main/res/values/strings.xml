@@ -7,6 +7,7 @@
     <string name="btn_cancel">Cancel</string>
     <string name="btn_close">Close</string>
     <string name="btn_ok">Ok</string>
+    <string name="btn_open">Open</string>
     <string name="btn_agree">I agree.</string>
     <string name="btn_not_agree">I do not agree.</string>
     <string name="btn_turn_on">Turn on</string>
@@ -102,4 +103,5 @@
     <string name="msg_op">Operating…</string>
     <string name="msg_welcome_2_0">Welcome…</string>
     <string name="msg_welcome">Welcome…</string>
+    <string name="msg_one_book_downloaded">One book has been downloaded, please check.</string>
 </resources>
