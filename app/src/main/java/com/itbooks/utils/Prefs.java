@@ -23,6 +23,7 @@ public final class Prefs extends BasicPrefs {
 	private static final String KEY_VIEW_STYLE = "key.view.style";
 	private static final String KEY_SHOWN_DETAILS_ADS_TIMES = "ads";
 	private static final String KEY_DEVICE_IDENT = "key.device.ident";
+	private static final String KEY_NEW_API_UPDATED = "key.new.api.updated";
 	/**
 	 * Storage. Whether the "End User License Agreement" has been shown and agreed at application's first start.
 	 * <p/>
@@ -146,10 +147,16 @@ public final class Prefs extends BasicPrefs {
 		return getLong(PUSH_SENDER_ID, -1);
 	}
 
-
+	public boolean isPushTurnedOn() {
+		return getBoolean(KEY_PUSH_SETTING, false);
+	}
 
 	public void turnOnPush() {
 		setBoolean(KEY_PUSH_SETTING, true);
+	}
+
+	public void turnOffPush() {
+		setBoolean(KEY_PUSH_SETTING, false);
 	}
 
 	public void setShownDetailsTimes(int times) {
@@ -196,5 +203,21 @@ public final class Prefs extends BasicPrefs {
 	 */
 	public String getDeviceIdent() {
 		return getString(KEY_DEVICE_IDENT, null);
+	}
+
+	/**
+	 *
+	 * @return {@code true} if user has ran the application with new-api before.
+	 */
+	public boolean isNewApiUpdated() {
+		return getBoolean(KEY_NEW_API_UPDATED, true);
+	}
+
+	/**
+	 * Set flag to indicate that user run and has ran the new-api versionl
+	 * @param updated {@code true} if new-api version started.
+	 */
+	public void setNewApiUpdated(boolean updated) {
+		setBoolean(KEY_NEW_API_UPDATED, updated);
 	}
 }

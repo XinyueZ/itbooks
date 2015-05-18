@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.os.AsyncTaskCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SlidingPaneLayout;
@@ -34,8 +35,8 @@ import com.chopping.net.GsonRequestTask;
 import com.chopping.net.TaskHelper;
 import com.chopping.utils.DeviceUtils;
 import com.chopping.utils.DeviceUtils.ScreenSize;
+import com.chopping.utils.Utils;
 import com.crashlytics.android.Crashlytics;
-import com.gc.materialdesign.widgets.SnackBar;
 import com.itbooks.R;
 import com.itbooks.adapters.AbstractBookViewAdapter;
 import com.itbooks.adapters.BookGridAdapter;
@@ -56,6 +57,7 @@ import com.itbooks.bus.RefreshBookmarksEvent;
 import com.itbooks.data.rest.RSBook;
 import com.itbooks.data.rest.RSBookList;
 import com.itbooks.data.rest.RSBookQuery;
+import com.itbooks.gcm.RegGCMTask;
 import com.itbooks.net.api.Api;
 import com.itbooks.net.api.ApiNotInitializedException;
 import com.itbooks.net.bookmark.BookmarkManger;
@@ -231,7 +233,8 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		mRefreshLayout.setRefreshing(true);
 
 		mRv = (RecyclerView) findViewById(R.id.books_rv);
-		if (Prefs.getInstance(getApplicationContext()).getViewStyle() == 2) {
+		Prefs prefs = Prefs.getInstance(getApplicationContext());
+		if (prefs.getViewStyle() == 2) {
 			mRv.setLayoutManager(mLayoutManager = new LinearLayoutManager(this));
 			mRv.setAdapter(new BookListAdapter(null));
 		} else {
@@ -242,7 +245,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 
 		handleIntent(getIntent());
 
-		mKeyword = Prefs.getInstance(getApplication()).getLastSearched();
+		mKeyword = prefs.getLastSearched();
 		initDrawer();
 		initSlidingPanel();
 
@@ -590,6 +593,20 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 
 	@Override
 	public void onResume() {
+		Prefs prefs = Prefs.getInstance(getApplicationContext());
+		if(prefs.isNewApiUpdated()) {
+			if(prefs.isPushTurnedOn()) {
+				prefs.turnOffPush();
+				prefs.setPushRegId(null);
+				AsyncTaskCompat.executeParallel(new RegGCMTask(getApplicationContext()));
+				Utils.showLongToast(getApplicationContext(), R.string.msg_welcome_2_0);
+			} else {
+				Utils.showLongToast(getApplicationContext(), R.string.msg_welcome);
+			}
+			prefs.setNewApiUpdated(false);
+		}
+
+
 		super.onResume();
 		if (mDrawerToggle != null) {
 			mDrawerToggle.syncState();
@@ -670,15 +687,15 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 			((AbstractBookViewAdapter) mRv.getAdapter()).setData(bookList.getBooks());
 			mRv.getAdapter().notifyDataSetChanged();
 			setHasShownDataOnUI(true);
-			new SnackBar(this, String.format(getString(R.string.msg_items_count), bookList.getBooks().size())).show();
+			//new SnackBar(this, String.format(getString(R.string.msg_items_count), bookList.getBooks().size())).show();
 		} else {
-			new SnackBar(this, getString(R.string.msg_refresh_fail), getString(R.string.btn_retry),
-					new OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							loadBooks();
-						}
-					}).show();
+//			new SnackBar(this, getString(R.string.msg_refresh_fail), getString(R.string.btn_retry),
+//					new OnClickListener() {
+//						@Override
+//						public void onClick(View v) {
+//							loadBooks();
+//						}
+//					}).show();
 		}
 		findViewById(R.id.loading_pb).setVisibility(View.GONE);
 		mRefreshLayout.setRefreshing(false);

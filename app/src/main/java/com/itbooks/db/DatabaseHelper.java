@@ -44,7 +44,7 @@ final class DatabaseHelper extends SQLiteOpenHelper {
 		if (oldVersion == 1 && newVersion == 2) {
 			//Have to delete old version because of new API.
 			db.execSQL(String.format("DROP TABLE IF EXISTS %s", BookmarksTbl.TABLE_NAME));
-			db.execSQL(String.format("DROP TABLE IF EXISTS %s", BookmarksTbl.TABLE_NAME));
+			db.execSQL(String.format("DROP TABLE IF EXISTS %s", LabelsTbl.TABLE_NAME));
 			db.execSQL(DownloadsTbl.SQL_CREATE);//New table for v2, if user had created bookmark-table or label-table, Android creates download-table for update.
 			EventBus.getDefault().postSticky(new NewAPIVersionUpdateEvent());
 		}

@@ -33,7 +33,7 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@color/common_black" />
 
-            <FrameLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/common_padding"
@@ -43,18 +43,20 @@
                     android:id="@+id/time_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="start"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/primary_accent" />
+
+                <android.support.v4.widget.Space
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent" />
 
                 <TextView
                     android:id="@+id/status_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="end"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/primary_accent" />
-            </FrameLayout>
+            </LinearLayout>
 
 
         </LinearLayout>

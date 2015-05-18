@@ -46,12 +46,13 @@ public final class BookmarkListAdapter extends AbstractBookViewAdapter<BookmarkL
 	public void onBindViewHolder(final ViewHolder viewHolder, int position) {
 		final DSBookmark bookmark = getData().get(position);
 		RSBook book = bookmark.getBook();
-		Picasso picasso = Picasso.with(viewHolder.itemView.getContext());
-		picasso.load(Utils.uriStr2URI(book.getCoverUrl()).toASCIIString())
-				.placeholder(R.drawable.ic_launcher)
-				.tag(viewHolder.itemView.getContext())
-				.into(viewHolder.mBookCoverIv);
-
+		try {
+			Picasso picasso = Picasso.with(viewHolder.itemView.getContext());
+			picasso.load(Utils.uriStr2URI(book.getCoverUrl()).toASCIIString()).placeholder(R.drawable.ic_launcher).tag(
+					viewHolder.itemView.getContext()).into(viewHolder.mBookCoverIv);
+		} catch (NullPointerException e ) {
+			viewHolder.mBookCoverIv.setImageResource(R.drawable.ic_launcher);
+		}
 		viewHolder.mBookCoverIv.setOnClickListener(new OnViewAnimatedClickedListener() {
 			@Override
 			public void onClick() {

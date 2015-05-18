@@ -42,12 +42,9 @@ public   class RegGCMTask extends AsyncTask<Void, Void, String> {
 	protected String doInBackground(Void... params) {
 		String regId;
 		try {
-			if(TextUtils.isEmpty(mPrefs.getPushRegId())) {
-				regId = mGCM.register(mPrefs.getPushSenderId() + "");
-			} else {
-				regId = mPrefs.getPushRegId();
-			}
+			regId = mGCM.register(mPrefs.getPushSenderId() + "");
 		} catch (IOException ex) {
+			ex.printStackTrace();
 			regId = null;
 		}
 		return regId;
@@ -58,6 +55,10 @@ public   class RegGCMTask extends AsyncTask<Void, Void, String> {
 		mPrefs.setKnownPush(true);
 		if (!TextUtils.isEmpty(regId)) {
 			regOnRemote(regId);
+		} else {
+			//Keep going
+			mPrefs.setPushRegId(null);
+			mPrefs.turnOffPush();
 		}
 	}
 	/**
@@ -70,6 +71,7 @@ public   class RegGCMTask extends AsyncTask<Void, Void, String> {
 				@Override
 				public void success(RSResult rsBookList, retrofit.client.Response response) {
 					mPrefs.setPushRegId(regId);
+					mPrefs.turnOnPush();
 				}
 
 				@Override

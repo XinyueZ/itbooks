@@ -83,4 +83,6 @@
     <string name="msg_require_external_storage">请检查SD卡是否已经插入，因为应用需要大存储空间，比方说SD卡或者内置大存储设备，您的空间不够。</string>
     <string name="msg_op">操作中…</string>
     <string name="lbl_history_empty">无下载记录</string>
+    <string name="msg_welcome_2_0">欢迎使用 2.0…</string>
+    <string name="msg_welcome">欢迎…</string>
 </resources>

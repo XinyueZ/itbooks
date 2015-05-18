@@ -58,7 +58,6 @@ public final class PushInfoDialogFragment extends DialogFragment implements OnCl
 			break;
 		case R.id.close_confirm_btn:
 			AsyncTaskCompat.executeParallel(new RegGCMTask(getActivity()) );
-			prefs.turnOnPush();
 			break;
 		}
 		dismiss();

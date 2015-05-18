@@ -45,9 +45,9 @@ public class GcmIntentService extends IntentService {
              * not interested in, or that you don't recognize.
              */
 			if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
-				//ignore.
+				Utils.showLongToast(this, GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR );
 			} else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType)) {
-				//ignore.
+				Utils.showLongToast(this, GoogleCloudMessaging.MESSAGE_TYPE_DELETED );
 			} else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
 				sendNotification(extras);
 			}
@@ -76,7 +76,7 @@ public class GcmIntentService extends IntentService {
 			Picasso picasso = Picasso.with(this);
 			try {
 				notify(title, desc, image, contentIntent, picasso);
-			} catch (IOException e) {
+			} catch(NullPointerException | IOException e) {
 				fallbackNotify(title, desc, contentIntent);
 			}
 

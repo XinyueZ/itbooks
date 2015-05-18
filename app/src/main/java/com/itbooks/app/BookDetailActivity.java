@@ -2,9 +2,7 @@ package com.itbooks.app;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,7 +30,6 @@ import com.chopping.utils.DeviceUtils;
 import com.chopping.utils.DeviceUtils.ScreenSize;
 import com.chopping.utils.Utils;
 import com.gc.materialdesign.views.ButtonFloat;
-import com.gc.materialdesign.widgets.SnackBar;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
@@ -40,7 +37,6 @@ import com.itbooks.R;
 import com.itbooks.app.fragments.BookmarkInfoDialogFragment;
 import com.itbooks.bus.DownloadEndEvent;
 import com.itbooks.bus.DownloadFailedEvent;
-import com.itbooks.bus.DownloadOpenEvent;
 import com.itbooks.bus.DownloadStartEvent;
 import com.itbooks.bus.DownloadUnavailableEvent;
 import com.itbooks.data.rest.RSBook;
@@ -145,7 +141,7 @@ public final class BookDetailActivity extends BaseActivity {
 	public void onEvent(DownloadFailedEvent e) {
 		if (e.getDownload().getBook().equals(mBook)) {
 			uiFailDownloading();
-			new SnackBar(this, getString(R.string.msg_downloading_fail)).show();
+			//new SnackBar(this, getString(R.string.msg_downloading_fail)).show();
 		}
 		mInProgress = false;
 	}
@@ -336,7 +332,7 @@ public final class BookDetailActivity extends BaseActivity {
 		new Handler().postDelayed(new Runnable() {
 			@Override
 			public void run() {
-				mHeadV.next();
+				mHeadV.show();
 			}
 		}, ANIM_DUR);
 

@@ -43,17 +43,22 @@ public   class UnregGCMTask extends AsyncTask<Void, Void, String> {
 		String regId;
 		try {
 			mGCM.unregister();
-			regId = mPrefs.getPushRegId();
-		} catch (IOException ex) {
 			regId = null;
+		} catch (IOException ex) {
+			ex.printStackTrace();
+			regId = mPrefs.getPushRegId();
 		}
 		return regId;
 	}
 
 	@Override
 	protected void onPostExecute(final String regId) {
-		if (!TextUtils.isEmpty(regId)) {
+		if (TextUtils.isEmpty(regId)) {
 			unregOnRemote(regId);
+		} else {
+			//Keep going
+			mPrefs.setPushRegId(regId);
+			mPrefs.turnOnPush();
 		}
 	}
 
@@ -67,6 +72,7 @@ public   class UnregGCMTask extends AsyncTask<Void, Void, String> {
 				@Override
 				public void success(RSResult rsBookList, retrofit.client.Response response) {
 					mPrefs.setPushRegId(null);
+					mPrefs.turnOffPush();
 				}
 
 				@Override

@@ -43,9 +43,13 @@ public final class BookListAdapter extends AbstractBookViewAdapter<BookListAdapt
 	@Override
 	public void onBindViewHolder(ViewHolder holder, int position) {
 		final RSBook book = getData().get(position);
-		Picasso picasso = Picasso.with(holder.itemView.getContext());
-		picasso.load(Utils.uriStr2URI(book.getCoverUrl()).toASCIIString()).placeholder(R.drawable.ic_launcher).tag(
-				holder.itemView.getContext()).into(holder.mBookThumbIv);
+		try {
+			Picasso picasso = Picasso.with(holder.itemView.getContext());
+			picasso.load(Utils.uriStr2URI(book.getCoverUrl()).toASCIIString()).placeholder(R.drawable.ic_launcher).tag(
+					holder.itemView.getContext()).into(holder.mBookThumbIv);
+		} catch (NullPointerException e) {
+			holder.mBookThumbIv.setImageResource(R.drawable.ic_launcher);
+		}
 		holder.mBookTitleTv.setText(book.getName());
 		holder.mBookSubTitleTv.setText(book.getAuthor());
 		holder.mISBNTv.setText(String.format("ISBN: %s", book.getISBN()));
