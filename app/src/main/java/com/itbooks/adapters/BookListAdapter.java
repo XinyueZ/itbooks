@@ -54,7 +54,7 @@ public final class BookListAdapter extends AbstractBookViewAdapter<BookListAdapt
 		holder.mBookSubTitleTv.setText(book.getAuthor());
 		holder.mISBNTv.setText(String.format("ISBN: %s", book.getISBN()));
 		holder.mSizeTv.setText(book.getSize());
-		holder.itemView.setOnClickListener(new OnClickListener() {
+		holder.mContentV.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				EventBus.getDefault().post(new OpenBookDetailEvent(book));
@@ -64,6 +64,7 @@ public final class BookListAdapter extends AbstractBookViewAdapter<BookListAdapt
 
 
 	public static class ViewHolder extends RecyclerView.ViewHolder {
+		private View mContentV;
 		private ImageView mBookThumbIv;
 		private TextView mBookTitleTv;
 		private TextView mBookSubTitleTv;
@@ -78,6 +79,7 @@ public final class BookListAdapter extends AbstractBookViewAdapter<BookListAdapt
 		 */
 		public ViewHolder(View convertView) {
 			super(convertView);
+			mContentV  =   convertView.findViewById(R.id.content_v);
 			mBookThumbIv = (ImageView) convertView.findViewById(R.id.book_thumb_iv);
 			mBookTitleTv = (TextView) convertView.findViewById(R.id.book_title_tv);
 			mBookSubTitleTv = (TextView) convertView.findViewById(R.id.book_subtitle_tv);

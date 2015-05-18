@@ -108,7 +108,7 @@
     <style name="ListItemCardView">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
-        <item name="contentPadding">@dimen/common_padding</item>
+        <item name="contentPadding">0dp</item>
         <item name="cardElevation">@dimen/common_elevation</item>
         <item name="cardMaxElevation">@dimen/common_elevation</item>
         <item name="cardUseCompatPadding">true</item>
