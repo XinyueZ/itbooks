@@ -48,6 +48,10 @@
     <string name="lbl_history">History</string>
     <string name="lbl_history_empty">No downloads</string>
 
+    <string name="lbl_status_pending">Pending</string>
+    <string name="lbl_status_running">Downloading</string>
+    <string name="lbl_status_failed">Failed</string>
+    <string name="lbl_status_successfully">Available</string>
 
     <string name="menu_forward">Forward</string>
     <string name="menu_backward">Backward</string>

@@ -17,6 +17,7 @@ import com.chopping.fragments.BaseFragment;
 import com.itbooks.App;
 import com.itbooks.R;
 import com.itbooks.adapters.HistoryAdapter;
+import com.itbooks.bus.DownloadCompleteEvent;
 import com.itbooks.db.DB;
 import com.itbooks.net.download.Download;
 import com.itbooks.utils.Prefs;
@@ -35,6 +36,20 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 	private HistoryAdapter mHistoryAdapter;
 	private View mEmptyV;
 
+	//------------------------------------------------
+	//Subscribes, event-handlers
+	//------------------------------------------------
+
+
+	/**
+	 * Handler for {@link com.itbooks.bus.DownloadCompleteEvent}.
+	 * @param e Event {@link com.itbooks.bus.DownloadCompleteEvent}.
+	 */
+	public void onEventMainThread(DownloadCompleteEvent e) {
+		getLoaderManager().initLoader(0, null, this).forceLoad();
+	}
+
+	//------------------------------------------------
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(LAYOUT, container, false);
 	}

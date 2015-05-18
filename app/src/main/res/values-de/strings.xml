@@ -41,6 +41,14 @@
     <string name="lbl_bookmark_info">Merke dieses Buch mit Klicken auf dem Icon.</string>
     <string name="lbl_bookmark_info_never_show_again">Ich habe gewusst. Diese Info zeigt spät nie.</string>
     <string name="lbl_by">Von</string>
+    <string name="lbl_history">Verlauf</string>
+    <string name="lbl_turn_on_push_info">Möchtest Du Push-Benachrichtigungen empfangen? Damit können wir Dir einige neuen IT-eBooks regelmäßig informieren.</string>
+    <string name="lbl_history_empty">Keine Downloads</string>
+
+    <string name="lbl_status_pending">Anstehend</string>
+    <string name="lbl_status_running">Wird heruntergeladen</string>
+    <string name="lbl_status_failed">War Fehler passiert</string>
+    <string name="lbl_status_successfully">Jetzt ist lesbar</string>
 
     <string name="menu_forward">Vorwärts</string>
     <string name="menu_backward">Rückwärts</string>
@@ -56,7 +64,6 @@
     <string name="setting_view_style_grid">Gridansicht</string>
 
     <string name="btn_turn_on">Einschalten</string>
-    <string name="lbl_turn_on_push_info">Möchtest Du Push-Benachrichtigungen empfangen? Damit können wir Dir einige neuen IT-eBooks regelmäßig informieren.</string>
 
     <string name="msg_bookmark_the_book">In die Merkliste hinzugefügt</string>
     <string name="msg_unbookmark_the_book">Entfernt von der Merkliste</string>
@@ -69,6 +76,4 @@
     <string name="msg_new_api_version_update">Hallo,  ich habe gute und schlechte Neuigkeiten: Ich nutze nun eine neue API, um direkte Downloads an Stelle des Webs zu verwenden. Lesezeichen werden nun in der Cloud gespeichert, um Datenverlust vorzubeugen.   Dafür müssen vorherige Lesezeichen leider verworfen werden. Ich danke für Ihr Verständnis und für Ihre Unterstützung.</string>
     <string name="msg_require_external_storage">Sie müssen durchsuchen, ob Sie eine SD-Karte schon genutzt haben oder nicht, weil die App unbedingt einen großen Speicherpltz braucht.</string>
     <string name="msg_op">Bearbeite…</string>
-    <string name="lbl_history">Verlauf</string>
-    <string name="lbl_history_empty">Keine Downloads</string>
 </resources>

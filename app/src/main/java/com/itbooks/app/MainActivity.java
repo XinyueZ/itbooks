@@ -1,6 +1,7 @@
 package com.itbooks.app;
 
 import android.app.Dialog;
+import android.app.DownloadManager;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.Intent;
@@ -48,6 +49,7 @@ import com.itbooks.bus.CleanBookmarkEvent;
 import com.itbooks.bus.EULAConfirmedEvent;
 import com.itbooks.bus.EULARejectEvent;
 import com.itbooks.bus.NewAPIVersionUpdateEvent;
+import com.itbooks.bus.OpenAllDownloadingsEvent;
 import com.itbooks.bus.OpenBookDetailEvent;
 import com.itbooks.bus.OpenBookmarkEvent;
 import com.itbooks.bus.RefreshBookmarksEvent;
@@ -164,6 +166,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	 */
 	public void onEvent(EULAConfirmedEvent e) {
 		showPushInfo();
+		mDrawerLayout.openDrawer(Gravity.RIGHT);
 	}
 
 	/**
@@ -197,6 +200,19 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		getSupportFragmentManager().beginTransaction().replace(R.id.bookmark_list_container_fl,
 				BookmarkListFragment.newInstance(getApplicationContext())).commit();
 	}
+
+	/**
+	 * Handler for {@link com.itbooks.bus.OpenAllDownloadingsEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link com.itbooks.bus.OpenAllDownloadingsEvent}.
+	 */
+	public void onEvent(OpenAllDownloadingsEvent e) {
+		Intent intent = new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS);
+		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		startActivity(intent);
+	}
+
 	//------------------------------------------------
 
 	@Override

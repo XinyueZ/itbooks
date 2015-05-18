@@ -4,6 +4,7 @@ package com.itbooks.app;
 import java.lang.reflect.Field;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -26,6 +27,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.itbooks.R;
 import com.itbooks.app.fragments.AboutDialogFragment;
 import com.itbooks.bus.CloseProgressDialogEvent;
+import com.itbooks.bus.DownloadOpenEvent;
 import com.itbooks.bus.OpenProgressDialogEvent;
 import com.itbooks.net.download.DownloadReceiver;
 import com.itbooks.utils.Prefs;
@@ -64,6 +66,49 @@ public abstract class BaseActivity extends com.chopping.activities.BaseActivity 
 	public void onEvent(CloseProgressDialogEvent e) {
 		if (mProgressDialog != null && mProgressDialog.isShowing()) {
 			mProgressDialog.dismiss();
+		}
+	}
+
+	/**
+	 * Handler for {@link com.itbooks.bus.DownloadOpenEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link com.itbooks.bus.DownloadOpenEvent}.
+	 */
+	public void onEvent(DownloadOpenEvent e) {
+		try {
+			Intent openFileIntent = new Intent(Intent.ACTION_VIEW);
+			openFileIntent.setDataAndType(Uri.fromFile(e.getFile()), "application/pdf");
+			openFileIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+			startActivity(openFileIntent);
+		} catch (Exception ex) {
+			//Download pdf-reader.
+			showDialogFragment(new DialogFragment() {
+				@Override
+				public Dialog onCreateDialog(Bundle savedInstanceState) {
+					// Use the Builder class for convenient dialog construction
+					android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+					builder.setTitle(R.string.application_name).setMessage(R.string.msg_no_reader).setPositiveButton(
+							R.string.btn_ok, new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog, int id) {
+									String pdfReader = "com.adobe.reader";
+									try {
+										startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
+												"market://details?id=" + pdfReader)));
+									} catch (android.content.ActivityNotFoundException exx) {
+										startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
+												"https://play.google.com/store/apps/details?id=" + pdfReader)));
+									}
+								}
+							}).setNegativeButton(R.string.btn_not_yet_load, new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							// User cancelled the dialog
+						}
+					});
+					// Create the AlertDialog object and return it
+					return builder.create();
+				}
+			}, null);
 		}
 	}
 
@@ -134,7 +179,7 @@ public abstract class BaseActivity extends com.chopping.activities.BaseActivity 
 	 * 		Tag name for dialog, default is "dlg". To grantee that only one instance of {@link
 	 * 		android.support.v4.app.DialogFragment} can been seen.
 	 */
-	public void showDialogFragment(DialogFragment _dlgFrg, String _tagName) {
+	protected void showDialogFragment(DialogFragment _dlgFrg, String _tagName) {
 		try {
 			if (_dlgFrg != null) {
 				DialogFragment dialogFragment = _dlgFrg;

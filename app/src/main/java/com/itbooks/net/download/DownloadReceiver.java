@@ -6,7 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 
+import com.itbooks.bus.DownloadCompleteEvent;
 import com.itbooks.db.DB;
+
+import de.greenrobot.event.EventBus;
 
 
 /**
@@ -38,5 +41,6 @@ public final class DownloadReceiver extends BroadcastReceiver {
 				}
 			}
 		}
+		EventBus.getDefault().post(new DownloadCompleteEvent());
 	}
 }

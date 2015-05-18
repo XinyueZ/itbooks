@@ -99,6 +99,7 @@ public final class Download extends RSBook {
 				if (Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB) {
 					request.setNotificationVisibility(Request.VISIBILITY_HIDDEN);
 				}
+				setStatus(DownloadManager.STATUS_PENDING);
 				setDownloadId(downloadManager.enqueue(request));
 				setStatus(DownloadManager.STATUS_RUNNING);
 				DB.getInstance(cxt).insertNewDownload(this);

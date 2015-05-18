@@ -151,48 +151,7 @@ public final class BookDetailActivity extends BaseActivity {
 	}
 
 
-	/**
-	 * Handler for {@link com.itbooks.bus.DownloadOpenEvent}.
-	 *
-	 * @param e
-	 * 		Event {@link com.itbooks.bus.DownloadOpenEvent}.
-	 */
-	public void onEvent(DownloadOpenEvent e) {
-		try {
-			Intent openFileIntent = new Intent(Intent.ACTION_VIEW);
-			openFileIntent.setDataAndType(Uri.fromFile(e.getFile()), "application/pdf");
-			openFileIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-			startActivity(openFileIntent);
-		} catch (Exception ex) {
-			//Download pdf-reader.
-			showDialogFragment(new DialogFragment() {
-				@Override
-				public Dialog onCreateDialog(Bundle savedInstanceState) {
-					// Use the Builder class for convenient dialog construction
-					AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-					builder.setTitle(R.string.application_name).setMessage(R.string.msg_no_reader).setPositiveButton(
-							R.string.btn_ok, new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) {
-							String pdfReader = "com.adobe.reader";
-							try {
-								startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
-										"market://details?id=" + pdfReader)));
-							} catch (android.content.ActivityNotFoundException exx) {
-								startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
-										"https://play.google.com/store/apps/details?id=" + pdfReader)));
-							}
-						}
-					}).setNegativeButton(R.string.btn_not_yet_load, new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog, int id) {
-									// User cancelled the dialog
-								}
-							});
-					// Create the AlertDialog object and return it
-					return builder.create();
-				}
-			}, null);
-		}
-	}
+
 
 	/**
 	 * Handler for {@link DownloadUnavailableEvent}.

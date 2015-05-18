@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent" android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/common_transparent">
+    android:background="@color/common_transparent"
+    android:orientation="vertical">
 
-    <com.itbooks.views.MaterialRippleLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <com.itbooks.views.MaterialRippleLayout
+        android:id="@+id/content_v"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/common_transparent"
@@ -24,27 +25,36 @@
             android:orientation="vertical">
 
             <TextView
-                android:layout_marginTop="@dimen/common_padding"
-                android:layout_marginBottom="@dimen/common_padding"
                 android:id="@+id/book_name_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/common_padding"
+                android:layout_marginTop="@dimen/common_padding"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@color/common_black" />
 
-            <LinearLayout
-                android:layout_marginTop="@dimen/common_padding"
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/common_padding"
                 android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/time_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="start"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/primary_accent" />
-            </LinearLayout>
+
+                <TextView
+                    android:id="@+id/status_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/primary_accent" />
+            </FrameLayout>
 
 
         </LinearLayout>
@@ -53,7 +63,8 @@
     <View
         android:id="@+id/div"
         android:layout_width="match_parent"
-        android:layout_height="1dp" android:layout_gravity="bottom"
+        android:layout_height="1dp"
+        android:layout_gravity="bottom"
         android:layout_marginBottom="@dimen/common_padding"
         android:layout_marginTop="@dimen/common_padding"
         android:background="@color/blue_grey_600_70" />
