@@ -51,6 +51,7 @@ public final class BookListAdapter extends AbstractBookViewAdapter<BookListAdapt
 			holder.mBookThumbIv.setImageResource(R.drawable.ic_launcher);
 		}
 		holder.mBookTitleTv.setText(book.getName());
+		holder.mBookDescTv.setText(book.getDescription());
 		holder.mBookSubTitleTv.setText(book.getAuthor());
 		holder.mISBNTv.setText(String.format("ISBN: %s", book.getISBN()));
 		holder.mSizeTv.setText(book.getSize());
@@ -67,6 +68,7 @@ public final class BookListAdapter extends AbstractBookViewAdapter<BookListAdapt
 		private View mContentV;
 		private ImageView mBookThumbIv;
 		private TextView mBookTitleTv;
+		private TextView mBookDescTv;
 		private TextView mBookSubTitleTv;
 		private TextView mISBNTv;
 		private TextView mSizeTv;
@@ -82,6 +84,7 @@ public final class BookListAdapter extends AbstractBookViewAdapter<BookListAdapt
 			mContentV  =   convertView.findViewById(R.id.content_v);
 			mBookThumbIv = (ImageView) convertView.findViewById(R.id.book_thumb_iv);
 			mBookTitleTv = (TextView) convertView.findViewById(R.id.book_title_tv);
+			mBookDescTv = (TextView) convertView.findViewById(R.id.book_desc_tv);
 			mBookSubTitleTv = (TextView) convertView.findViewById(R.id.book_subtitle_tv);
 			mISBNTv = (TextView) convertView.findViewById(R.id.book_isbn_tv);
 			mSizeTv  = (TextView) convertView.findViewById(R.id.book_size_tv);
