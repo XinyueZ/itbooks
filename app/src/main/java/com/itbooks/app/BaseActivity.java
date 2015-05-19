@@ -274,7 +274,7 @@ public abstract class BaseActivity extends com.chopping.activities.BaseActivity 
 		toast.setAnimations(Animations.FADE);
 		toast.setBackground(Background.RED);
 		toast.setText(text);
-		toast.setIndeterminate(true);
+		toast.setDuration(10000);
 		toast.setButtonText(getString(R.string.btn_retry));
 		toast.setTextColor(getResources().getColor(R.color.common_white));
 		toast.setIcon(SuperToast.Icon.Dark.INFO, IconPosition.LEFT);

@@ -510,7 +510,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 
 	public void search(View view) {
 		mKeyword = mSearchView.getQuery().toString();
-		loadBooks();
+		//loadBooks();
 	}
 
 	@Override
