@@ -34,6 +34,7 @@
 
             <android.support.v4.widget.SwipeRefreshLayout
                 android:id="@+id/content_srl"
+                android:layout_marginTop="?attr/actionBarSize"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="top">
@@ -59,13 +60,20 @@
                 app:animate="true"
                 app:iconDrawable="@drawable/ic_to_top" />
 
+
             <LinearLayout
                 android:id="@+id/card_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="?attr/actionBarSize"
                 android:layout_gravity="top"
                 android:background="@color/common_white"
                 android:orientation="vertical" />
+
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                style="@style/ActionBar_ToolBar" />
         </FrameLayout>
 
 
@@ -206,9 +214,10 @@
         android:layout_height="match_parent"
         android:layout_gravity="end"
         android:background="@android:color/white">
+
         <fragment
             android:name="com.itbooks.app.fragments.HistoryFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"  />
+            android:layout_height="match_parent" />
     </FrameLayout>
 </android.support.v4.widget.DrawerLayout>

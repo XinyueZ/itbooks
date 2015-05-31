@@ -25,6 +25,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -245,6 +246,10 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		super.onCreate(savedInstanceState);
 		setContentView(LAYOUT);
 		Crashlytics.start(this);
+
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
+
 
 		mScreenSize = DeviceUtils.getScreenSize(getApplicationContext());
 		mSuggestions = new SearchRecentSuggestions(this, SearchSuggestionProvider.AUTHORITY,
