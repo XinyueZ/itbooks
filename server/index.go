@@ -58,7 +58,7 @@ func init() {
 	http.HandleFunc("/insert", handleInsert)
 	http.HandleFunc("/del", handleDelete)
 	http.HandleFunc("/response", handleResponse)
-	http.HandleFunc("/dela", handleDeleteAllUsers)
+//	http.HandleFunc("/dela", handleDeleteAllUsers)
 }
 
 /*
