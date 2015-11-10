@@ -3,4 +3,4 @@
     android:id="@+id/toolbar"
     style="@style/ActionBar_ToolBar"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.itbooks.app.SettingActivity" />
+    tools:context=".app.activities.SettingActivity" />

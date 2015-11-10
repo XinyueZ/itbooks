@@ -18,7 +18,7 @@ import android.text.TextUtils;
 import com.chopping.utils.Utils;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.itbooks.R;
-import com.itbooks.app.BookDetailActivity;
+import com.itbooks.app.activities.BookDetailActivity;
 import com.itbooks.data.rest.RSBook;
 import com.squareup.picasso.Picasso;
 

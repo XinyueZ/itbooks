@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 
 import com.chopping.application.BasicPrefs;
 import com.chopping.fragments.BaseFragment;
-import com.itbooks.App;
+import com.itbooks.app.App;
 import com.itbooks.R;
 import com.itbooks.adapters.HistoryAdapter;
 import com.itbooks.bus.DownloadCompleteEvent;

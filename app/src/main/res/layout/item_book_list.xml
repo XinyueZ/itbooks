@@ -101,7 +101,7 @@
                 android:id="@+id/book_size_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom|right"
+                android:layout_gravity="bottom|end"
                 android:text="23MB"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/text_common_black"

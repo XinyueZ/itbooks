@@ -42,15 +42,17 @@
 
 
 
-    <com.gc.materialdesign.views.ButtonFloat
+
+
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/refresh_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginRight="24dp"
-        android:background="#8BC34A"
-        app:animate="true"
-        app:iconDrawable="@drawable/ic_refresh" />
-
+        android:layout_gravity="end|bottom"
+        android:layout_margin="24dp"
+        android:clickable="true"
+        android:src="@drawable/ic_refresh"
+        app:backgroundTint="@color/common_green"
+        app:rippleColor="@color/common_green" />
 
 </FrameLayout>

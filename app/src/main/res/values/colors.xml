@@ -1,33 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="green_1">@color/indigo_300</color>
-    <color name="green_2">@color/indigo_500</color>
-    <color name="green_3">@color/indigo_700</color>
-    <color name="green_4">@color/a400</color>
+    <color name="indigo_1">@color/indigo_300</color>
+    <color name="indigo_2">@color/indigo_500</color>
+    <color name="indigo_3">@color/indigo_700</color>
+    <color name="indigo_4">@color/a400</color>
 
 
     <color name="indigo_300">#7986CB</color>
     <color name="indigo_500">#3F51B5</color>
-    <color name="indigo_500_25">#403F51B5</color>
     <color name="indigo_700">#303F9F</color>
     <color name="blue_grey_50">#607D8B</color>
-    <color name="blue_grey_600">#546E7A</color>
     <color name="blue_grey_600_70">#B3546E7A</color>
-    <color name="blue_grey_600_90">#F2546E7A</color>
-    <color name="grey_100">#F5F5F5</color>
     <color name="grey_500">#9E9E9E</color>
     <color name="a400">#3D5AFE</color>
     <color name="a400_50">#803D5AFE</color>
     <color name="teal_500">#009688</color>
-    <color name="teal_500_90">#F2009688</color>
     <color name="red">#F44336</color>
-    <color name="red_50">#B3F44336</color>
-    <color name="red_90">#F2F44336</color>
     <color name="pink">#E91E63</color>
-    <color name="pink_90">#F2E91E63</color>
     <color name="green_mid">#4CAF50</color>
-    <color name="orange_500">#FF9800</color>
 
 
     <color name="common_black">#000000</color>
@@ -35,28 +26,25 @@
     <color name="common_blue">@color/indigo_500</color>
     <color name="common_transparent">@android:color/transparent</color>
     <color name="common_red">@color/red</color>
-    <color name="common_pink">@color/pink</color>
     <color name="common_green">@color/green_mid</color>
 
     <color name="text_common_black">@color/common_black</color>
     <color name="text_common_white">@color/common_white</color>
-    <color name="text_common_blue">@color/common_blue</color>
 
     <color name="primary_color">@color/indigo_500</color>
     <color name="primary_dark_color">@color/indigo_700</color>
     <color name="primary_accent">@color/teal_500</color>
 
-    <color name="book_not_downloaded">@color/blue_grey_600</color>
-    <color name="book_downloading">@color/red_90</color>
-    <color name="book_downloaded">@color/teal_500_90</color>
-    <color name="book_failed_downloaded">@color/pink_90</color>
 
-    <color name="book_not_downloaded_full">@color/blue_grey_600</color>
-    <color name="book_downloading_full">@color/red</color>
-    <color name="book_downloaded_full">@color/teal_500</color>
-    <color name="book_failed_downloaded_full">@color/pink</color>
+    <color name="color_pocket_1">#4CAF50</color>
+    <color name="color_pocket_2">#3F51B5</color>
+    <color name="color_pocket_3">#F44336</color>
+    <color name="color_pocket_4">#009688</color>
 
-    <color name="book_btn_not_downloaded">@color/teal_500</color>
-    <color name="book_btn_downloading">@color/orange_500</color>
-    <color name="book_btn_downloaded">@color/common_blue</color>
+    <integer-array name="loading_colors">
+        <item>@color/color_pocket_1</item>
+        <item>@color/color_pocket_2</item>
+        <item>@color/color_pocket_3</item>
+        <item>@color/color_pocket_4</item>
+    </integer-array>
 </resources>

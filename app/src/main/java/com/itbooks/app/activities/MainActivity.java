@@ -1,4 +1,4 @@
-package com.itbooks.app;
+package com.itbooks.app.activities;
 
 import java.io.File;
 
@@ -6,14 +6,19 @@ import android.app.Dialog;
 import android.app.DownloadManager;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.TypedArray;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.SearchRecentSuggestions;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.os.AsyncTaskCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SlidingPaneLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -23,6 +28,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.OnScrollListener;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.support.v7.widget.Toolbar;
@@ -112,6 +118,9 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	private static final int GRID_COL_COUNT = 2;
 
 	private ScreenSize mScreenSize;
+
+
+	private FloatingActionButton mTopFab;
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -249,14 +258,16 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
-
+		int actionBarHeight = calcActionBarHeight(this);
 
 		mScreenSize = DeviceUtils.getScreenSize(getApplicationContext());
 		mSuggestions = new SearchRecentSuggestions(this, SearchSuggestionProvider.AUTHORITY,
 				SearchSuggestionProvider.MODE);
 
 		mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.content_srl);
-		mRefreshLayout.setColorSchemeResources(R.color.green_1, R.color.green_2, R.color.green_3, R.color.green_4);
+		mRefreshLayout.setColorSchemeResources(R.color.indigo_1, R.color.indigo_2, R.color.indigo_3, R.color.indigo_4);
+		mRefreshLayout.setProgressViewEndTarget(true, actionBarHeight * 2);
+		mRefreshLayout.setProgressViewOffset(false, 0, actionBarHeight * 2);
 		mRefreshLayout.setOnRefreshListener(this);
 		mRefreshLayout.setRefreshing(true);
 
@@ -270,6 +281,23 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 			mRv.setAdapter(new BookGridAdapter(null, GRID_COL_COUNT, mScreenSize));
 		}
 
+		mRv.addOnScrollListener(new OnScrollListener() {
+			@Override
+			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+				//Scrolling up and down can hidden and show the FAB.
+				float y = ViewCompat.getY(recyclerView);
+				if (y < dy) {
+					if (mTopFab.isShown()) {
+						mTopFab.hide();
+					}
+				} else {
+					if (!mTopFab.isShown()) {
+						mTopFab.show();
+					}
+				}
+			}
+		});
+
 
 		handleIntent(getIntent());
 
@@ -277,9 +305,8 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		initDrawer();
 		initSlidingPanel();
 
-		View topV = findViewById(R.id.to_top_btn);
-		topV.setBackgroundColor(getResources().getColor(R.color.common_green));
-		topV.setOnClickListener(new OnClickListener() {
+		mTopFab = (FloatingActionButton) findViewById(R.id.to_top_btn);
+		mTopFab.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				mLayoutManager.scrollToPositionWithOffset(0, 0);
@@ -434,7 +461,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	 */
 	private void loadBooks() {
 		if (((AbstractBookViewAdapter) mRv.getAdapter()).getItemCount() == 0) {
-			findViewById(R.id.loading_pb).setVisibility(View.VISIBLE);
+			mRefreshLayout.setRefreshing(true);
 		}
 		if (!TextUtils.isEmpty(mKeyword)) {
 			loadByKeyword();
@@ -724,7 +751,23 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 				}
 			});
 		}
-		findViewById(R.id.loading_pb).setVisibility(View.GONE);
 		mRefreshLayout.setRefreshing(false);
 	}
+
+	/**
+	 * Calculate height of actionbar.
+	 *
+	 * @return Height of system defined actionbar.
+	 */
+	public static int calcActionBarHeight(Context cxt) {
+		int[] abSzAttr;
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			abSzAttr = new int[] { android.R.attr.actionBarSize };
+		} else {
+			abSzAttr = new int[] { R.attr.actionBarSize };
+		}
+		TypedArray a = cxt.obtainStyledAttributes(abSzAttr);
+		return a.getDimensionPixelSize(0, -1);
+	}
+
 }

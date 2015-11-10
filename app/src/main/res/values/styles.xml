@@ -1,11 +1,9 @@
 <resources>
 
-    <style name="AppTheme.Base" parent="@style/Theme.AppCompat.Light">
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowActionBarOverlay">false</item>
+    <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:colorPrimary">@color/primary_color</item>
         <item name="android:colorPrimaryDark">@color/primary_dark_color</item>
-        <item name="android:windowBackground">@color/background_material_light</item>
+        <item name="android:windowBackground">@color/common_white</item>
         <!-- android:textColorPrimary is the  color of the title text in the Toolbar, in the Theme.AppCompat theme:  -->
         <item name="android:textColorPrimary">@color/common_white</item>
         <!-- android:textColorPrimaryInverse is the  color of the title    text in the Toolbar, in the Theme.AppCompat.Light theme:  -->
@@ -18,8 +16,6 @@
         <item name="android:dropDownListViewStyle">@style/OverflowDropDown</item>
 
         <!--##########Support library compatibility##########-->
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
         <item name="windowActionBarOverlay">false</item>
         <item name="colorPrimary">@color/primary_color</item>
         <item name="colorPrimaryDark">@color/primary_dark_color</item>
@@ -78,6 +74,9 @@
         <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
     </style>
 
+    <style name="BookNameTitle" parent="@style/TextAppearance.AppCompat.Inverse">
+        <item name="android:textSize">24sp</item>
+    </style>
 
     <style name="BookDetailStyle.Property">
         <item name="android:textStyle">bold</item>
@@ -97,7 +96,7 @@
         <item name="cardElevation">1dp</item>
         <item name="cardMaxElevation">0dp</item>
         <item name="cardUseCompatPadding">true</item>
-        <item name="cardCornerRadius">0dp</item>
+        <item name="cardCornerRadius">1dp</item>
     </style>
 
 
@@ -109,5 +108,15 @@
         </attr>
     </declare-styleable>
 
+
+    <style name="GradientProgressBar" parent="SmoothProgressBar">
+        <item name="spb_stroke_separator_length">0dp</item>
+        <item name="spb_sections_count">3</item>
+        <item name="spb_speed">1.7</item>
+        <item name="spb_stroke_width">@dimen/pb_height</item>
+        <item name="android:interpolator">@android:anim/decelerate_interpolator</item>
+        <item name="spb_colors">@array/loading_colors</item>
+        <item name="spb_gradients">true</item>
+    </style>
 
 </resources>

@@ -29,12 +29,12 @@
 //                  奔驰宝马贵者趣，公交自行程序员。
 //                  别人笑我忒疯癫，我笑自己命太贱。
 
-package com.itbooks;
+package com.itbooks.app;
 
 import java.io.IOException;
 import java.util.Properties;
 
-import android.app.Application;
+import android.support.multidex.MultiDexApplication;
 
 import com.chopping.net.TaskHelper;
 import com.facebook.stetho.Stetho;
@@ -49,7 +49,7 @@ import cn.bmob.v3.Bmob;
  *
  * @author Xinyue Zhao
  */
-public final class App extends Application {
+public final class App extends MultiDexApplication {
 	/**
 	 * Our downloaded file is unique to other apps.
 	 */

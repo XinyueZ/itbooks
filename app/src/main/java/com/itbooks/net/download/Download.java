@@ -4,16 +4,13 @@ import java.io.File;
 import java.util.List;
 
 import android.app.DownloadManager;
-import android.app.DownloadManager.Request;
 import android.content.Context;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Build.VERSION_CODES;
 import android.os.Environment;
 import android.text.TextUtils;
 
 import com.chopping.utils.Utils;
-import com.itbooks.App;
+import com.itbooks.app.App;
 import com.itbooks.bus.DownloadEndEvent;
 import com.itbooks.bus.DownloadFailedEvent;
 import com.itbooks.bus.DownloadOpenEvent;
@@ -96,9 +93,6 @@ public final class Download extends RSBook {
 						mBook.getLink()).toASCIIString()));
 				request.setDestinationInExternalFilesDir(cxt, Environment.DIRECTORY_DOWNLOADS, mTargetName);
 				request.setVisibleInDownloadsUi(true);//Can see the downloaded file in "download" app.
-				if (Build.VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB) {
-					request.setNotificationVisibility(Request.VISIBILITY_HIDDEN);
-				}
 				setStatus(DownloadManager.STATUS_PENDING);
 				setDownloadId(downloadManager.enqueue(request));
 				setStatus(DownloadManager.STATUS_RUNNING);

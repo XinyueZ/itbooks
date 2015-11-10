@@ -112,7 +112,6 @@ public final class BookmarkListFragment extends BaseFragment {
 				EventBus.getDefault().post(new RefreshBookmarksEvent());
 			}
 		});
-		mRefreshV.setBackgroundColor(getResources().getColor(R.color.common_red));
 	}
 
 	@Override

@@ -62,7 +62,6 @@ public final class HistoryAdapter extends AbstractBookViewAdapter<HistoryAdapter
 		switch (download.getStatus()) {
 		case DownloadManager.STATUS_PENDING:
 			viewHolder.mStatusTv.setText(R.string.lbl_status_pending);
-			viewHolder.mStatusTv.setTextColor(resources.getColor(R.color.book_downloading_full));
 			viewHolder.mContentV.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -72,7 +71,6 @@ public final class HistoryAdapter extends AbstractBookViewAdapter<HistoryAdapter
 			break;
 		case DownloadManager.STATUS_RUNNING:
 			viewHolder.mStatusTv.setText(R.string.lbl_status_running);
-			viewHolder.mStatusTv.setTextColor(resources.getColor(R.color.book_downloading_full));
 			viewHolder.mContentV.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -82,7 +80,6 @@ public final class HistoryAdapter extends AbstractBookViewAdapter<HistoryAdapter
 			break;
 		case DownloadManager.STATUS_FAILED:
 			viewHolder.mStatusTv.setText(R.string.lbl_status_failed);
-			viewHolder.mStatusTv.setTextColor(resources.getColor(R.color.book_failed_downloaded_full));
 			viewHolder.mContentV.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -92,8 +89,6 @@ public final class HistoryAdapter extends AbstractBookViewAdapter<HistoryAdapter
 			break;
 		case DownloadManager.STATUS_SUCCESSFUL:
 			viewHolder.mStatusTv.setText(R.string.lbl_status_successfully);
-			viewHolder.mStatusTv.setTextColor(resources.getColor(R.color.book_downloaded_full));
-
 			viewHolder.mContentV.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
