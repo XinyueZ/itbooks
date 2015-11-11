@@ -127,6 +127,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	private FloatingActionButton mTopFab;
 
 	private View mLoginBtn;
+	private View mLogoutBtn;
 	private TextView mLoginNameTv;
 	private ImageView mUserIv;
 	private View mAppListV;
@@ -660,6 +661,13 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 				ConnectGoogleActivity.showInstance(MainActivity.this);
 			}
 		});
+		mLogoutBtn = header.findViewById(R.id.logout_btn);
+		mLogoutBtn.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				exitAccount();
+			}
+		});
 		mLoginNameTv  = (TextView) header.findViewById(R.id.login_name_tv);
 		navigationView.addHeaderView(header);
 		navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -695,6 +703,45 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		} else {
 			super.onBackPressed();
 		}
+	}
+
+	private void showUserInfo(Prefs prefs) {
+		if(!TextUtils.isEmpty(prefs.getGoogleId())) {
+			ViewPropertyAnimator.animate(mLoginBtn).alpha(0).setDuration(800).start();
+			mLoginBtn.setEnabled(false);
+			ViewPropertyAnimator.animate(mLogoutBtn).alpha(1).setDuration(800).start();
+			mLogoutBtn.setEnabled(true);
+		} else {
+			ViewPropertyAnimator.animate(mLoginBtn).alpha(1).setDuration(800).start();
+			mLoginBtn.setEnabled(true);
+			ViewPropertyAnimator.animate(mLogoutBtn).alpha(0).setDuration(800).start();
+			mLogoutBtn.setEnabled(false);
+		}
+		if (!TextUtils.isEmpty(prefs.getGoogleDisplyName())) {
+			mLoginNameTv.setText(prefs.getGoogleDisplyName());
+			ViewPropertyAnimator.animate(mLoginNameTv).translationY(Utils.convertPixelsToDp(App.Instance, 55)).setDuration(800).start();
+		}
+		Picasso picasso = Picasso.with(App.Instance);
+		if (!TextUtils.isEmpty(prefs.getGoogleThumbUrl())) {
+			picasso.load(Utils.uriStr2URI(prefs.getGoogleThumbUrl()).toASCIIString()).into(mUserIv);
+		}
+	}
+
+	/**
+	 * Exit current account, here unregister all push-elements etc.
+	 */
+	public void exitAccount() {
+		Prefs prefs = Prefs.getInstance(App.Instance);
+		prefs.setGoogleId(null);
+		prefs.setGoogleThumbUrl(null);
+		prefs.setGoogleDisplyName(null);
+		mLoginNameTv.setText("");
+		ViewPropertyAnimator.animate(mLoginNameTv).translationY(Utils.convertPixelsToDp(App.Instance, -55)).setDuration(800).start();
+		ViewPropertyAnimator.animate(mLoginBtn).alpha(1).setDuration(800).start();
+		mLoginBtn.setEnabled(true);
+		ViewPropertyAnimator.animate(mLogoutBtn).alpha(0).setDuration(800).start();
+		mLogoutBtn.setEnabled(false);
+		mUserIv.setImageResource(R.drawable.ic_person);
 	}
 
 	@Override
@@ -799,20 +846,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		}
 		showPushInfo();
 		showUserInfo(prefs);
-	}
-
-	private void showUserInfo(Prefs prefs) {
-		if(!TextUtils.isEmpty(prefs.getGoogleId())) {
-			mLoginBtn.setVisibility(View.GONE);
-		}
-		if (!TextUtils.isEmpty(prefs.getGoogleDisplyName())) {
-			mLoginNameTv.setText(prefs.getGoogleDisplyName());
-			ViewPropertyAnimator.animate(mLoginNameTv).translationY(Utils.convertPixelsToDp(App.Instance, 55)).setDuration(800).start();
-		}
-		Picasso picasso = Picasso.with(App.Instance);
-		if (!TextUtils.isEmpty(prefs.getGoogleThumbUrl())) {
-			picasso.load(Utils.uriStr2URI(prefs.getGoogleThumbUrl()).toASCIIString()).into(mUserIv);
-		}
 	}
 
 	@Override

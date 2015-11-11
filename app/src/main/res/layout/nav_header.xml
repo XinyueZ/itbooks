@@ -35,14 +35,22 @@
     <com.itbooks.views.FontTextView
         android:id="@+id/login_name_tv"
         font="thin"
-        android:layout_gravity="center"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/google_login_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|bottom" />
+
+    <ImageButton
+        android:id="@+id/logout_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:background="@color/common_transparent"
+        android:src="@drawable/ic_exit" />
 </FrameLayout>
 
