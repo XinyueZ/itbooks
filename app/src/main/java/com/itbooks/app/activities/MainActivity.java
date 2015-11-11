@@ -78,6 +78,8 @@ import com.itbooks.net.api.Api;
 import com.itbooks.net.api.ApiNotInitializedException;
 import com.itbooks.net.bookmark.BookmarkManger;
 import com.itbooks.utils.Prefs;
+import com.nineoldandroids.animation.Animator;
+import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.squareup.picasso.Picasso;
 
@@ -705,14 +707,24 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		}
 	}
 
+	private AnimatorListenerAdapter aniAdp = new AnimatorListenerAdapter() {
+		@Override
+		public void onAnimationEnd(Animator animation) {
+			super.onAnimationEnd(animation);
+			if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+				mDrawerLayout.closeDrawer(GravityCompat.START);
+			}
+		}
+	};
+
 	private void showUserInfo(Prefs prefs) {
 		if(!TextUtils.isEmpty(prefs.getGoogleId())) {
-			ViewPropertyAnimator.animate(mLoginBtn).alpha(0).setDuration(800).start();
+			ViewPropertyAnimator.animate(mLoginBtn).alpha(0).setDuration(800).setListener(aniAdp).start();
 			mLoginBtn.setEnabled(false);
 			ViewPropertyAnimator.animate(mLogoutBtn).alpha(1).setDuration(800).start();
 			mLogoutBtn.setEnabled(true);
 		} else {
-			ViewPropertyAnimator.animate(mLoginBtn).alpha(1).setDuration(800).start();
+			ViewPropertyAnimator.animate(mLoginBtn).alpha(1).setDuration(800).setListener(aniAdp).start();
 			mLoginBtn.setEnabled(true);
 			ViewPropertyAnimator.animate(mLogoutBtn).alpha(0).setDuration(800).start();
 			mLogoutBtn.setEnabled(false);
