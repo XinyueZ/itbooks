@@ -742,6 +742,8 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		ViewPropertyAnimator.animate(mLogoutBtn).alpha(0).setDuration(800).start();
 		mLogoutBtn.setEnabled(false);
 		mUserIv.setImageResource(R.drawable.ic_person);
+
+		getBookmarks();
 	}
 
 	@Override
@@ -858,5 +860,15 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	protected void onDestroy() {
 		super.onDestroy();
 		TaskHelper.getRequestQueue().cancelAll(GsonRequestTask.TAG);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+		case ConnectGoogleActivity.REQ:
+			getBookmarks();
+			break;
+		}
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 }

@@ -1,18 +1,23 @@
 package com.itbooks.net.bookmark;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import android.app.Application;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
+import com.itbooks.app.App;
 import com.itbooks.bus.BookmarksLoadedEvent;
 import com.itbooks.bus.CloseProgressDialogEvent;
 import com.itbooks.bus.OpenProgressDialogEvent;
 import com.itbooks.data.DSBookmark;
 import com.itbooks.data.rest.RSBook;
 import com.itbooks.utils.DeviceUniqueUtil;
+import com.itbooks.utils.Prefs;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.listener.DeleteListener;
@@ -128,10 +133,10 @@ public final class BookmarkManger {
 	public void removeAllRemoteBookmarks() {
 		getBookmarksInCache().clear();
 		try {
-			BmobQuery<DSBookmark> queryBookmarks = new BmobQuery<>();
-			queryBookmarks.addWhereEqualTo("mUID", DeviceUniqueUtil.getDeviceIdent(mContext));
+			BmobQuery<DSBookmark> mainQuery = buildMainQueryToSelectAll();
+
 			EventBus.getDefault().post(new OpenProgressDialogEvent());
-			queryBookmarks.findObjects(mContext, new FindListener<DSBookmark>() {
+			mainQuery.findObjects(mContext, new FindListener<DSBookmark>() {
 				@Override
 				public void onSuccess(List<DSBookmark> list) {
 					for(DSBookmark b : list) {
@@ -151,6 +156,32 @@ public final class BookmarkManger {
 		} catch (NoSuchAlgorithmException e) {
 			//TODO Error when can not get device id.
 		}
+	}
+
+	@NonNull
+	private BmobQuery<DSBookmark> buildMainQueryToSelectAll() throws NoSuchAlgorithmException {
+		BmobQuery<DSBookmark> mainQuery = new BmobQuery<>();
+		List<BmobQuery<DSBookmark>> queries = new ArrayList<>();
+
+		BmobQuery<DSBookmark> qUID = new BmobQuery<>();
+		qUID.addWhereEqualTo("mUID", DeviceUniqueUtil.getDeviceIdent(mContext));
+		queries.add(qUID);
+		String userId = Prefs.getInstance(App.Instance).getGoogleId();
+		if(!TextUtils.isEmpty(userId)) {
+			//Have login
+			BmobQuery<DSBookmark> qUser = new BmobQuery<>();
+			qUser.addWhereEqualTo("mUserId", userId);
+			queries.add(qUser);
+			mainQuery.or(queries);
+		} else {
+			//No login
+			BmobQuery<DSBookmark> qUser = new BmobQuery<>();
+			qUser.addWhereDoesNotExists("mUserId");
+			queries.add(qUser);
+			mainQuery.and(queries);
+		}
+
+		return mainQuery;
 	}
 
 	/**
@@ -200,11 +231,10 @@ public final class BookmarkManger {
 	/**
 	 * Make UI for loading all bookmarks
 	 */
-	public void loadAllBookmarks( ) {
+	public void loadAllBookmarks() {
 		try {
-			BmobQuery<DSBookmark> queryBookmarks = new BmobQuery<>();
-			queryBookmarks.addWhereEqualTo("mUID", DeviceUniqueUtil.getDeviceIdent(mContext));
-			queryBookmarks.findObjects(mContext, new FindListener<DSBookmark>() {
+			BmobQuery<DSBookmark> mainQuery = buildMainQueryToSelectAll();
+			mainQuery.findObjects(mContext, new FindListener<DSBookmark>() {
 				@Override
 				public void onSuccess(List<DSBookmark> list) {
 					getInstance().setBookmarksInCache(list);
@@ -239,7 +269,7 @@ public final class BookmarkManger {
 	public void addBookmark(RSBook book) {
 		try {
 			DSBookmark bookmark = new DSBookmark(book, DeviceUniqueUtil.getDeviceIdent(
-					mContext));
+					mContext), Prefs.getInstance(App.Instance).getGoogleId());
 			BookmarkManger.getInstance().addBookmark(bookmark);
 			BookmarkManger.getInstance().addRemoteBookmark(bookmark);
 		} catch (NoSuchAlgorithmException e) {
