@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.List;
 
 import android.app.DownloadManager;
-import android.content.res.Resources;
 import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
@@ -49,7 +48,8 @@ public final class HistoryAdapter extends AbstractBookViewAdapter<HistoryAdapter
 	public void onBindViewHolder(final ViewHolder viewHolder, int position) {
 		final Download download = getData().get(position);
 		RSBook book = download.getBook();
-		viewHolder.mBookNameTv.setText(book.getName());CharSequence elapsedSeconds = DateUtils
+		viewHolder.mBookNameTv.setText(book.getName());
+		CharSequence elapsedSeconds = DateUtils
 				.getRelativeTimeSpanString(download.getTimeStamp(), System.currentTimeMillis(),
 						DateUtils.MINUTE_IN_MILLIS);
 		viewHolder.mTimeTv.setText(elapsedSeconds);
@@ -58,7 +58,6 @@ public final class HistoryAdapter extends AbstractBookViewAdapter<HistoryAdapter
 	}
 
 	private static void setStatus(final ViewHolder viewHolder, final Download download) {
-		Resources resources = viewHolder.itemView.getContext().getResources();
 		switch (download.getStatus()) {
 		case DownloadManager.STATUS_PENDING:
 			viewHolder.mStatusTv.setText(R.string.lbl_status_pending);

@@ -92,7 +92,7 @@ public final class Download extends RSBook {
 				DownloadManager.Request request = new DownloadManager.Request(Uri.parse(Utils.uriStr2URI(
 						mBook.getLink()).toASCIIString()));
 				request.setDestinationInExternalFilesDir(cxt, Environment.DIRECTORY_DOWNLOADS, mTargetName);
-				request.setVisibleInDownloadsUi(true);//Can see the downloaded file in "download" app.
+				request.setVisibleInDownloadsUi(false);//Can see the downloaded file in "download" app.
 				setStatus(DownloadManager.STATUS_PENDING);
 				setDownloadId(downloadManager.enqueue(request));
 				setStatus(DownloadManager.STATUS_RUNNING);

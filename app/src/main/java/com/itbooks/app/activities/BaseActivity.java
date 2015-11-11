@@ -1,15 +1,14 @@
 package com.itbooks.app.activities;
 
 
+import java.io.File;
 import java.lang.reflect.Field;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -37,15 +36,10 @@ import com.itbooks.app.fragments.AboutDialogFragment;
 import com.itbooks.bus.CloseProgressDialogEvent;
 import com.itbooks.bus.DownloadOpenEvent;
 import com.itbooks.bus.OpenProgressDialogEvent;
-import com.itbooks.net.download.DownloadReceiver;
 import com.itbooks.utils.Prefs;
 
 public abstract class BaseActivity extends com.chopping.activities.BaseActivity implements OnRefreshListener {
 	protected SwipeRefreshLayout mRefreshLayout;
-	/**
-	 * Receiver for downloading reports.
-	 */
-	private DownloadReceiver mDownloadReceiver;
 
 	private ProgressDialog mProgressDialog;
 
@@ -84,9 +78,10 @@ public abstract class BaseActivity extends com.chopping.activities.BaseActivity 
 	 * 		Event {@link com.itbooks.bus.DownloadOpenEvent}.
 	 */
 	public void onEvent(DownloadOpenEvent e) {
+		File pdf = e.getFile();
 		try {
 			Intent openFileIntent = new Intent(Intent.ACTION_VIEW);
-			openFileIntent.setDataAndType(Uri.fromFile(e.getFile()), "application/pdf");
+			openFileIntent.setDataAndType(Uri.fromFile(pdf), "application/pdf");
 			openFileIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 			startActivity(openFileIntent);
 		} catch (Exception ex) {
@@ -151,17 +146,11 @@ public abstract class BaseActivity extends com.chopping.activities.BaseActivity 
 		setErrorHandlerAvailable(true);
 	}
 
-	@Override
-	protected void onPause() {
-		super.onPause();
-		unregisterReceiver(mDownloadReceiver);
-	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		IntentFilter intentFilter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
-		registerReceiver(mDownloadReceiver = new DownloadReceiver(), intentFilter);
+
 		final int isFound = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
 		if (isFound == ConnectionResult.SUCCESS ||
 				isFound == ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED) {//Ignore update.

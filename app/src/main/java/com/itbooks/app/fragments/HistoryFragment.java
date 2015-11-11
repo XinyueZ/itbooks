@@ -66,7 +66,7 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 	@Override
 	public void onResume() {
 		super.onResume();
-		getLoaderManager().initLoader(0, null, this).forceLoad();
+		getLoaderManager().initLoader(1, null, this).forceLoad();
 	}
 
 	@Override
