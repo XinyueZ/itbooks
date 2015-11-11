@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.os.AsyncTaskCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -19,6 +20,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
 
 import com.itbooks.R;
+import com.itbooks.app.App;
 import com.itbooks.gcm.RegGCMTask;
 import com.itbooks.gcm.UnregGCMTask;
 import com.itbooks.utils.Prefs;
@@ -55,6 +57,7 @@ public final class SettingActivity extends PreferenceActivity implements Prefere
 		mToolbar = (Toolbar) getLayoutInflater().inflate(R.layout.toolbar, null, false);
 		addContentView(mToolbar, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 		mToolbar.setTitle(R.string.menu_setting);
+		mToolbar.setTitleTextColor(ActivityCompat.getColor(App.Instance, R.color.text_common_white));
 		mToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
 		mToolbar.setNavigationOnClickListener(new OnClickListener() {
 			@Override

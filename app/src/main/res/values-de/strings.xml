@@ -3,6 +3,8 @@
 
     <string name="app_name">IT Bücher</string>
     <string name="application_name">IT Bücher</string>
+
+
     <string name="btn_confirm">Sicher</string>
     <string name="btn_cancel">Abbrechen</string>
     <string name="btn_close">Schließen</string>
@@ -51,10 +53,14 @@
     <string name="lbl_status_failed">War Fehler passiert</string>
     <string name="lbl_status_successfully">Jetzt ist lesbar</string>
 
+    <string name="lbl_welcome">Willkommen bei %1$s!</string>
+    <string name="lbl_hello">Hallo %1$s!</string>
+    <string name="lbl_connect_google">Verbindung an Google…</string>
+
     <string name="menu_forward">Vorwärts</string>
     <string name="menu_backward">Rückwärts</string>
     <string name="menu_remove_all_bookmarks">Merkliste leeren</string>
-
+    <string name="menu_more_apps">Mehr Apps</string>
 
     <string name="lbl_bookmark_empty">Merkliste ist leer.</string>
     <string name="menu_setting">Einstellung</string>

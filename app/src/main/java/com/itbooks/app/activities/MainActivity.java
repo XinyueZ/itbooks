@@ -6,17 +6,17 @@ import android.app.Dialog;
 import android.app.DownloadManager;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.TypedArray;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.SearchRecentSuggestions;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.support.v4.os.AsyncTaskCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -40,6 +40,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.chopping.bus.CloseDrawerEvent;
 import com.chopping.net.GsonRequestTask;
@@ -47,12 +49,12 @@ import com.chopping.net.TaskHelper;
 import com.chopping.utils.DeviceUtils;
 import com.chopping.utils.DeviceUtils.ScreenSize;
 import com.chopping.utils.Utils;
-import com.crashlytics.android.Crashlytics;
 import com.github.johnpersano.supertoasts.SuperToast;
 import com.itbooks.R;
 import com.itbooks.adapters.AbstractBookViewAdapter;
 import com.itbooks.adapters.BookGridAdapter;
 import com.itbooks.adapters.BookListAdapter;
+import com.itbooks.app.App;
 import com.itbooks.app.fragments.AboutDialogFragment;
 import com.itbooks.app.fragments.AppListImpFragment;
 import com.itbooks.app.fragments.BookmarkListFragment;
@@ -76,6 +78,8 @@ import com.itbooks.net.api.Api;
 import com.itbooks.net.api.ApiNotInitializedException;
 import com.itbooks.net.bookmark.BookmarkManger;
 import com.itbooks.utils.Prefs;
+import com.nineoldandroids.view.ViewPropertyAnimator;
+import com.squareup.picasso.Picasso;
 
 import de.greenrobot.event.EventBus;
 import retrofit.Callback;
@@ -121,6 +125,12 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 
 
 	private FloatingActionButton mTopFab;
+
+	private View mLoginBtn;
+	private TextView mLoginNameTv;
+	private ImageView mUserIv;
+	private View mAppListV;
+
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -132,8 +142,8 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		showWarningToast(getString(R.string.msg_one_book_downloaded), new SuperToast.OnClickListener() {
 			@Override
 			public void onClick(View view, Parcelable parcelable) {
-				File to = new File(getExternalFilesDir(
-						Environment.DIRECTORY_DOWNLOADS), e.getDownload().getTargetName());
+				File to = new File(getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
+						e.getDownload().getTargetName());
 				if (to.exists()) {
 					EventBus.getDefault().post(new DownloadOpenEvent(to));
 				}
@@ -250,73 +260,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 
 	//------------------------------------------------
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(LAYOUT);
-		Crashlytics.start(this);
-
-		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-		setSupportActionBar(toolbar);
-		int actionBarHeight = calcActionBarHeight(this);
-
-		mScreenSize = DeviceUtils.getScreenSize(getApplicationContext());
-		mSuggestions = new SearchRecentSuggestions(this, SearchSuggestionProvider.AUTHORITY,
-				SearchSuggestionProvider.MODE);
-
-		mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.content_srl);
-		mRefreshLayout.setColorSchemeResources(R.color.indigo_1, R.color.indigo_2, R.color.indigo_3, R.color.indigo_4);
-		mRefreshLayout.setProgressViewEndTarget(true, actionBarHeight * 2);
-		mRefreshLayout.setProgressViewOffset(false, 0, actionBarHeight * 2);
-		mRefreshLayout.setOnRefreshListener(this);
-		mRefreshLayout.setRefreshing(true);
-
-		mRv = (RecyclerView) findViewById(R.id.books_rv);
-		Prefs prefs = Prefs.getInstance(getApplicationContext());
-		if (prefs.getViewStyle() == 2) {
-			mRv.setLayoutManager(mLayoutManager = new LinearLayoutManager(this));
-			mRv.setAdapter(new BookListAdapter(null));
-		} else {
-			mRv.setLayoutManager(mLayoutManager = new GridLayoutManager(this, GRID_COL_COUNT));
-			mRv.setAdapter(new BookGridAdapter(null, GRID_COL_COUNT, mScreenSize));
-		}
-
-		mRv.addOnScrollListener(new OnScrollListener() {
-			@Override
-			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-				//Scrolling up and down can hidden and show the FAB.
-				float y = ViewCompat.getY(recyclerView);
-				if (y < dy) {
-					if (mTopFab.isShown()) {
-						mTopFab.hide();
-					}
-				} else {
-					if (!mTopFab.isShown()) {
-						mTopFab.show();
-					}
-				}
-			}
-		});
-
-
-		handleIntent(getIntent());
-
-		mKeyword = prefs.getLastSearched();
-		initDrawer();
-		initSlidingPanel();
-
-		mTopFab = (FloatingActionButton) findViewById(R.id.to_top_btn);
-		mTopFab.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				mLayoutManager.scrollToPositionWithOffset(0, 0);
-				getSupportActionBar().show();
-			}
-		});
-
-		getBookmarks();
-	}
-
 
 	/**
 	 * Get and load all bookmarks.
@@ -325,12 +268,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		BookmarkManger.getInstance().loadAllBookmarks();
 	}
 
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		Prefs.getInstance(getApplication()).setLastSearched(mKeyword);
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -365,9 +302,14 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		android.support.v7.widget.ShareActionProvider provider =
 				(android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(menuShare);
 		//Setting a share intent.
-		String subject = getString(R.string.lbl_share_app);
-		String text = getString(R.string.lbl_share_app_content);
-		provider.setShareIntent(getDefaultShareIntent(provider, subject, text));
+		if( provider != null ) {
+			String subject = getString(R.string.lbl_share_app);
+			String text = getString(R.string.lbl_share_app_content);
+			Intent intent = getDefaultShareIntent(provider, subject, text);
+			if (intent != null) {
+				provider.setShareIntent(intent);
+			}
+		}
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -390,10 +332,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 			BookmarkManger.getInstance().removeAllRemoteBookmarks();
 			openBookmarkList();
 			EventBus.getDefault().post(new CleanBookmarkEvent());
-			break;
-
-		case R.id.action_setting:
-			SettingActivity.showInstance(this);
 			break;
 		case R.id.action_view_style_list:
 			mRv.setLayoutManager(mLayoutManager = new LinearLayoutManager(this));
@@ -554,7 +492,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		} else {
 			mDetailOpened = false;
 		}
-		showAppList();
 	}
 
 	@Override
@@ -566,14 +503,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		} else {
 			mDetailOpened = false;
 		}
-		showAppList();
-	}
-
-
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		TaskHelper.getRequestQueue().cancelAll(GsonRequestTask.TAG);
 	}
 
 
@@ -588,8 +517,13 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	 * Show all external applications links.
 	 */
 	private void showAppList() {
-		getSupportFragmentManager().beginTransaction().replace(R.id.app_list_fl, AppListImpFragment.newInstance(this))
-				.commit();
+		String clsName =  AppListImpFragment.class.getSimpleName();
+		if(getSupportFragmentManager().getBackStackEntryCount() <= 0 ) {
+			mAppListV.setVisibility(View.VISIBLE);
+			getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.slide_out_from_top_to_down_fast, R.anim.slide_in_from_down_to_top_fast,
+					R.anim.slide_out_from_top_to_down_fast, R.anim.slide_in_from_down_to_top_fast).add(R.id.app_list_fl, AppListImpFragment.newInstance(this),clsName)
+					.addToBackStack(clsName).commit();
+		}
 	}
 
 	/**
@@ -622,51 +556,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 				}
 			};
 			mDrawerLayout.setDrawerListener(mDrawerToggle);
-			findViewById(R.id.open_bookmarks_ll).setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					openBookmarkList();
-					mDrawerLayout.closeDrawer(Gravity.LEFT);
-				}
-			});
-			findViewById(R.id.open_history_ll).setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					mDrawerLayout.openDrawer(Gravity.RIGHT);
-					mDrawerLayout.closeDrawer(Gravity.LEFT);
-				}
-			});
-			findViewById(R.id.open_setting_ll).setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					SettingActivity.showInstance(MainActivity.this);
-					mDrawerLayout.closeDrawer(Gravity.LEFT);
-				}
-			});
 		}
-	}
-
-	@Override
-	public void onResume() {
-		Prefs prefs = Prefs.getInstance(getApplicationContext());
-		if(prefs.isNewApiUpdated()) {
-			if(prefs.isPushTurnedOn()) {
-				prefs.turnOffPush();
-				prefs.setPushRegId(null);
-				AsyncTaskCompat.executeParallel(new RegGCMTask(getApplicationContext()));
-				Utils.showLongToast(getApplicationContext(), R.string.msg_welcome_2_0);
-			} else {
-				Utils.showLongToast(getApplicationContext(), R.string.msg_welcome);
-			}
-			prefs.setNewApiUpdated(false);
-		}
-
-
-		super.onResume();
-		if (mDrawerToggle != null) {
-			mDrawerToggle.syncState();
-		}
-		showPushInfo();
 	}
 
 	private void showPushInfo() {
@@ -754,20 +644,186 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		mRefreshLayout.setRefreshing(false);
 	}
 
+
+
+
 	/**
-	 * Calculate height of actionbar.
-	 *
-	 * @return Height of system defined actionbar.
+	 * Set-up of navi-bar left.
 	 */
-	public static int calcActionBarHeight(Context cxt) {
-		int[] abSzAttr;
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			abSzAttr = new int[] { android.R.attr.actionBarSize };
-		} else {
-			abSzAttr = new int[] { R.attr.actionBarSize };
-		}
-		TypedArray a = cxt.obtainStyledAttributes(abSzAttr);
-		return a.getDimensionPixelSize(0, -1);
+	private void setupDrawerContent(NavigationView navigationView) {
+		View header = getLayoutInflater().inflate(R.layout.nav_header, navigationView, false);
+		mUserIv = (ImageView) header.findViewById(R.id.user_iv);
+		mLoginBtn = header.findViewById(R.id.google_login_btn);
+		mLoginBtn.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				ConnectGoogleActivity.showInstance(MainActivity.this);
+			}
+		});
+		mLoginNameTv  = (TextView) header.findViewById(R.id.login_name_tv);
+		navigationView.addHeaderView(header);
+		navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+			@Override
+			public boolean onNavigationItemSelected(MenuItem menuItem) {
+				menuItem.setChecked(true);
+				mDrawerLayout.closeDrawer(GravityCompat.START);
+
+				switch (menuItem.getItemId()) {
+				case R.id.action_bookmarks:
+					openBookmarkList();
+					break;
+				case R.id.action_history:
+					mDrawerLayout.openDrawer(GravityCompat.END);
+					break;
+				case R.id.action_more_apps:
+					showAppList();
+					break;
+				case R.id.action_setting:
+					SettingActivity.showInstance(MainActivity.this);
+					break;
+				}
+				return true;
+			}
+		});
+
 	}
 
+	@Override
+	public void onBackPressed() {
+		if(mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+			mDrawerLayout.closeDrawer(GravityCompat.START);
+		} else {
+			super.onBackPressed();
+		}
+	}
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(LAYOUT);
+		mAppListV = findViewById(R.id.app_list_sv);
+		setupDrawerContent((NavigationView) findViewById(R.id.nav_view));
+
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
+		int actionBarHeight = Utils.getActionBarHeight(this);
+
+		mScreenSize = DeviceUtils.getScreenSize(getApplicationContext());
+		mSuggestions = new SearchRecentSuggestions(this, SearchSuggestionProvider.AUTHORITY,
+				SearchSuggestionProvider.MODE);
+
+		mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.content_srl);
+		mRefreshLayout.setColorSchemeResources(R.color.indigo_1, R.color.indigo_2, R.color.indigo_3, R.color.indigo_4);
+		mRefreshLayout.setProgressViewEndTarget(true, actionBarHeight * 2);
+		mRefreshLayout.setProgressViewOffset(false, 0, actionBarHeight * 2);
+		mRefreshLayout.setOnRefreshListener(this);
+		mRefreshLayout.setRefreshing(true);
+
+		mRv = (RecyclerView) findViewById(R.id.books_rv);
+		Prefs prefs = Prefs.getInstance(getApplicationContext());
+		if (prefs.getViewStyle() == 2) {
+			mRv.setLayoutManager(mLayoutManager = new LinearLayoutManager(this));
+			mRv.setAdapter(new BookListAdapter(null));
+		} else {
+			mRv.setLayoutManager(mLayoutManager = new GridLayoutManager(this, GRID_COL_COUNT));
+			mRv.setAdapter(new BookGridAdapter(null, GRID_COL_COUNT, mScreenSize));
+		}
+
+		mRv.addOnScrollListener(new OnScrollListener() {
+			@Override
+			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+				//Scrolling up and down can hidden and show the FAB.
+				float y = ViewCompat.getY(recyclerView);
+				if (y < dy) {
+					if (mTopFab.isShown()) {
+						mTopFab.hide();
+					}
+				} else {
+					if (!mTopFab.isShown()) {
+						mTopFab.show();
+					}
+				}
+			}
+		});
+
+
+		handleIntent(getIntent());
+
+		mKeyword = prefs.getLastSearched();
+		initDrawer();
+		initSlidingPanel();
+
+		mTopFab = (FloatingActionButton) findViewById(R.id.to_top_btn);
+		mTopFab.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mLayoutManager.scrollToPositionWithOffset(0, 0);
+				getSupportActionBar().show();
+			}
+		});
+		getSupportFragmentManager().addOnBackStackChangedListener(new OnBackStackChangedListener() {
+			@Override
+			public void onBackStackChanged() {
+				if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+					mTopFab.hide();
+					mAppListV.setVisibility(View.VISIBLE);
+				} else {
+					mTopFab.show();
+					mAppListV.setVisibility(View.GONE);
+				}
+			}
+		});
+
+		getBookmarks();
+	}
+
+	@Override
+	public void onResume() {
+		Prefs prefs = Prefs.getInstance(getApplicationContext());
+		if(prefs.isNewApiUpdated()) {
+			if(prefs.isPushTurnedOn()) {
+				prefs.turnOffPush();
+				prefs.setPushRegId(null);
+				AsyncTaskCompat.executeParallel(new RegGCMTask(getApplicationContext()));
+				Utils.showLongToast(getApplicationContext(), R.string.msg_welcome_2_0);
+			} else {
+				Utils.showLongToast(getApplicationContext(), R.string.msg_welcome);
+			}
+			prefs.setNewApiUpdated(false);
+		}
+
+
+		super.onResume();
+		if (mDrawerToggle != null) {
+			mDrawerToggle.syncState();
+		}
+		showPushInfo();
+		showUserInfo(prefs);
+	}
+
+	private void showUserInfo(Prefs prefs) {
+		if(!TextUtils.isEmpty(prefs.getGoogleId())) {
+			mLoginBtn.setVisibility(View.GONE);
+		}
+		if (!TextUtils.isEmpty(prefs.getGoogleDisplyName())) {
+			mLoginNameTv.setText(prefs.getGoogleDisplyName());
+			ViewPropertyAnimator.animate(mLoginNameTv).translationY(Utils.convertPixelsToDp(App.Instance, 55)).setDuration(800).start();
+		}
+		Picasso picasso = Picasso.with(App.Instance);
+		if (!TextUtils.isEmpty(prefs.getGoogleThumbUrl())) {
+			picasso.load(Utils.uriStr2URI(prefs.getGoogleThumbUrl()).toASCIIString()).into(mUserIv);
+		}
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		Prefs.getInstance(getApplication()).setLastSearched(mKeyword);
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		TaskHelper.getRequestQueue().cancelAll(GsonRequestTask.TAG);
+	}
 }

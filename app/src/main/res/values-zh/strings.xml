@@ -3,6 +3,7 @@
 
     <string name="app_name">IT 书籍</string>
     <string name="application_name">IT 书籍</string>
+
     <string name="btn_close">关闭</string>
     <string name="btn_confirm">确认</string>
     <string name="btn_cancel">取消</string>
@@ -48,10 +49,14 @@
     <string name="lbl_status_failed">发生错误</string>
     <string name="lbl_status_successfully">可以阅读</string>
 
+    <string name="lbl_welcome">欢迎使用 %1$s，来下载您需要的IT书籍!</string>
+    <string name="lbl_hello">你好 %1$s!</string>
+    <string name="lbl_connect_google">正在连接谷歌后台…</string>
 
     <string name="menu_forward">向前</string>
     <string name="menu_backward">向后</string>
     <string name="menu_remove_all_bookmarks">收藏清空</string>
+    <string name="menu_more_apps">其他应用</string>
 
     <!-- Shown in the 'About' window of the app. -->
     <string name="about_body">&lt;b&gt;IT Books &lt;/b&gt;&lt;br&gt;版本%s &lt;br&gt;</string>

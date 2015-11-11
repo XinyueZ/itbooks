@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".app.activities.ConnectGoogleActivity">
+
+    <data></data>
+
+    <FrameLayout
+        android:id="@id/error_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/login_content_ll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:weightSum="3">
+
+            <FrameLayout
+                android:id="@+id/slogan_vg"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@color/primary_color">
+
+                <ImageView
+                    android:id="@+id/slogan_iv"
+                    android:background="@color/common_transparent"
+                    android:src="@drawable/slogan"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:background="@color/common_white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <com.pnikosis.materialishprogress.ProgressWheel
+                            android:id="@+id/login_pb"
+                            android:layout_width="82dp"
+                            android:layout_height="82dp"
+                            android:layout_gravity="center"
+                            android:visibility="gone"
+                            app:matProg_barColor="@color/green_mid"
+                            app:matProg_fillRadius="true"
+                            app:matProg_progressIndeterminate="true" />
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/thumb_iv"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_launcher" />
+
+                    </FrameLayout>
+
+                    <com.itbooks.views.FontTextView
+                        android:id="@+id/hello_tv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="@dimen/activity_vertical_margin"
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_marginTop="@dimen/activity_vertical_margin"
+                        android:gravity="center_horizontal" />
+
+                    <com.google.android.gms.common.SignInButton
+                        android:id="@+id/google_login_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal" />
+
+                    <ImageButton
+
+                        android:id="@+id/close_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="@dimen/activity_vertical_margin"
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                        android:layout_marginRight="@dimen/activity_horizontal_margin"
+                        android:layout_marginTop="@dimen/activity_vertical_margin"
+                        android:background="@color/common_transparent"
+                        android:src="@drawable/ic_next"
+                        android:visibility="invisible" />
+                </LinearLayout>
+
+            </FrameLayout>
+        </LinearLayout>
+
+    </FrameLayout>
+</layout>

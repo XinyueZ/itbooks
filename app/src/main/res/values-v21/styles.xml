@@ -15,6 +15,18 @@
         <item name="android:alertDialogTheme">@style/AlertDialogCustom</item>
     </style>
 
+    <style name="SettingsTheme" parent="AppTheme">
+        <item name="android:windowBackground">@color/common_white</item>
+        <item name="android:textColorPrimary">@color/blue_grey_50</item>
+        <item name="android:textColorSecondary">@color/blue_grey_50</item>
+        <item name="android:colorAccent">@color/teal_500</item>
+        <item name="colorAccent">@color/teal_500</item>
+        <item name="android:statusBarColor">@color/primary_dark_color</item>
+    </style>
+
+    <style name="AppTheme.FirstPage"  >
+        <item name="android:statusBarColor">@color/primary_dark_color</item>
+    </style>
 
     <style name="AlertDialogCustom" parent="android:Theme.Material.Light.Dialog.Alert">
         <item name="android:colorPrimary">@color/primary_color</item>

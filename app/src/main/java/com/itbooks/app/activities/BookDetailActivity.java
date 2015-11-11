@@ -88,7 +88,6 @@ public final class BookDetailActivity extends BaseActivity {
 	private MenuItem mBookmarkItem;
 
 	private boolean mBookmarked;
-	private static final int ANIM_DUR = 1000;
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -101,7 +100,6 @@ public final class BookDetailActivity extends BaseActivity {
 	 */
 	public void onEvent(DownloadStartEvent e) {
 		mInProgress = true;
-		uiLoading();
 	}
 
 
@@ -112,9 +110,6 @@ public final class BookDetailActivity extends BaseActivity {
 	 * 		Event {@link com.itbooks.bus.DownloadEndEvent}.
 	 */
 	public void onEvent(DownloadEndEvent e) {
-		if (e.getDownload().getBook().equals(mBook)) {
-			uiLoaded();
-		}
 		mInProgress = false;
 	}
 
@@ -127,7 +122,6 @@ public final class BookDetailActivity extends BaseActivity {
 	 */
 	public void onEvent(DownloadFailedEvent e) {
 		if (e.getDownload().getBook().equals(mBook)) {
-			uiFailDownloading();
 			showInfoToast(getString(R.string.msg_downloading_fail));
 		}
 		mInProgress = false;
@@ -232,14 +226,7 @@ public final class BookDetailActivity extends BaseActivity {
 		mPublisherTv = (TextView) findViewById(R.id.detail_publisher_tv);
 		mSizeTv = (TextView) findViewById(R.id.book_size_tv);
 
-		mHeadV = (RevealLayout) findViewById(R.id.thumb_rl);
-		mHeadV.hide();
-		mHeadV.post(new Runnable() {
-			@Override
-			public void run() {
-				mHeadV.show(1500);
-			}
-		});
+
 
 		mOpenBtn = (FloatingActionButton) findViewById(R.id.download_btn);
 		mOpenBtn.setOnClickListener(new OnClickListener() {
@@ -294,6 +281,15 @@ public final class BookDetailActivity extends BaseActivity {
 			mSizeTv.setText(mBook.getSize());
 		}
 
+		mHeadV = (RevealLayout) findViewById(R.id.thumb_rl);
+		mHeadV.hide();
+		mHeadV.post(new Runnable() {
+			@Override
+			public void run() {
+				mHeadV.show(1500);
+			}
+		});
+
 
 		if (Download.exists(getApplicationContext(), mBook)) {
 			AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Boolean>() {
@@ -312,14 +308,11 @@ public final class BookDetailActivity extends BaseActivity {
 					if (isLoading != null) {
 						if (isLoading) {
 							mInProgress = true;
-							uiLoading();
 						} else {
 							mInProgress = false;
-							uiLoaded();
 						}
 					} else {
 						mInProgress = false;
-						uiFailDownloading();
 					}
 				}
 			});
@@ -341,13 +334,11 @@ public final class BookDetailActivity extends BaseActivity {
 					if (isLoading != null) {
 						if (isLoading) {
 							mInProgress = true;
-							uiLoading();
 						} else {
 							mInProgress = false;
 						}
 					} else {
 						mInProgress = false;
-						uiFailDownloading();
 					}
 				}
 			});
@@ -396,11 +387,14 @@ public final class BookDetailActivity extends BaseActivity {
 			android.support.v7.widget.ShareActionProvider provider =
 					(android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(mMenuShare);
 			//Setting a share intent.
-			String subject = getString(R.string.lbl_share_book);
-			String text = getString(R.string.lbl_share_book_content, mBook.getName(), mBook.getAuthor(),
-					mBook.getLink());
-
-			provider.setShareIntent(getDefaultShareIntent(provider, subject, text));
+			if(provider != null) {
+				String subject = getString(R.string.lbl_share_book);
+				String text = getString(R.string.lbl_share_book_content, mBook.getName(), mBook.getAuthor(), mBook.getLink());
+				Intent intent = getDefaultShareIntent(provider, subject, text);
+				if (intent != null) {
+					provider.setShareIntent(intent);
+				}
+			}
 		}
 		return super.onPrepareOptionsMenu(menu);
 	}
@@ -415,94 +409,4 @@ public final class BookDetailActivity extends BaseActivity {
 	public void onBackPressed() {
 		ActivityCompat.finishAfterTransition(this);
 	}
-
-	private boolean mFabIsShown;
-
-	private void showFab() {
-		mOpenBtn.setEnabled(true);
-		if (!mFabIsShown) {
-			//			mOpenBtn.setEnabled(true);
-			//			ViewPropertyAnimator.animate(mOpenBtn).cancel();
-			//			ViewPropertyAnimator.animate(mOpenBtn).scaleX(1).scaleY(1).setDuration(200).start();
-			//			mToolbar.setBackgroundResource(R.color.indigo_500_25);
-			//			mFabIsShown = true;
-
-
-			//			switch (mDownloadStatus ) {
-			//			case 0:
-			//				mHeadV.setBackgroundResource(R.drawable.bg_not_downloaded);
-			//				break;
-			//			case 1:
-			//				mHeadV.setBackgroundResource(R.drawable.bg_downloading);
-			//				break;
-			//			case 2:
-			//				mHeadV.setBackgroundResource(R.drawable.bg_downloaded);
-			//				break;
-			//			case 3:
-			//				mHeadV.setBackgroundResource(R.drawable.bg_failed_downloaded);
-			//				break;
-			//			}
-		}
-	}
-
-	private void hideFab() {
-		mOpenBtn.setEnabled(false);
-		if (mFabIsShown) {
-			//			mOpenBtn.setEnabled(false);
-			//			ViewPropertyAnimator.animate(mOpenBtn).cancel();
-			//			ViewPropertyAnimator.animate(mOpenBtn).scaleX(0).scaleY(0).setDuration(200).start();
-			//			mToolbar.setBackgroundResource(R.color.primary_color);
-			//			mFabIsShown = false;
-
-			//			switch (mDownloadStatus ) {
-			//			case 0:
-			//				mHeadV.setBackgroundResource(R.color.book_not_downloaded_full);
-			//				break;
-			//			case 1:
-			//				mHeadV.setBackgroundResource(R.color.book_downloading_full);
-			//				break;
-			//			case 2:
-			//				mHeadV.setBackgroundResource(R.color.book_downloaded_full);
-			//				break;
-			//			case 3:
-			//				mHeadV.setBackgroundResource(R.color.book_failed_downloaded_full);
-			//				break;
-			//			}
-		}
-	}
-
-	/**
-	 * Color on head changed while being loaded.
-	 */
-	private void uiLoading() {
-		mDownloadStatus = 1;
-		//mHeadV.setBackgroundResource(mFabIsShown ? R.drawable.bg_downloading : R.color.book_downloading_full);
-		//mOpenBtn.setBackgroundDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_file_cloud_download,
-		//		null));
-		//mOpenBtn.setBackgroundColor(getResources().getColor(R.color.book_btn_downloading));
-		mHeadV.next(ANIM_DUR);
-	}
-
-	/**
-	 * Color on head changed after being loaded.
-	 */
-	private void uiLoaded() {
-		mDownloadStatus = 2;
-		//mHeadV.setBackgroundResource(mFabIsShown ? R.drawable.bg_downloaded : R.color.book_downloaded_full);
-		//mOpenBtn.setBackgroundDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_reading, null));
-		//mOpenBtn.setBackgroundColor(getResources().getColor(R.color.book_btn_downloaded));
-		mHeadV.next(ANIM_DUR);
-	}
-
-	/**
-	 * Color on head changed if download failed.
-	 */
-	private void uiFailDownloading() {
-		mDownloadStatus = 3;
-		//mOpenBtn.setBackgroundDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_download, null));
-		//mHeadV.setBackgroundResource(mFabIsShown ? R.drawable.bg_failed_downloaded : R.color.book_failed_downloaded_full);
-		mHeadV.next(ANIM_DUR);
-	}
-
-	private int mDownloadStatus = 0;
 }

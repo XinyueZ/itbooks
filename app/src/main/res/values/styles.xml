@@ -109,14 +109,16 @@
     </declare-styleable>
 
 
-    <style name="GradientProgressBar" parent="SmoothProgressBar">
-        <item name="spb_stroke_separator_length">0dp</item>
-        <item name="spb_sections_count">3</item>
-        <item name="spb_speed">1.7</item>
-        <item name="spb_stroke_width">@dimen/pb_height</item>
-        <item name="android:interpolator">@android:anim/decelerate_interpolator</item>
-        <item name="spb_colors">@array/loading_colors</item>
-        <item name="spb_gradients">true</item>
+
+
+
+
+    <style name="NavDrawerItem" parent="@style/Theme.AppCompat.Light">
+        <item name="android:textColor">@color/primary_accent</item>
+        <item name="android:textColorSecondary">@color/primary_accent</item>
     </style>
 
+
+    <style name="AppTheme.FirstPage"  >
+    </style>
 </resources>

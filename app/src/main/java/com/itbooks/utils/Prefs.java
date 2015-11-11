@@ -40,6 +40,18 @@ public final class Prefs extends BasicPrefs {
 	private static final String PUSH_SENDER_ID  = "push_sender_id";
 
 	/**
+	 * Google's ID
+	 */
+	private static final String KEY_GOOGLE_ID = "key.google.id";
+	/**
+	 * The display-name of Google's user.
+	 */
+	private static final String KEY_GOOGLE_DISPLAY_NAME = "key.google.display.name";
+	/**
+	 * Url to user's profile-image.
+	 */
+	private static final String KEY_GOOGLE_THUMB_URL = "key.google.thumb.url";
+	/**
 	 * Created a DeviceData storage.
 	 *
 	 * @param context
@@ -219,5 +231,47 @@ public final class Prefs extends BasicPrefs {
 	 */
 	public void setNewApiUpdated(boolean updated) {
 		setBoolean(KEY_NEW_API_UPDATED, updated);
+	}
+
+	/**
+	 * Google's ID
+	 */
+	public void setGoogleId(String id) {
+		setString(KEY_GOOGLE_ID, id);
+	}
+
+	/**
+	 * Google's ID
+	 */
+	public String getGoogleId() {
+		return getString(KEY_GOOGLE_ID, null);
+	}
+
+	/**
+	 * The display-name of Google's user.
+	 */
+	public void setGoogleDisplyName(String displayName) {
+		setString(KEY_GOOGLE_DISPLAY_NAME, displayName);
+	}
+
+	/**
+	 * The display-name of Google's user.
+	 */
+	public String getGoogleDisplyName() {
+		return getString(KEY_GOOGLE_DISPLAY_NAME, null);
+	}
+
+	/**
+	 * The display-name of Google's user.
+	 */
+	public void setGoogleThumbUrl(String thumbUrl) {
+		setString(KEY_GOOGLE_THUMB_URL, thumbUrl);
+	}
+
+	/**
+	 * Url to user's profile-image.
+	 */
+	public String getGoogleThumbUrl() {
+		return getString(KEY_GOOGLE_THUMB_URL, null);
 	}
 }
