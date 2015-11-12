@@ -16,7 +16,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="256dp"
+    android:layout_height="230dp"
     android:background="?attr/colorPrimaryDark"
     android:paddingBottom="@dimen/activity_horizontal_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -30,6 +30,7 @@
         android:layout_height="80dp"
         android:layout_gravity="center"
         android:src="@drawable/ic_person"
+        app:border_width="2dp"
         app:border_color="@color/common_white" />
 
     <com.itbooks.views.FontTextView

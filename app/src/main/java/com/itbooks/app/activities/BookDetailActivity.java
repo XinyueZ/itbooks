@@ -268,8 +268,11 @@ public final class BookDetailActivity extends BaseActivity {
 	 */
 	private void showBookDetail() {
 		if (!TextUtils.isEmpty(mBook.getCoverUrl())) {
-			Picasso.with(this).load(Utils.uriStr2URI(mBook.getCoverUrl()).toASCIIString()).placeholder(
-					R.drawable.ic_launcher).into(mThumbIv);
+			try {
+				Picasso.with(this).load(Utils.uriStr2URI(mBook.getCoverUrl()).toASCIIString()).placeholder(R.drawable.ic_launcher).into(mThumbIv);
+			} catch (NullPointerException e) {
+				Picasso.with(this).load(mBook.getCoverUrl()).placeholder(R.drawable.ic_launcher).into(mThumbIv);
+			}
 		}
 
 		mDescriptionTv.setText(Html.fromHtml(mBook.getDescription()));

@@ -52,15 +52,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <com.pnikosis.materialishprogress.ProgressWheel
-                            android:id="@+id/login_pb"
-                            android:layout_width="82dp"
-                            android:layout_height="82dp"
-                            android:layout_gravity="center"
-                            android:visibility="gone"
-                            app:matProg_barColor="@color/green_mid"
-                            app:matProg_fillRadius="true"
-                            app:matProg_progressIndeterminate="true" />
+
 
                         <de.hdodenhof.circleimageview.CircleImageView
                             android:id="@+id/thumb_iv"
@@ -68,6 +60,18 @@
                             android:layout_height="80dp"
                             android:layout_gravity="center"
                             android:src="@drawable/ic_launcher" />
+
+
+
+
+                        <com.wang.avi.AVLoadingIndicatorView
+                            android:id="@+id/login_pb"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:visibility="gone"
+                            app:indicator="BallScale"
+                            app:indicator_color="@color/primary_color" />
 
                     </FrameLayout>
 

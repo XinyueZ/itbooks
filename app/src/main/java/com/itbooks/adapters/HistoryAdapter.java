@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.app.DownloadManager;
 import android.os.Environment;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -15,7 +16,6 @@ import android.widget.TextView;
 
 import com.itbooks.R;
 import com.itbooks.bus.DownloadOpenEvent;
-import com.itbooks.bus.OpenAllDownloadingsEvent;
 import com.itbooks.data.rest.RSBook;
 import com.itbooks.net.download.Download;
 
@@ -58,35 +58,29 @@ public final class HistoryAdapter extends AbstractBookViewAdapter<HistoryAdapter
 	}
 
 	private static void setStatus(final ViewHolder viewHolder, final Download download) {
+		PopupMenu menu = (PopupMenu) viewHolder.mFileV.getTag();
 		switch (download.getStatus()) {
 		case DownloadManager.STATUS_PENDING:
+			viewHolder.mFileV.setVisibility(View.INVISIBLE);
+			viewHolder.mLoadingPb.setVisibility(View.VISIBLE);
 			viewHolder.mStatusTv.setText(R.string.lbl_status_pending);
-			viewHolder.mContentV.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-						EventBus.getDefault().post(new OpenAllDownloadingsEvent());
-				}
-			});
+			viewHolder.mContentV.setOnClickListener(null);
 			break;
 		case DownloadManager.STATUS_RUNNING:
+			viewHolder.mFileV.setVisibility(View.INVISIBLE);
+			viewHolder.mLoadingPb.setVisibility(View.VISIBLE);
 			viewHolder.mStatusTv.setText(R.string.lbl_status_running);
-			viewHolder.mContentV.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					EventBus.getDefault().post(new OpenAllDownloadingsEvent());
-				}
-			});
+			viewHolder.mContentV.setOnClickListener(null);
 			break;
 		case DownloadManager.STATUS_FAILED:
+			viewHolder.mFileV.setVisibility(View.INVISIBLE);
+			viewHolder.mLoadingPb.setVisibility(View.GONE);
 			viewHolder.mStatusTv.setText(R.string.lbl_status_failed);
-			viewHolder.mContentV.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					EventBus.getDefault().post(new OpenAllDownloadingsEvent());
-				}
-			});
+			viewHolder.mContentV.setOnClickListener(null);
 			break;
 		case DownloadManager.STATUS_SUCCESSFUL:
+			viewHolder.mFileV.setVisibility(View.VISIBLE);
+			viewHolder.mLoadingPb.setVisibility(View.GONE);
 			viewHolder.mStatusTv.setText(R.string.lbl_status_successfully);
 			viewHolder.mContentV.setOnClickListener(new OnClickListener() {
 				@Override
@@ -103,19 +97,35 @@ public final class HistoryAdapter extends AbstractBookViewAdapter<HistoryAdapter
 	}
 
 	static class ViewHolder extends RecyclerView.ViewHolder {
+		private View mFileV;
 		private View mDiv;
 		private View mContentV;
 		private TextView mBookNameTv;
 		private TextView mTimeTv;
 		private TextView mStatusTv;
+		private View mLoadingPb;
 
 		ViewHolder(View convertView) {
 			super(convertView);
+
+			mFileV = convertView.findViewById(R.id.file_btn);
+			final PopupMenu menu = new PopupMenu(convertView.getContext(), mFileV);
+			mFileV.setTag(menu);
+			menu.inflate(R.menu.downloaded_item);
+			mFileV.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					menu.show();
+				}
+			});
+
 			mContentV = convertView.findViewById(R.id.content_v);
 			mBookNameTv = (TextView) convertView.findViewById(R.id.book_name_tv);
 			mTimeTv = (TextView) convertView.findViewById(R.id.time_tv);
 			mStatusTv = (TextView) convertView.findViewById(R.id.status_tv);
 			mDiv = convertView.findViewById(R.id.div);
+
+			mLoadingPb = convertView.findViewById(R.id.loading_pb);
 		}
 	}
 }
