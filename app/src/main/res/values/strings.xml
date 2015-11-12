@@ -35,7 +35,6 @@
     <string name="lbl_page">Page</string>
     <string name="lbl_publisher">Publisher</string>
     <string name="lbl_download">Here download.</string>
-    <string name="lbl_download_in_browser">Download in browser.</string>
     <string name="lbl_more">More…</string>
     <string name="lbl_no_data">Nothing found!</string>
     <string name="lbl_play_service">This application needs Google Play Service, you must install it first.</string>
@@ -56,6 +55,7 @@
     <string name="lbl_status_running">Downloading</string>
     <string name="lbl_status_failed">Failed</string>
     <string name="lbl_status_successfully">Available</string>
+    <string name="lbl_status_new_loading">This book should be loaded again</string>
 
     <string name="lbl_welcome">Welcome to %1$s\na free and lightweight app to download IT-Books!</string>
     <string name="lbl_hello">Hello %1$s!</string>

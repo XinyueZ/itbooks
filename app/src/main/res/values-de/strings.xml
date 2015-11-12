@@ -31,7 +31,6 @@
     <string name="lbl_page">Seiten</string>
     <string name="lbl_publisher">Verleger</string>
     <string name="lbl_download">Hier herunterzuladen.</string>
-    <string name="lbl_download_in_browser">Herunterladen in browser.</string>
     <string name="lbl_more">Mehr…</string>
     <string name="lbl_no_data">Nichts gefunden!</string>
     <string name="lbl_play_service">Diese App braucht Google Play Service, Sie müssen erst herunterladen dann
@@ -52,6 +51,7 @@
     <string name="lbl_status_running">Wird heruntergeladen</string>
     <string name="lbl_status_failed">War Fehler passiert</string>
     <string name="lbl_status_successfully">Jetzt ist lesbar</string>
+    <string name="lbl_status_new_loading">Dieses Buch soll wieder heruntergeladen werden</string>
 
     <string name="lbl_welcome">Willkommen bei %1$s!</string>
     <string name="lbl_hello">Hallo %1$s!</string>

@@ -55,7 +55,7 @@ public final class DownloadReceiver extends BroadcastReceiver {
 
 					break;
 				case DownloadManager.STATUS_FAILED:
-					download.failed(context);
+					download.failed();
 					break;
 				}
 			}

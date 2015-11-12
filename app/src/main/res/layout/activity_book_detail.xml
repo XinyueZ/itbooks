@@ -3,11 +3,11 @@
     android:id="@id/error_content"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".app.activities.BookDetailActivity"
-    xmlns:tools="http://schemas.android.com/tools">
+    tools:context=".app.activities.BookDetailActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -38,8 +38,8 @@
                     android:id="@+id/detail_thumb_iv"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:layout_gravity="center_horizontal" />
+                    android:layout_gravity="center_horizontal"
+                    android:scaleType="centerCrop" />
             </com.itbooks.views.RevealLayout>
 
             <android.support.v7.widget.Toolbar
@@ -161,13 +161,13 @@
         android:id="@+id/download_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:clickable="true"
+        android:layout_margin="@dimen/activity_horizontal_margin"
         android:src="@drawable/ic_download"
         app:backgroundTint="@color/primary_accent"
         app:layout_anchor="@id/appbar"
         app:layout_anchorGravity="bottom|right|end"
         app:rippleColor="@color/primary_accent" />
+
 
 
     <TextView

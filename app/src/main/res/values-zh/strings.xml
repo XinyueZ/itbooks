@@ -29,7 +29,6 @@
     <string name="lbl_page">页数</string>
     <string name="lbl_publisher">发行商</string>
     <string name="lbl_download">这里下载。</string>
-    <string name="lbl_download_in_browser">浏览器中下载。</string>
     <string name="lbl_more">更多…</string>
     <string name="lbl_no_data">没有发现结果！</string>
     <string name="lbl_play_service">本App需要谷歌服务，必须先安装然后使用。</string>
@@ -48,6 +47,7 @@
     <string name="lbl_status_running">下载中</string>
     <string name="lbl_status_failed">发生错误</string>
     <string name="lbl_status_successfully">可以阅读</string>
+    <string name="lbl_status_new_loading">这本书需要重新下载</string>
 
     <string name="lbl_welcome">欢迎使用 %1$s，来下载您需要的IT书籍!</string>
     <string name="lbl_hello">你好 %1$s!</string>

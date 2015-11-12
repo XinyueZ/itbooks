@@ -2,14 +2,18 @@ package com.itbooks.app.activities;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.DownloadManager;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.os.AsyncTaskCompat;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
@@ -27,6 +31,7 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.itbooks.R;
+import com.itbooks.app.App;
 import com.itbooks.app.fragments.BookmarkInfoDialogFragment;
 import com.itbooks.bus.DownloadEndEvent;
 import com.itbooks.bus.DownloadFailedEvent;
@@ -38,6 +43,8 @@ import com.itbooks.net.download.Download;
 import com.itbooks.utils.Prefs;
 import com.itbooks.views.RevealLayout;
 import com.squareup.picasso.Picasso;
+
+import net.steamcrafted.loadtoast.LoadToast;
 
 /**
  * Details of book.
@@ -76,10 +83,9 @@ public final class BookDetailActivity extends BaseActivity {
 	private TextView mSizeTv;
 
 
-	private FloatingActionButton mOpenBtn;
+	private FloatingActionButton mDownloadBtn;
 	private RevealLayout mHeadV;
-	private boolean mInProgress;
-
+	private LoadToast mLoadToast;
 
 	/**
 	 * The interstitial ad.
@@ -98,8 +104,8 @@ public final class BookDetailActivity extends BaseActivity {
 	 * @param e
 	 * 		Event {@link com.itbooks.bus.DownloadStartEvent}.
 	 */
-	public void onEvent(DownloadStartEvent e) {
-		mInProgress = true;
+	public void onEventMainThread(DownloadStartEvent e) {
+		updateStatusRefreshUI();
 	}
 
 
@@ -109,8 +115,8 @@ public final class BookDetailActivity extends BaseActivity {
 	 * @param e
 	 * 		Event {@link com.itbooks.bus.DownloadEndEvent}.
 	 */
-	public void onEvent(DownloadEndEvent e) {
-		mInProgress = false;
+	public void onEventMainThread(DownloadEndEvent e) {
+		updateStatusRefreshUI();
 	}
 
 
@@ -120,11 +126,8 @@ public final class BookDetailActivity extends BaseActivity {
 	 * @param e
 	 * 		Event {@link com.itbooks.bus.DownloadFailedEvent}.
 	 */
-	public void onEvent(DownloadFailedEvent e) {
-		if (e.getDownload().getBook().equals(mBook)) {
-			showInfoToast(getString(R.string.msg_downloading_fail));
-		}
-		mInProgress = false;
+	public void onEventMainThread(DownloadFailedEvent e) {
+		updateStatusRefreshUI();
 	}
 
 
@@ -172,6 +175,209 @@ public final class BookDetailActivity extends BaseActivity {
 			closeTroubleUI();
 			mInterstitialAd.show();
 		}
+	}
+
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		setIntent(intent);
+		mBook = (RSBook) intent.getSerializableExtra(EXTRAS_BOOK);
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putSerializable(EXTRAS_BOOK, mBook);
+	}
+
+
+	/**
+	 * Show the content of a book.
+	 */
+	private void showBookDetail() {
+		if (!TextUtils.isEmpty(mBook.getCoverUrl())) {
+			try {
+				Picasso.with(this).load(Utils.uriStr2URI(mBook.getCoverUrl()).toASCIIString()).placeholder(
+						R.drawable.ic_launcher).into(mThumbIv);
+			} catch (NullPointerException e) {
+				Picasso.with(this).load(mBook.getCoverUrl()).placeholder(R.drawable.ic_launcher).into(mThumbIv);
+			}
+		}
+
+		mDescriptionTv.setText(Html.fromHtml(mBook.getDescription()));
+		mISBNTv.setText(mBook.getISBN());
+		mYearTv.setText(mBook.getYear());
+		mPageTv.setText(mBook.getPages());
+		mPublisherTv.setText(mBook.getPublisher());
+		if (!TextUtils.isEmpty(mBook.getSize())) {
+			mSizeTv.setText(mBook.getSize());
+		}
+
+		mHeadV = (RevealLayout) findViewById(R.id.thumb_rl);
+		mHeadV.hide();
+		mHeadV.post(new Runnable() {
+			@Override
+			public void run() {
+				mHeadV.show(1500);
+			}
+		});
+
+
+		ActivityCompat.invalidateOptionsMenu(this);
+	}
+
+	/**
+	 * Refresh current item download-status and info UI.
+	 */
+	private void updateStatusRefreshUI() {
+		Bundle args = new Bundle();
+		args.putSerializable("book", mBook);
+		getSupportLoaderManager().initLoader((int) System.currentTimeMillis(), args, new LoaderCallbacks<Integer>() {
+			@Override
+			public Loader<Integer> onCreateLoader(int id, final Bundle args) {
+				return new AsyncTaskLoader<Integer>(App.Instance) {
+					@Override
+					public Integer loadInBackground() {
+						RSBook book = (RSBook) args.getSerializable("book");
+						int status = Download.getDownloadStatus(getApplicationContext(), book);
+						return Integer.valueOf(status);
+					}
+				};
+			}
+
+			@Override
+			public void onLoadFinished(Loader<Integer> loader, Integer data) {
+				if (mLoadToast == null) {
+					mLoadToast = new LoadToast(BookDetailActivity.this).setBackgroundColor(ActivityCompat.getColor(
+							App.Instance, R.color.green_mid)).setProgressColor(ActivityCompat.getColor(App.Instance,
+							R.color.primary_color)).setTextColor(ActivityCompat.getColor(App.Instance,
+							R.color.text_common_white)).setTranslationY(Utils.getActionBarHeight(App.Instance));
+				}
+				switch (data.intValue()) {
+				case DownloadManager.STATUS_SUCCESSFUL:
+					mLoadToast.setText(getString(R.string.lbl_status_successfully));
+					mLoadToast.success();
+					setReadButton();
+					break;
+				case DownloadManager.STATUS_PAUSED:
+				case DownloadManager.STATUS_PENDING:
+					mLoadToast.setText(getString(R.string.lbl_status_pending));
+					mLoadToast.show();
+					hiddenDownloadButton();
+					break;
+				case DownloadManager.STATUS_RUNNING:
+					mLoadToast.setText(getString(R.string.lbl_status_running));
+					mLoadToast.show();
+					hiddenDownloadButton();
+					break;
+				case DownloadManager.STATUS_FAILED:
+					mLoadToast.setText(getString(R.string.lbl_status_failed));
+					mLoadToast.error();
+					setDownloadButton();
+					break;
+				}
+			}
+
+			@Override
+			public void onLoaderReset(Loader<Integer> loader) {
+
+			}
+		}).forceLoad();
+	}
+
+
+	@Override
+	public boolean onCreateOptionsMenu(final Menu menu) {
+		getMenuInflater().inflate(BOOK_DETAIL_MENU, menu);
+		mBookmarkItem = menu.findItem(R.id.action_bookmark);
+		mBookmarked = BookmarkManger.getInstance().getBookmarked(mBook) != null;
+		mBookmarkItem.setIcon(mBookmarked ? R.drawable.ic_bookmarked : R.drawable.ic_not_bookmarked);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.action_bookmark:
+			if (mBook != null) {
+				if (mBookmarked) {
+					BookmarkManger.getInstance().removeBookmark(mBook);
+					Utils.showShortToast(getApplicationContext(), R.string.msg_unbookmark_the_book);
+					mBookmarkItem.setIcon(R.drawable.ic_not_bookmarked);
+					mBookmarked = false;
+				} else {
+					BookmarkManger.getInstance().addBookmark(mBook);
+					Utils.showShortToast(getApplicationContext(), R.string.msg_bookmark_the_book);
+					mBookmarkItem.setIcon(R.drawable.ic_bookmarked);
+					mBookmarked = true;
+				}
+			}
+			break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		MenuItem mMenuShare = menu.findItem(R.id.action_share_book);
+		if (mBook != null) {
+			//Getting the actionprovider associated with the menu item whose id is share.
+			android.support.v7.widget.ShareActionProvider provider =
+					(android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(mMenuShare);
+			//Setting a share intent.
+			if (provider != null) {
+				String subject = getString(R.string.lbl_share_book);
+				String text = getString(R.string.lbl_share_book_content, mBook.getName(), mBook.getAuthor(),
+						mBook.getLink());
+				Intent intent = getDefaultShareIntent(provider, subject, text);
+				if (intent != null) {
+					provider.setShareIntent(intent);
+				}
+			}
+		}
+		return super.onPrepareOptionsMenu(menu);
+	}
+
+
+	@Override
+	public void onRefresh() {
+
+	}
+
+	@Override
+	public void onBackPressed() {
+		ActivityCompat.finishAfterTransition(this);
+	}
+
+	public void hiddenDownloadButton() {
+		CoordinatorLayout.LayoutParams p = (CoordinatorLayout.LayoutParams) mDownloadBtn.getLayoutParams();
+		p.setAnchorId(View.NO_ID);
+		mDownloadBtn.setLayoutParams(p);
+		mDownloadBtn.hide();
+	}
+
+	public void showDownloadButton() {
+		CoordinatorLayout.LayoutParams p = (CoordinatorLayout.LayoutParams) mDownloadBtn.getLayoutParams();
+		p.setAnchorId(R.id.appbar);
+		mDownloadBtn.setLayoutParams(p);
+		mDownloadBtn.show();
+	}
+
+
+	public void setDownloadButton() {
+		showDownloadButton();
+		mDownloadBtn.setImageResource(R.drawable.ic_download);
+		mDownloadBtn.setBackgroundTintList(ColorStateList.valueOf(ActivityCompat.getColor(App.Instance,
+				R.color.common_green)));
+	}
+
+	public void setReadButton() {
+		showDownloadButton();
+		mDownloadBtn.setImageResource(R.drawable.ic_read);
+		mDownloadBtn.setBackgroundTintList(ColorStateList.valueOf(ActivityCompat.getColor(App.Instance,
+				R.color.common_red)));
 	}
 
 	@Override
@@ -226,16 +432,13 @@ public final class BookDetailActivity extends BaseActivity {
 		mPublisherTv = (TextView) findViewById(R.id.detail_publisher_tv);
 		mSizeTv = (TextView) findViewById(R.id.book_size_tv);
 
-
-
-		mOpenBtn = (FloatingActionButton) findViewById(R.id.download_btn);
-		mOpenBtn.setOnClickListener(new OnClickListener() {
+		mDownloadBtn = (FloatingActionButton) findViewById(R.id.download_btn);
+		mDownloadBtn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (!mInProgress) {
-					Download download = new Download(mBook);
-					download.start(getApplicationContext());
-				}
+				mDownloadBtn.hide();
+				Download download = new Download(mBook);
+				download.start(getApplicationContext());
 			}
 		});
 
@@ -245,171 +448,17 @@ public final class BookDetailActivity extends BaseActivity {
 
 
 		showBookDetail();
-
-	}
-
-
-	@Override
-	protected void onNewIntent(Intent intent) {
-		super.onNewIntent(intent);
-		setIntent(intent);
-		mBook = (RSBook) intent.getSerializableExtra(EXTRAS_BOOK);
 	}
 
 	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putSerializable(EXTRAS_BOOK, mBook);
-	}
+	public void onResume() {
+		super.onResume();
 
-
-	/**
-	 * Show the content of a book.
-	 */
-	private void showBookDetail() {
-		if (!TextUtils.isEmpty(mBook.getCoverUrl())) {
-			try {
-				Picasso.with(this).load(Utils.uriStr2URI(mBook.getCoverUrl()).toASCIIString()).placeholder(R.drawable.ic_launcher).into(mThumbIv);
-			} catch (NullPointerException e) {
-				Picasso.with(this).load(mBook.getCoverUrl()).placeholder(R.drawable.ic_launcher).into(mThumbIv);
-			}
-		}
-
-		mDescriptionTv.setText(Html.fromHtml(mBook.getDescription()));
-		mISBNTv.setText(mBook.getISBN());
-		mYearTv.setText(mBook.getYear());
-		mPageTv.setText(mBook.getPages());
-		mPublisherTv.setText(mBook.getPublisher());
-		if (!TextUtils.isEmpty(mBook.getSize())) {
-			mSizeTv.setText(mBook.getSize());
-		}
-
-		mHeadV = (RevealLayout) findViewById(R.id.thumb_rl);
-		mHeadV.hide();
-		mHeadV.post(new Runnable() {
-			@Override
-			public void run() {
-				mHeadV.show(1500);
-			}
-		});
-
-
+		hiddenDownloadButton();
 		if (Download.exists(getApplicationContext(), mBook)) {
-			AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Boolean>() {
-				@Override
-				protected Boolean doInBackground(Void... params) {
-					try {
-						return Download.downloading(getApplicationContext(), mBook);
-					} catch (IllegalStateException e) {
-						return null;
-					}
-				}
-
-				@Override
-				protected void onPostExecute(Boolean isLoading) {
-					super.onPostExecute(isLoading);
-					if (isLoading != null) {
-						if (isLoading) {
-							mInProgress = true;
-						} else {
-							mInProgress = false;
-						}
-					} else {
-						mInProgress = false;
-					}
-				}
-			});
+			updateStatusRefreshUI();
 		} else {
-			AsyncTaskCompat.executeParallel(new AsyncTask<Void, Void, Boolean>() {
-				@Override
-				protected Boolean doInBackground(Void... params) {
-					try {
-						return Download.downloading(getApplicationContext(), mBook);
-					} catch (IllegalStateException e) {
-						return null;
-					}
-				}
-
-				@Override
-				protected void onPostExecute(Boolean isLoading) {
-					super.onPostExecute(isLoading);
-					mInProgress = false;
-					if (isLoading != null) {
-						if (isLoading) {
-							mInProgress = true;
-						} else {
-							mInProgress = false;
-						}
-					} else {
-						mInProgress = false;
-					}
-				}
-			});
+			setDownloadButton();
 		}
-		ActivityCompat.invalidateOptionsMenu(this);
-	}
-
-
-	@Override
-	public boolean onCreateOptionsMenu(final Menu menu) {
-		getMenuInflater().inflate(BOOK_DETAIL_MENU, menu);
-		mBookmarkItem = menu.findItem(R.id.action_bookmark);
-		mBookmarked = BookmarkManger.getInstance().getBookmarked(mBook) != null;
-		mBookmarkItem.setIcon(mBookmarked ? R.drawable.ic_bookmarked : R.drawable.ic_not_bookmarked);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.action_bookmark:
-			if (mBook != null) {
-				if (mBookmarked) {
-					BookmarkManger.getInstance().removeBookmark(mBook);
-					Utils.showShortToast(getApplicationContext(), R.string.msg_unbookmark_the_book);
-					mBookmarkItem.setIcon(R.drawable.ic_not_bookmarked);
-					mBookmarked = false;
-				} else {
-					BookmarkManger.getInstance().addBookmark(mBook);
-					Utils.showShortToast(getApplicationContext(), R.string.msg_bookmark_the_book);
-					mBookmarkItem.setIcon(R.drawable.ic_bookmarked);
-					mBookmarked = true;
-				}
-			}
-			break;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
-
-	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		MenuItem mMenuShare = menu.findItem(R.id.action_share_book);
-		if (mBook != null) {
-			//Getting the actionprovider associated with the menu item whose id is share.
-			android.support.v7.widget.ShareActionProvider provider =
-					(android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(mMenuShare);
-			//Setting a share intent.
-			if(provider != null) {
-				String subject = getString(R.string.lbl_share_book);
-				String text = getString(R.string.lbl_share_book_content, mBook.getName(), mBook.getAuthor(), mBook.getLink());
-				Intent intent = getDefaultShareIntent(provider, subject, text);
-				if (intent != null) {
-					provider.setShareIntent(intent);
-				}
-			}
-		}
-		return super.onPrepareOptionsMenu(menu);
-	}
-
-
-	@Override
-	public void onRefresh() {
-
-	}
-
-	@Override
-	public void onBackPressed() {
-		ActivityCompat.finishAfterTransition(this);
 	}
 }

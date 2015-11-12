@@ -700,8 +700,8 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 
 	@Override
 	public void onBackPressed() {
-		if(mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-			mDrawerLayout.closeDrawer(GravityCompat.START);
+		if(mDrawerLayout.isDrawerOpen(GravityCompat.START) || mDrawerLayout.isDrawerOpen(GravityCompat.END)) {
+			mDrawerLayout.closeDrawers();
 		} else {
 			super.onBackPressed();
 		}

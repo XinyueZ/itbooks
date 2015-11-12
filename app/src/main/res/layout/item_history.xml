@@ -92,7 +92,7 @@
             <com.wang.avi.AVLoadingIndicatorView
                 android:id="@+id/loading_pb"
                 android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_height="25dp"
                 android:visibility="visible"
                 app:indicator="LineScale"
                 app:indicator_color="@color/primary_accent" />

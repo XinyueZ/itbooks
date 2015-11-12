@@ -85,7 +85,6 @@ public final class Download extends RSBook {
 			if (TextUtils.equals(Environment.getExternalStorageState(), Environment.MEDIA_REMOVED)) {
 				EventBus.getDefault().post(new DownloadUnavailableEvent());
 			} else {
-				EventBus.getDefault().post(new DownloadStartEvent(this));
 				DownloadManager downloadManager = (DownloadManager) cxt.getSystemService(Context.DOWNLOAD_SERVICE);
 				setTimeStamp(System.currentTimeMillis());
 
@@ -97,6 +96,7 @@ public final class Download extends RSBook {
 				setDownloadId(downloadManager.enqueue(request));
 				setStatus(DownloadManager.STATUS_RUNNING);
 				DB.getInstance(cxt).insertNewDownload(this);
+				EventBus.getDefault().post(new DownloadStartEvent(this));
 			}
 		}
 	}
@@ -118,27 +118,15 @@ public final class Download extends RSBook {
 	}
 
 	/**
-	 * Test whether is being downloaded.
-	 *
-	 * @param cxt
-	 * 		{@link Context}.
-	 * @param book
-	 * 		{@link RSBook} The book.
-	 *
-	 * @return {@code true} if the book is being downloaded.
-	 *
-	 * @throws IllegalStateException
-	 * 		For error status {@link DownloadManager#STATUS_FAILED}.
+	 * Get downloaded object status.
+	 * @return {@link DownloadManager#STATUS_*}
 	 */
-	public static boolean downloading(Context cxt, RSBook book) throws IllegalStateException {
+	public static int getDownloadStatus(Context cxt, RSBook book)  {
 		List<Download> downloads = DB.getInstance(cxt).getDownloads(book);
 		for (Download download : downloads) {
-			if (download.getStatus() == DownloadManager.STATUS_FAILED) {
-				throw new IllegalStateException();
-			}
-			return download.getStatus() != DownloadManager.STATUS_SUCCESSFUL;
+			return download.getStatus();
 		}
-		return false;
+		return DownloadManager.STATUS_FAILED;
 	}
 
 
@@ -156,10 +144,8 @@ public final class Download extends RSBook {
 	/**
 	 * Fail on downloading.
 	 *
-	 * @param cxt
-	 * 		{@link Context}.
 	 */
-	public void failed(Context cxt) {
+	public void failed() {
 		EventBus.getDefault().post(new DownloadFailedEvent(this));
 
 	}
