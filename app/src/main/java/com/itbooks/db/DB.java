@@ -251,7 +251,7 @@ public final class DB {
 					DownloadsTbl.BOOK_DESC + "=?  ";
 			String[] whereArgs = book.toArray();
 			c = mDB.query(DownloadsTbl.TABLE_NAME,null, whereClause,
-					whereArgs, null, null, null);
+					whereArgs, null, null, DownloadsTbl.EDIT_TIME +  " DESC");
 
 			while (c.moveToNext()) {
 				Download item = new Download(new RSBook(c.getString(c.getColumnIndex(DownloadsTbl.BOOK_NAME)), c.getString(c.getColumnIndex(

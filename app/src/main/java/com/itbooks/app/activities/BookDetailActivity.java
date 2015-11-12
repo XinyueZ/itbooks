@@ -458,7 +458,9 @@ public final class BookDetailActivity extends BaseActivity {
 		if (Download.exists(getApplicationContext(), mBook)) {
 			updateStatusRefreshUI();
 		} else {
-			setDownloadButton();
+			if (!TextUtils.isEmpty(mBook.getLink())) {
+				setDownloadButton();
+			}
 		}
 	}
 }
