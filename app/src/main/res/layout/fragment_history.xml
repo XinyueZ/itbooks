@@ -3,25 +3,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.itbooks.app.fragments.HistoryFragment"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context="com.itbooks.app.fragments.HistoryFragment">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/history_rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
         android:background="@color/common_transparent"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
         android:scrollbars="none" />
 
     <LinearLayout
         android:id="@+id/empty_ll"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:orientation="vertical"
-        android:visibility="gone"
-        android:layout_height="wrap_content">
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -31,13 +32,13 @@
             android:src="@drawable/ic_bookshelf" />
 
         <com.itbooks.views.FontTextView
+            font="thin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/lbl_history_empty"
-            font="thin"
-            android:textColor="@color/text_common_black"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/text_common_black" />
     </LinearLayout>
 </FrameLayout>
 

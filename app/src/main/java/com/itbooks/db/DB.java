@@ -311,4 +311,27 @@ public final class DB {
 		}
 		return downloads;
 	}
+
+
+	/**
+	 * Delete a download history.
+	 * @param id The ident of a download entry.
+	 * @return {@code true} if delete, otherwise {@code false}.
+	 */
+	public synchronized boolean deleteDownload(long id) {
+		if (mDB == null || !mDB.isOpen()) {
+			open();
+		}
+		boolean success;
+		try {
+			long rowId;
+			String whereClause = DownloadsTbl.DOWNLOAD_ID + "=?";
+			String[] whereArgs = new String[] { String.valueOf(id) };
+			rowId = mDB.delete(DownloadsTbl.TABLE_NAME, whereClause, whereArgs);
+			success = rowId > 0;
+		} finally {
+			close();
+		}
+		return success;
+	}
 }

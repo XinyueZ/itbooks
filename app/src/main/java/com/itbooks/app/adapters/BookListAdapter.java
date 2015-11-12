@@ -1,4 +1,4 @@
-package com.itbooks.adapters;
+package com.itbooks.app.adapters;
 
 import java.util.List;
 
@@ -74,7 +74,7 @@ public final class BookListAdapter extends AbstractBookViewAdapter<BookListAdapt
 		private TextView mSizeTv;
 
 		/**
-		 * Constructor of {@link com.itbooks.adapters.BookListAdapter.ViewHolder}.
+		 * Constructor of {@link com.itbooks.app.adapters.BookListAdapter.ViewHolder}.
 		 *
 		 * @param convertView
 		 * 		The root {@link android.view.View}.

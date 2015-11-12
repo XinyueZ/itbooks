@@ -1,4 +1,4 @@
-package com.itbooks.adapters;
+package com.itbooks.app.adapters;
 
 import java.util.List;
 

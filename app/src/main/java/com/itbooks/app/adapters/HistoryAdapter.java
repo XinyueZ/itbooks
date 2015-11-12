@@ -1,4 +1,4 @@
-package com.itbooks.adapters;
+package com.itbooks.app.adapters;
 
 import java.io.File;
 import java.util.List;
@@ -6,15 +6,20 @@ import java.util.List;
 import android.app.DownloadManager;
 import android.os.Environment;
 import android.support.v7.widget.PopupMenu;
+import android.support.v7.widget.PopupMenu.OnMenuItemClickListener;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.itbooks.R;
+import com.itbooks.bus.DownloadCopyEvent;
+import com.itbooks.bus.DownloadDeleteEvent;
+import com.itbooks.bus.DownloadMoveEvent;
 import com.itbooks.bus.DownloadOpenEvent;
 import com.itbooks.data.rest.RSBook;
 import com.itbooks.net.download.Download;
@@ -49,9 +54,8 @@ public final class HistoryAdapter extends AbstractBookViewAdapter<HistoryAdapter
 		final Download download = getData().get(position);
 		RSBook book = download.getBook();
 		viewHolder.mBookNameTv.setText(book.getName());
-		CharSequence elapsedSeconds = DateUtils
-				.getRelativeTimeSpanString(download.getTimeStamp(), System.currentTimeMillis(),
-						DateUtils.MINUTE_IN_MILLIS);
+		CharSequence elapsedSeconds = DateUtils.getRelativeTimeSpanString(download.getTimeStamp(),
+				System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS);
 		viewHolder.mTimeTv.setText(elapsedSeconds);
 		setStatus(viewHolder, download);
 		viewHolder.mDiv.setVisibility(position == getItemCount() - 1 ? View.GONE : View.VISIBLE);
@@ -59,6 +63,23 @@ public final class HistoryAdapter extends AbstractBookViewAdapter<HistoryAdapter
 
 	private static void setStatus(final ViewHolder viewHolder, final Download download) {
 		PopupMenu menu = (PopupMenu) viewHolder.mFileV.getTag();
+		menu.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+			@Override
+			public boolean onMenuItemClick(MenuItem item) {
+				switch (item.getItemId()) {
+				case R.id.action_delete:
+					EventBus.getDefault().post(new DownloadDeleteEvent(download));
+					break;
+				case R.id.action_copy:
+					EventBus.getDefault().post(new DownloadCopyEvent(download));
+					break;
+				case R.id.action_move:
+					EventBus.getDefault().post(new DownloadMoveEvent(download));
+					break;
+				}
+				return true;
+			}
+		});
 		switch (download.getStatus()) {
 		case DownloadManager.STATUS_PENDING:
 			viewHolder.mFileV.setVisibility(View.INVISIBLE);

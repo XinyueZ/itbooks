@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import com.chopping.application.BasicPrefs;
 import com.chopping.fragments.BaseFragment;
 import com.itbooks.R;
-import com.itbooks.adapters.BookmarkListAdapter;
+import com.itbooks.app.adapters.BookmarkListAdapter;
 import com.itbooks.bus.BookmarksLoadedEvent;
 import com.itbooks.bus.DeleteBookmarkEvent;
 import com.itbooks.bus.RefreshBookmarksEvent;

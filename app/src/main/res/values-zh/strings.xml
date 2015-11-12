@@ -95,4 +95,9 @@
     <string name="msg_welcome_2_0">欢迎使用 2.0…</string>
     <string name="msg_welcome">欢迎…</string>
     <string name="msg_one_book_downloaded">有本书已经下载好了，请检查下。</string>
+    <string name="msg_file_moved">移动了文件</string>
+    <string name="msg_file_copied">拷贝了文件</string>
+    <string name="msg_file_deleted">删除了文件</string>
+    <string name="msg_file_duplicated">目标文件已经存在，终止操作</string>
+    <string name="msg_file_can_be_found_to_delete">无法找到要删除的目标文件</string>
 </resources>
