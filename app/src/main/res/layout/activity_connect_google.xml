@@ -29,11 +29,11 @@
 
                 <ImageView
                     android:id="@+id/slogan_iv"
-                    android:background="@color/common_transparent"
-                    android:src="@drawable/slogan"
-                    android:layout_gravity="end|center_vertical"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|center_vertical"
+                    android:background="@color/common_transparent"
+                    android:src="@drawable/slogan" />
             </FrameLayout>
 
             <FrameLayout
@@ -53,15 +53,14 @@
                         android:layout_height="wrap_content">
 
 
-
                         <de.hdodenhof.circleimageview.CircleImageView
                             android:id="@+id/thumb_iv"
                             android:layout_width="80dp"
                             android:layout_height="80dp"
                             android:layout_gravity="center"
-                            android:src="@drawable/ic_launcher" />
-
-
+                            android:src="@drawable/ic_person"
+                            app:border_color="@color/common_white"
+                            app:border_width="2dp" />
 
 
                         <com.wang.avi.AVLoadingIndicatorView
@@ -69,9 +68,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:visibility="gone"
+                            android:visibility="invisible"
                             app:indicator="BallScale"
-                            app:indicator_color="@color/primary_color" />
+                            app:indicator_color="@color/primary_dark_color" />
 
                     </FrameLayout>
 
