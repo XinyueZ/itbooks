@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -18,6 +19,8 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.text.TextUtils;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewConfiguration;
 
 import com.chopping.application.BasicPrefs;
@@ -33,10 +36,13 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.itbooks.R;
 import com.itbooks.app.fragments.AboutDialogFragment;
+import com.itbooks.bus.CellNetworkNoImageWarningEvent;
 import com.itbooks.bus.CloseProgressDialogEvent;
 import com.itbooks.bus.DownloadOpenEvent;
 import com.itbooks.bus.OpenProgressDialogEvent;
 import com.itbooks.utils.Prefs;
+
+import de.greenrobot.event.EventBus;
 
 public abstract class BaseActivity extends com.chopping.activities.BaseActivity implements OnRefreshListener {
 	protected SwipeRefreshLayout mRefreshLayout;
@@ -47,6 +53,25 @@ public abstract class BaseActivity extends com.chopping.activities.BaseActivity 
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
+
+	/**
+	 * Handler for {@link com.itbooks.bus.CellNetworkNoImageWarningEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link com.itbooks.bus.CellNetworkNoImageWarningEvent}.
+	 */
+	public void onEvent(CellNetworkNoImageWarningEvent e) {
+		if (mRefreshLayout != null) {
+			Snackbar.make(mRefreshLayout, R.string.msg_cell_network_no_image, Snackbar.LENGTH_LONG).setAction(
+					R.string.btn_reset, new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							SettingActivity.showInstance(BaseActivity.this);
+						}
+					}).show();
+			EventBus.getDefault().removeAllStickyEvents();
+		}
+	}
 
 	/**
 	 * Handler for {@link com.itbooks.bus.OpenProgressDialogEvent}.
@@ -90,7 +115,8 @@ public abstract class BaseActivity extends com.chopping.activities.BaseActivity 
 				@Override
 				public Dialog onCreateDialog(Bundle savedInstanceState) {
 					// Use the Builder class for convenient dialog construction
-					android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(getActivity());
+					android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(
+							getActivity());
 					builder.setTitle(R.string.application_name).setMessage(R.string.msg_no_reader).setPositiveButton(
 							R.string.btn_ok, new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog, int id) {

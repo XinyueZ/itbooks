@@ -14,6 +14,7 @@
     <string name="btn_agree">I agree.</string>
     <string name="btn_not_agree">I do not agree.</string>
     <string name="btn_turn_on">Turn on</string>
+    <string name="btn_reset">Reset</string>
 
     <string name="suggestion_auth">com.itbooks</string>
 
@@ -100,6 +101,14 @@
     <string name="setting_view_style_list">List</string>
     <string name="setting_view_style_grid">Grid</string>
 
+    <string name="setting_images">Images</string>
+    <string name="setting_no_image">Do not show images anyway except bookmark-list.</string>
+    <string name="setting_no_image_on">Current: No images</string>
+    <string name="setting_no_image_off">Current: Show images</string>
+    <string name="setting_show_image_wifi">Show images except bookmark-list only when WIFI is on.</string>
+    <string name="setting_show_image_on_wifi">Current: Only when WIFI</string>
+    <string name="setting_show_image_off_wifi">Current: WIFI, also including 3g, LTE, any cellular network.</string>
+
     <string name="msg_bookmark_the_book">Added to bookmarks</string>
     <string name="msg_unbookmark_the_book">Removed from bookmarks</string>
     <string name="msg_push_registering">Signing in push…</string>
@@ -120,4 +129,5 @@
     <string name="msg_file_deleted">File has been deleted.</string>
     <string name="msg_file_duplicated">Target file is already existed. Operation stopped.</string>
     <string name="msg_file_can_be_found_to_delete">Target file can not be found to delete.</string>
+    <string name="msg_cell_network_no_image">Turn off all images(ex.Bookmark-List) under non-WIFI.</string>
 </resources>

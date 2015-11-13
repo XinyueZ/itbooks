@@ -164,7 +164,7 @@ public final class BookDetailActivity extends BaseActivity {
 		Intent intent = new Intent(cxt, BookDetailActivity.class);
 		intent.putExtra(EXTRAS_BOOK, book);
 		intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		cxt.startActivity(intent);
+		ActivityCompat.startActivity(cxt, intent, null);
 	}
 
 	/**
@@ -196,12 +196,13 @@ public final class BookDetailActivity extends BaseActivity {
 	 * Show the content of a book.
 	 */
 	private void showBookDetail() {
-		if (!TextUtils.isEmpty(mBook.getCoverUrl())) {
+		boolean showImage = com.itbooks.utils.Utils.showImage(App.Instance);
+		if (showImage && !TextUtils.isEmpty(mBook.getCoverUrl())) {
 			try {
 				Picasso.with(this).load(Utils.uriStr2URI(mBook.getCoverUrl()).toASCIIString()).placeholder(
-						R.drawable.ic_launcher).into(mThumbIv);
+						R.drawable.ic_book).into(mThumbIv);
 			} catch (NullPointerException e) {
-				Picasso.with(this).load(mBook.getCoverUrl()).placeholder(R.drawable.ic_launcher).into(mThumbIv);
+				Picasso.with(this).load(mBook.getCoverUrl()).placeholder(R.drawable.ic_book).into(mThumbIv);
 			}
 		}
 

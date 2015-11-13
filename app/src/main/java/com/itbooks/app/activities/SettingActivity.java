@@ -2,10 +2,7 @@ package com.itbooks.app.activities;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.TypedArray;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
@@ -19,6 +16,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
 
+import com.chopping.utils.Utils;
 import com.itbooks.R;
 import com.itbooks.app.App;
 import com.itbooks.gcm.RegGCMTask;
@@ -35,7 +33,10 @@ public final class SettingActivity extends PreferenceActivity implements Prefere
 	 * The "ActionBar".
 	 */
 	private Toolbar mToolbar;
-
+	/**
+	 * Request-id of this  {@link Activity}.
+	 */
+	public static final int REQ = 0x95;
 
 	/**
 	 * Show an instance of SettingsActivity.
@@ -43,10 +44,10 @@ public final class SettingActivity extends PreferenceActivity implements Prefere
 	 * @param context
 	 * 		A context object.
 	 */
-	public static void showInstance(Context context) {
+	public static void showInstance(Activity context) {
 		Intent intent = new Intent(context, SettingActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		context.startActivity(intent);
+		ActivityCompat.startActivityForResult(context, intent, REQ, null);
 	}
 
 
@@ -68,28 +69,11 @@ public final class SettingActivity extends PreferenceActivity implements Prefere
 
 		CheckBoxPreference push = (CheckBoxPreference) findPreference(Prefs.KEY_PUSH_SETTING);
 		push.setOnPreferenceChangeListener(this);
-		((MarginLayoutParams) findViewById(android.R.id.list).getLayoutParams()).topMargin = getActionBarHeight(this);
+		((MarginLayoutParams) findViewById(android.R.id.list).getLayoutParams()).topMargin = Utils.getActionBarHeight(
+				this);
 	}
 
 
-	/**
-	 * Get height of {@link android.support.v7.app.ActionBar}.
-	 *
-	 * @param activity
-	 * 		{@link android.app.Activity} that hosts an  {@link android.support.v7.app.ActionBar}.
-	 *
-	 * @return Height of bar.
-	 */
-	public static int getActionBarHeight(Activity activity) {
-		int[] abSzAttr;
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			abSzAttr = new int[] { android.R.attr.actionBarSize };
-		} else {
-			abSzAttr = new int[] { R.attr.actionBarSize };
-		}
-		TypedArray a = activity.obtainStyledAttributes(abSzAttr);
-		return a.getDimensionPixelSize(0, -1);
-	}
 
 
 	@Override

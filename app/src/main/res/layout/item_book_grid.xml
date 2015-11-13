@@ -11,11 +11,33 @@
     app:mrl_rippleHover="true"
     app:mrl_rippleOverlay="true">
 
-
-    <ImageView
-        android:id="@+id/book_thumb_iv"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal|top" />
+        android:layout_height="match_parent">
 
+        <ImageView
+            android:id="@+id/book_thumb_iv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal|top" />
+
+        <ImageView
+            android:id="@+id/book_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/common_transparent"
+            android:src="@drawable/ic_book" />
+
+        <TextView
+            android:id="@+id/book_title_tv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="title"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/text_common_black" />
+
+    </FrameLayout>
 </com.itbooks.views.MaterialRippleLayout>

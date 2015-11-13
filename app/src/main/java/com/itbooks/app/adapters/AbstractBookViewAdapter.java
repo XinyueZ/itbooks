@@ -24,4 +24,8 @@ public abstract class AbstractBookViewAdapter<T extends ViewHolder, B extends RS
 	public int getItemCount() {
 		return mBooks == null ? 0 : mBooks.size();
 	}
+
+	public void setShowImage(boolean showImage) {
+
+	}
 }

@@ -12,4 +12,25 @@
             android:layout="@layout/setting_item"
             android:defaultValue="false" />
     </PreferenceCategory>
+
+
+
+    <PreferenceCategory
+        android:layout="@layout/setting_entry"
+        android:title="@string/setting_images">
+        <CheckBoxPreference
+            android:key="key.no.images"
+            android:title="@string/setting_no_image"
+            android:summaryOn="@string/setting_no_image_on"
+            android:summaryOff="@string/setting_no_image_off"
+            android:layout="@layout/setting_item"
+            android:defaultValue="false" />
+        <CheckBoxPreference
+            android:key="key.show.images.wifi"
+            android:title="@string/setting_show_image_wifi"
+            android:summaryOn="@string/setting_show_image_off_wifi"
+            android:summaryOff="@string/setting_show_image_on_wifi"
+            android:layout="@layout/setting_item"
+            android:defaultValue="false" />
+    </PreferenceCategory>
 </PreferenceScreen>

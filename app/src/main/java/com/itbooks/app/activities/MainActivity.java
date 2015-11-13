@@ -3,7 +3,6 @@ package com.itbooks.app.activities;
 import java.io.File;
 
 import android.app.Dialog;
-import android.app.DownloadManager;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.Intent;
@@ -66,7 +65,6 @@ import com.itbooks.bus.DownloadOpenEvent;
 import com.itbooks.bus.EULAConfirmedEvent;
 import com.itbooks.bus.EULARejectEvent;
 import com.itbooks.bus.NewAPIVersionUpdateEvent;
-import com.itbooks.bus.OpenAllDownloadingsEvent;
 import com.itbooks.bus.OpenBookDetailEvent;
 import com.itbooks.bus.OpenBookmarkEvent;
 import com.itbooks.bus.RefreshBookmarksEvent;
@@ -133,7 +131,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	private TextView mLoginNameTv;
 	private ImageView mUserIv;
 	private View mAppListV;
-
+	private volatile boolean mUIVisible;
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -248,21 +246,12 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	 * 		Event {@link com.itbooks.bus.BookmarksLoadedEvent}.
 	 */
 	public void onEvent(BookmarksLoadedEvent e) {
-		getSupportFragmentManager().beginTransaction().replace(R.id.bookmark_list_container_fl,
-				BookmarkListFragment.newInstance(getApplicationContext())).commit();
+		if (mUIVisible) {
+			getSupportFragmentManager().beginTransaction().replace(R.id.bookmark_list_container_fl,
+					BookmarkListFragment.newInstance(getApplicationContext())).commit();
+		}
 	}
 
-	/**
-	 * Handler for {@link com.itbooks.bus.OpenAllDownloadingsEvent}.
-	 *
-	 * @param e
-	 * 		Event {@link com.itbooks.bus.OpenAllDownloadingsEvent}.
-	 */
-	public void onEvent(OpenAllDownloadingsEvent e) {
-		Intent intent = new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS);
-		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		startActivity(intent);
-	}
 
 	//------------------------------------------------
 
@@ -341,14 +330,15 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 			break;
 		case R.id.action_view_style_list:
 			mRv.setLayoutManager(mLayoutManager = new LinearLayoutManager(this));
-			mRv.setAdapter(new BookListAdapter(((AbstractBookViewAdapter) mRv.getAdapter()).getData()));
+			mRv.setAdapter(new BookListAdapter(((AbstractBookViewAdapter) mRv.getAdapter()).getData(),
+					com.itbooks.utils.Utils.showImage(App.Instance)));
 			Prefs.getInstance(getApplicationContext()).setViewStyle(2);
 			supportInvalidateOptionsMenu();
 			break;
 		case R.id.action_view_style_grid:
 			mRv.setLayoutManager(mLayoutManager = new GridLayoutManager(this, GRID_COL_COUNT));
 			mRv.setAdapter(new BookGridAdapter(((AbstractBookViewAdapter) mRv.getAdapter()).getData(), GRID_COL_COUNT,
-					mScreenSize));
+					mScreenSize, com.itbooks.utils.Utils.showImage(App.Instance)));
 			Prefs.getInstance(getApplicationContext()).setViewStyle(1);
 			supportInvalidateOptionsMenu();
 			break;
@@ -404,7 +394,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	 * Load feed of books.
 	 */
 	private void loadBooks() {
-		if (((AbstractBookViewAdapter) mRv.getAdapter()).getItemCount() == 0) {
+		if ((mRv.getAdapter()).getItemCount() == 0) {
 			mRefreshLayout.setRefreshing(true);
 		}
 		if (!TextUtils.isEmpty(mKeyword)) {
@@ -634,21 +624,25 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	 * 		The result of REST call.
 	 */
 	public void showBookList(RSBookList bookList) {
-		if (bookList != null && bookList.getStatus() == 200 && bookList.getBooks() != null &&
-				bookList.getBooks().size() > 0) {
-			((AbstractBookViewAdapter) mRv.getAdapter()).setData(bookList.getBooks());
-			mRv.getAdapter().notifyDataSetChanged();
-			setHasShownDataOnUI(true);
-			showInfoToast(String.format(getString(R.string.msg_items_count), bookList.getBooks().size()));
-		} else {
-			showErrorToast(getString(R.string.msg_refresh_fail), new SuperToast.OnClickListener() {
-				@Override
-				public void onClick(View view, Parcelable parcelable) {
-					loadBooks();
-				}
-			});
+		if (mUIVisible) {
+			if (bookList != null && bookList.getStatus() == 200 && bookList.getBooks() != null &&
+					bookList.getBooks().size() > 0) {
+				AbstractBookViewAdapter adp = (AbstractBookViewAdapter) mRv.getAdapter();
+				adp.setShowImage(com.itbooks.utils.Utils.showImage(App.Instance));
+				adp.setData(bookList.getBooks());
+				mRv.getAdapter().notifyDataSetChanged();
+				setHasShownDataOnUI(true);
+				showInfoToast(String.format(getString(R.string.msg_items_count), bookList.getBooks().size()));
+			} else {
+				showErrorToast(getString(R.string.msg_refresh_fail), new SuperToast.OnClickListener() {
+					@Override
+					public void onClick(View view, Parcelable parcelable) {
+						loadBooks();
+					}
+				});
+			}
+			mRefreshLayout.setRefreshing(false);
 		}
-		mRefreshLayout.setRefreshing(false);
 	}
 
 
@@ -768,6 +762,16 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	}
 
 	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+		case ConnectGoogleActivity.REQ:
+			getBookmarks();
+			break;
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(LAYOUT);
@@ -793,10 +797,11 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		Prefs prefs = Prefs.getInstance(getApplicationContext());
 		if (prefs.getViewStyle() == 2) {
 			mRv.setLayoutManager(mLayoutManager = new LinearLayoutManager(this));
-			mRv.setAdapter(new BookListAdapter(null));
+			mRv.setAdapter(new BookListAdapter(null, com.itbooks.utils.Utils.showImage(App.Instance)));
 		} else {
 			mRv.setLayoutManager(mLayoutManager = new GridLayoutManager(this, GRID_COL_COUNT));
-			mRv.setAdapter(new BookGridAdapter(null, GRID_COL_COUNT, mScreenSize));
+			mRv.setAdapter(new BookGridAdapter(null, GRID_COL_COUNT, mScreenSize, com.itbooks.utils.Utils.showImage(
+					App.Instance)));
 		}
 
 		mRv.addOnScrollListener(new OnScrollListener() {
@@ -845,6 +850,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		});
 
 		getBookmarks();
+		mUIVisible = true;
 	}
 
 	@Override
@@ -880,16 +886,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		mUIVisible = false;
 		TaskHelper.getRequestQueue().cancelAll(GsonRequestTask.TAG);
-	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		switch (requestCode) {
-		case ConnectGoogleActivity.REQ:
-			getBookmarks();
-			break;
-		}
-		super.onActivityResult(requestCode, resultCode, data);
 	}
 }

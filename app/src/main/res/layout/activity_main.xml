@@ -65,19 +65,20 @@
                 </android.support.v4.widget.SwipeRefreshLayout>
 
 
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/to_top_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|bottom"
+                    android:layout_margin="24dp"
+                    android:clickable="true"
+                    android:src="@drawable/ic_to_top"
+                    app:backgroundTint="@color/common_green"
+                    app:rippleColor="@color/common_green" />
             </android.support.design.widget.CoordinatorLayout>
 
 
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/to_top_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end|bottom"
-                android:layout_margin="24dp"
-                android:clickable="true"
-                android:src="@drawable/ic_to_top"
-                app:backgroundTint="@color/common_green"
-                app:rippleColor="@color/common_green" />
+
 
             <LinearLayout
                 android:id="@+id/card_container"

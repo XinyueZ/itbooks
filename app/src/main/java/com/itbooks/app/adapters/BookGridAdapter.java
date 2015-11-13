@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.chopping.utils.DeviceUtils.ScreenSize;
 import com.chopping.utils.Utils;
@@ -30,11 +31,13 @@ public final class BookGridAdapter extends AbstractBookViewAdapter<BookGridAdapt
 	private static final int ITEM_LAYOUT = R.layout.item_book_grid;
 	private ScreenSize mScreenSize;
 	private int mColCount;
+	private boolean mShowImages;
 
-	public BookGridAdapter(List<RSBook> books, int colCount, ScreenSize screenSize) {
+	public BookGridAdapter(List<RSBook> books, int colCount, ScreenSize screenSize, boolean showImages) {
 		mColCount = colCount;
 		mScreenSize = screenSize;
 		setData(books);
+		mShowImages = showImages;
 	}
 
 
@@ -49,41 +52,51 @@ public final class BookGridAdapter extends AbstractBookViewAdapter<BookGridAdapt
 	@Override
 	public void onBindViewHolder(final ViewHolder holder, int position) {
 		final RSBook book = getData().get(position);
-		try {
-			Picasso picasso = Picasso.with(holder.itemView.getContext());
-			picasso.load(Utils.uriStr2URI(book.getCoverUrl()).toASCIIString()).transform(new Transformation() {
+		if(mShowImages) {
+			try {
+				Picasso picasso = Picasso.with(holder.itemView.getContext());
+				picasso.load(Utils.uriStr2URI(book.getCoverUrl()).toASCIIString()).transform(new Transformation() {
 
-				public Bitmap getResizedBitmap(Bitmap bm, float newWidth, float newHeight) {
-					int width = bm.getWidth();
-					int height = bm.getHeight();
-					float scaleWidth = newWidth / width;
-					float scaleHeight = newHeight / height;
-					// CREATE A MATRIX FOR THE MANIPULATION
-					Matrix matrix = new Matrix();
-					// RESIZE THE BIT MAP
-					matrix.postScale(scaleWidth, scaleHeight);
-					// "RECREATE" THE NEW BITMAP
-					return Bitmap.createBitmap(bm, 0, 0, width, height, matrix, false);
-				}
-
-				@Override
-				public Bitmap transform(Bitmap source) {
-					float x = mScreenSize.Width / (mColCount + 0.f);
-					float y = x * (source.getHeight() / (source.getWidth() + 0.f));
-					Bitmap result = getResizedBitmap(source, x, y);
-					if (result != source) {
-						source.recycle();
+					public Bitmap getResizedBitmap(Bitmap bm, float newWidth, float newHeight) {
+						int width = bm.getWidth();
+						int height = bm.getHeight();
+						float scaleWidth = newWidth / width;
+						float scaleHeight = newHeight / height;
+						// CREATE A MATRIX FOR THE MANIPULATION
+						Matrix matrix = new Matrix();
+						// RESIZE THE BIT MAP
+						matrix.postScale(scaleWidth, scaleHeight);
+						// "RECREATE" THE NEW BITMAP
+						return Bitmap.createBitmap(bm, 0, 0, width, height, matrix, false);
 					}
-					return result;
-				}
 
-				@Override
-				public String key() {
-					return book.hashCode() + "";
-				}
-			}).placeholder(R.drawable.ic_launcher).tag(holder.itemView.getContext()).into(holder.mBookThumbIv);
-		} catch (NullPointerException e) {
-			holder.mBookThumbIv.setImageResource(R.drawable.ic_launcher);
+					@Override
+					public Bitmap transform(Bitmap source) {
+						float x = mScreenSize.Width / (mColCount + 0.f);
+						float y = x * (source.getHeight() / (source.getWidth() + 0.f));
+						Bitmap result = getResizedBitmap(source, x, y);
+						if (result != source) {
+							source.recycle();
+						}
+						return result;
+					}
+
+					@Override
+					public String key() {
+						return book.hashCode() + "";
+					}
+				}).placeholder(R.drawable.ic_book).tag(holder.itemView.getContext()).into(holder.mBookThumbIv);
+			} catch (NullPointerException e) {
+				holder.mBookThumbIv.setImageResource(R.drawable.ic_book);
+			}
+			holder.mBookTitleTv.setVisibility(View.GONE);
+			holder.mBookV.setVisibility(View.GONE);
+			holder.mBookThumbIv.setVisibility(View.VISIBLE);
+		} else {
+			holder.mBookTitleTv.setText(book.getName());
+			holder.mBookTitleTv.setVisibility(View.VISIBLE);
+			holder.mBookV.setVisibility(View.VISIBLE);
+			holder.mBookThumbIv.setVisibility(View.GONE);
 		}
 		holder.itemView.setOnClickListener(new OnClickListener() {
 			@Override
@@ -93,9 +106,15 @@ public final class BookGridAdapter extends AbstractBookViewAdapter<BookGridAdapt
 		});
 	}
 
+	@Override
+	public void setShowImage(boolean showImage) {
+		mShowImages = showImage;
+	}
+
 	public static class ViewHolder extends RecyclerView.ViewHolder {
 		private ImageView mBookThumbIv;
-
+		private TextView mBookTitleTv;
+		private View mBookV;
 		/**
 		 * Constructor of {@link BookGridAdapter.ViewHolder}.
 		 *
@@ -105,6 +124,8 @@ public final class BookGridAdapter extends AbstractBookViewAdapter<BookGridAdapt
 		public ViewHolder(View convertView) {
 			super(convertView);
 			mBookThumbIv = (ImageView) convertView.findViewById(R.id.book_thumb_iv);
+			mBookTitleTv = (TextView) convertView.findViewById(R.id.book_title_tv);
+			mBookV =  convertView.findViewById(R.id.book_iv);
 		}
 	}
 }

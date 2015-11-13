@@ -19,6 +19,8 @@ public final class Prefs extends BasicPrefs {
 	public static final String KEY_PUSH_REG_ID = "key.push.regid";
 	private static final String KEY_APP_VERSION_FOR_PUSH ="key.app.version.push";
 	public static final String KEY_PUSH_SETTING = "key.push.setting";
+	public static final String KEY_NO_IMAGES = "key.no.images";
+	public static final String KEY_SHOW_IMAGES_WIFI = "key.show.images.wifi";
 	private static final String KEY_SHOWN_DETAILS_TIMES = "key.details.shown.times";
 	private static final String KEY_VIEW_STYLE = "key.view.style";
 	private static final String KEY_SHOWN_DETAILS_ADS_TIMES = "ads";
@@ -169,6 +171,22 @@ public final class Prefs extends BasicPrefs {
 
 	public void turnOffPush() {
 		setBoolean(KEY_PUSH_SETTING, false);
+	}
+
+	public boolean noImages() {
+		return getBoolean(KEY_NO_IMAGES, false);
+	}
+
+	public void setNoImages(boolean noImages) {
+		setBoolean(KEY_NO_IMAGES, noImages);
+	}
+
+	public boolean showImagesOnlyWifi() {
+		return getBoolean(KEY_SHOW_IMAGES_WIFI, false);
+	}
+
+	public void setshowImagesOnlyWifi(boolean onlyWifi) {
+		setBoolean(KEY_SHOW_IMAGES_WIFI, onlyWifi);
 	}
 
 	public void setShownDetailsTimes(int times) {

@@ -25,10 +25,11 @@ public final class BookListAdapter extends AbstractBookViewAdapter<BookListAdapt
 	 * Main layout for this component.
 	 */
 	private static final int ITEM_LAYOUT = R.layout.item_book_list;
+	private boolean mShowImages;
 
-
-	public BookListAdapter(List<RSBook> books) {
+	public BookListAdapter(List<RSBook> books, boolean showImages) {
 		setData(books);
+		mShowImages = showImages;
 	}
 
 
@@ -43,12 +44,17 @@ public final class BookListAdapter extends AbstractBookViewAdapter<BookListAdapt
 	@Override
 	public void onBindViewHolder(ViewHolder holder, int position) {
 		final RSBook book = getData().get(position);
-		try {
-			Picasso picasso = Picasso.with(holder.itemView.getContext());
-			picasso.load(Utils.uriStr2URI(book.getCoverUrl()).toASCIIString()).placeholder(R.drawable.ic_launcher).tag(
-					holder.itemView.getContext()).into(holder.mBookThumbIv);
-		} catch (NullPointerException e) {
-			holder.mBookThumbIv.setImageResource(R.drawable.ic_launcher);
+		if(mShowImages) {
+			try {
+				Picasso picasso = Picasso.with(holder.itemView.getContext());
+				picasso.load(Utils.uriStr2URI(book.getCoverUrl()).toASCIIString()).placeholder(R.drawable.ic_book)
+						.tag(holder.itemView.getContext()).into(holder.mBookThumbIv);
+			} catch (NullPointerException e) {
+				holder.mBookThumbIv.setImageResource(R.drawable.ic_book);
+			}
+			holder.mBookThumbIv.setVisibility(View.VISIBLE);
+		} else {
+			holder.mBookThumbIv.setVisibility(View.GONE);
 		}
 		holder.mBookTitleTv.setText(book.getName());
 		holder.mBookDescTv.setText(book.getDescription());
@@ -63,6 +69,10 @@ public final class BookListAdapter extends AbstractBookViewAdapter<BookListAdapt
 		});
 	}
 
+	@Override
+	public void setShowImage(boolean showImage) {
+		mShowImages = showImage;
+	}
 
 	public static class ViewHolder extends RecyclerView.ViewHolder {
 		private View mContentV;
