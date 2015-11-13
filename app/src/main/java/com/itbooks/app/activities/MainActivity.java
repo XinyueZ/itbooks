@@ -51,10 +51,10 @@ import com.chopping.utils.DeviceUtils.ScreenSize;
 import com.chopping.utils.Utils;
 import com.github.johnpersano.supertoasts.SuperToast;
 import com.itbooks.R;
+import com.itbooks.app.App;
 import com.itbooks.app.adapters.AbstractBookViewAdapter;
 import com.itbooks.app.adapters.BookGridAdapter;
 import com.itbooks.app.adapters.BookListAdapter;
-import com.itbooks.app.App;
 import com.itbooks.app.fragments.AboutDialogFragment;
 import com.itbooks.app.fragments.AppListImpFragment;
 import com.itbooks.app.fragments.BookmarkListFragment;
@@ -137,9 +137,12 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
+
 	/**
 	 * Handler for {@link com.itbooks.bus.DownloadCompleteEvent}.
-	 * @param e Event {@link com.itbooks.bus.DownloadCompleteEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link com.itbooks.bus.DownloadCompleteEvent}.
 	 */
 	public void onEventMainThread(final DownloadCompleteEvent e) {
 		showWarningToast(getString(R.string.msg_one_book_downloaded), new SuperToast.OnClickListener() {
@@ -305,7 +308,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		android.support.v7.widget.ShareActionProvider provider =
 				(android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(menuShare);
 		//Setting a share intent.
-		if( provider != null ) {
+		if (provider != null) {
 			String subject = getString(R.string.lbl_share_app);
 			String text = getString(R.string.lbl_share_app_content);
 			Intent intent = getDefaultShareIntent(provider, subject, text);
@@ -520,12 +523,13 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	 * Show all external applications links.
 	 */
 	private void showAppList() {
-		String clsName =  AppListImpFragment.class.getSimpleName();
-		if(getSupportFragmentManager().getBackStackEntryCount() <= 0 ) {
+		String clsName = AppListImpFragment.class.getSimpleName();
+		if (getSupportFragmentManager().getBackStackEntryCount() <= 0) {
 			mAppListV.setVisibility(View.VISIBLE);
-			getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.slide_out_from_top_to_down_fast, R.anim.slide_in_from_down_to_top_fast,
-					R.anim.slide_out_from_top_to_down_fast, R.anim.slide_in_from_down_to_top_fast).add(R.id.app_list_fl, AppListImpFragment.newInstance(this),clsName)
-					.addToBackStack(clsName).commit();
+			getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.slide_out_from_top_to_down_fast,
+					R.anim.slide_in_from_down_to_top_fast, R.anim.slide_out_from_top_to_down_fast,
+					R.anim.slide_in_from_down_to_top_fast).add(R.id.app_list_fl, AppListImpFragment.newInstance(this),
+					clsName).addToBackStack(clsName).commit();
 		}
 	}
 
@@ -648,8 +652,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	}
 
 
-
-
 	/**
 	 * Set-up of navi-bar left.
 	 */
@@ -670,7 +672,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 				exitAccount();
 			}
 		});
-		mLoginNameTv  = (TextView) header.findViewById(R.id.login_name_tv);
+		mLoginNameTv = (TextView) header.findViewById(R.id.login_name_tv);
 		navigationView.addHeaderView(header);
 		navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
 			@Override
@@ -700,11 +702,16 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 
 	@Override
 	public void onBackPressed() {
-		if(mDrawerLayout.isDrawerOpen(GravityCompat.START) || mDrawerLayout.isDrawerOpen(GravityCompat.END)) {
+		if (mDrawerLayout.isDrawerOpen(GravityCompat.START) || mDrawerLayout.isDrawerOpen(GravityCompat.END)) {
 			mDrawerLayout.closeDrawers();
 		} else {
-			super.onBackPressed();
+			if (mBookmarkSpl.isOpen()) {
+				mBookmarkSpl.closePane();
+			} else {
+				super.onBackPressed();
+			}
 		}
+
 	}
 
 	private AnimatorListenerAdapter aniAdp = new AnimatorListenerAdapter() {
@@ -718,7 +725,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	};
 
 	private void showUserInfo(Prefs prefs) {
-		if(!TextUtils.isEmpty(prefs.getGoogleId())) {
+		if (!TextUtils.isEmpty(prefs.getGoogleId())) {
 			ViewPropertyAnimator.animate(mLoginBtn).alpha(0).setDuration(800).setListener(aniAdp).start();
 			mLoginBtn.setEnabled(false);
 			ViewPropertyAnimator.animate(mLogoutBtn).alpha(1).setDuration(800).start();
@@ -731,7 +738,8 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		}
 		if (!TextUtils.isEmpty(prefs.getGoogleDisplyName())) {
 			mLoginNameTv.setText(prefs.getGoogleDisplyName());
-			ViewPropertyAnimator.animate(mLoginNameTv).translationY(Utils.convertPixelsToDp(App.Instance, 55)).setDuration(800).start();
+			ViewPropertyAnimator.animate(mLoginNameTv).translationY(Utils.convertPixelsToDp(App.Instance, 55))
+					.setDuration(800).start();
 		}
 		Picasso picasso = Picasso.with(App.Instance);
 		if (!TextUtils.isEmpty(prefs.getGoogleThumbUrl())) {
@@ -748,7 +756,8 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		prefs.setGoogleThumbUrl(null);
 		prefs.setGoogleDisplyName(null);
 		mLoginNameTv.setText("");
-		ViewPropertyAnimator.animate(mLoginNameTv).translationY(Utils.convertPixelsToDp(App.Instance, -55)).setDuration(800).start();
+		ViewPropertyAnimator.animate(mLoginNameTv).translationY(Utils.convertPixelsToDp(App.Instance, -55)).setDuration(
+				800).start();
 		ViewPropertyAnimator.animate(mLoginBtn).alpha(1).setDuration(800).start();
 		mLoginBtn.setEnabled(true);
 		ViewPropertyAnimator.animate(mLogoutBtn).alpha(0).setDuration(800).start();
@@ -841,8 +850,8 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	@Override
 	public void onResume() {
 		Prefs prefs = Prefs.getInstance(getApplicationContext());
-		if(prefs.isNewApiUpdated()) {
-			if(prefs.isPushTurnedOn()) {
+		if (prefs.isNewApiUpdated()) {
+			if (prefs.isPushTurnedOn()) {
 				prefs.turnOffPush();
 				prefs.setPushRegId(null);
 				AsyncTaskCompat.executeParallel(new RegGCMTask(getApplicationContext()));
