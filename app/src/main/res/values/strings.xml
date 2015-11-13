@@ -15,6 +15,7 @@
     <string name="btn_not_agree">I do not agree.</string>
     <string name="btn_turn_on">Turn on</string>
     <string name="btn_reset">Reset</string>
+    <string name="btn_login">Login</string>
 
     <string name="suggestion_auth">com.itbooks</string>
 
@@ -70,6 +71,7 @@
     <string name="menu_book_delete">Delete</string>
     <string name="menu_book_copy">Copy</string>
     <string name="menu_book_move">Move</string>
+    <string name="menu_sync">Sync</string>
 
     <!--debug:-->
     <!--<string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>-->
@@ -130,4 +132,6 @@
     <string name="msg_file_duplicated">Target file is already existed. Operation stopped.</string>
     <string name="msg_file_can_be_found_to_delete">Target file can not be found to delete.</string>
     <string name="msg_cell_network_no_image">Turn off all images(ex.Bookmark-List) under non-WIFI.</string>
+    <string name="msg_access_driver_failed">Can not access Google Driver.</string>
+    <string name="msg_sync_req_for_driver">You need login to access Google Driver for sync.</string>
 </resources>

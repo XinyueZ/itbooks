@@ -13,6 +13,7 @@
     <string name="btn_agree">Stimme zu.</string>
     <string name="btn_not_agree">Stimme nicht zu.</string>
     <string name="btn_reset">Änderen</string>
+    <string name="btn_login">Anmelden</string>
 
     <string name="lbl_about">About</string>
     <string name="lbl_share_app">Teilen</string>
@@ -108,4 +109,6 @@
     <string name="msg_file_duplicated">Die Operation is anzuhalten, weil die Zieldatei schon vorhanden ist.</string>
     <string name="msg_file_can_be_found_to_delete">Die Zieldatei wird nicht gelöscht, weil die Datei nicht gefunden werden kann.</string>
     <string name="msg_cell_network_no_image">Alle Bilder(außerhalb Merkliste) werden ausgeblendet, wenn Du nicht mit W-LAN unterwegs bist.</string>
+    <string name="msg_access_driver_failed">Google Driver ist nicht erreichbar.</string>
+    <string name="msg_sync_req_for_driver">Damit Google Driver für Sync verwendet werden kann, musst Du einloggen.</string>
 </resources>

@@ -6,15 +6,26 @@
     android:orientation="vertical"
     tools:context="com.itbooks.app.fragments.HistoryFragment">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/history_rv"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:background="@color/common_transparent"
-        android:scrollbars="none" />
+        android:orientation="vertical">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            style="@style/ActionBar_ToolBar" android:visibility="invisible"
+            background="@color/grey_500" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/history_rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:background="@color/common_transparent"
+            android:scrollbars="none" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/empty_ll"

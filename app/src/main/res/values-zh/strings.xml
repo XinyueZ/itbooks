@@ -12,6 +12,7 @@
     <string name="btn_agree">同意</string>
     <string name="btn_not_agree">拒绝</string>
     <string name="btn_reset">重置</string>
+    <string name="btn_login">登录</string>
 
     <string name="lbl_about">关于</string>
     <string name="lbl_share_app">分享</string>
@@ -61,6 +62,8 @@
     <string name="menu_book_delete">删除</string>
     <string name="menu_book_copy">拷贝</string>
     <string name="menu_book_move">转移</string>
+    <string name="menu_setting">设置</string>
+    <string name="menu_sync">同步</string>
 
     <!-- Shown in the 'About' window of the app. -->
     <string name="about_body">&lt;b&gt;IT Books &lt;/b&gt;&lt;br&gt;版本%s &lt;br&gt;</string>
@@ -89,7 +92,7 @@
 
 
 
-    <string name="menu_setting">设置</string>
+
     <string name="btn_turn_on">启动</string>
 
     <string name="msg_bookmark_the_book">收藏</string>
@@ -112,4 +115,7 @@
     <string name="msg_file_deleted">删除了文件</string>
     <string name="msg_file_duplicated">目标文件已经存在，终止操作</string>
     <string name="msg_file_can_be_found_to_delete">无法找到要删除的目标文件</string>
+    <string name="msg_access_driver_failed">无法接触谷歌网盘。</string>
+    <string name="msg_sync_req_for_driver">你必须登录后才能用谷歌网盘来同步。</string>
+
 </resources>

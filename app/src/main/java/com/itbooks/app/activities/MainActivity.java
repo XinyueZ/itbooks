@@ -6,12 +6,14 @@ import android.app.Dialog;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.Intent;
+import android.content.IntentSender.SendIntentException;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.SearchRecentSuggestions;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.support.v4.os.AsyncTaskCompat;
@@ -49,6 +51,11 @@ import com.chopping.utils.DeviceUtils;
 import com.chopping.utils.DeviceUtils.ScreenSize;
 import com.chopping.utils.Utils;
 import com.github.johnpersano.supertoasts.SuperToast;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.drive.Drive;
 import com.itbooks.R;
 import com.itbooks.app.App;
 import com.itbooks.app.adapters.AbstractBookViewAdapter;
@@ -64,10 +71,12 @@ import com.itbooks.bus.DownloadCompleteEvent;
 import com.itbooks.bus.DownloadOpenEvent;
 import com.itbooks.bus.EULAConfirmedEvent;
 import com.itbooks.bus.EULARejectEvent;
+import com.itbooks.bus.LoginRequestEvent;
 import com.itbooks.bus.NewAPIVersionUpdateEvent;
 import com.itbooks.bus.OpenBookDetailEvent;
 import com.itbooks.bus.OpenBookmarkEvent;
 import com.itbooks.bus.RefreshBookmarksEvent;
+import com.itbooks.bus.SyncEvent;
 import com.itbooks.data.rest.RSBook;
 import com.itbooks.data.rest.RSBookList;
 import com.itbooks.data.rest.RSBookQuery;
@@ -132,9 +141,46 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	private ImageView mUserIv;
 	private View mAppListV;
 	private volatile boolean mUIVisible;
+	/**
+	 * Google Driver access client.
+	 */
+	private GoogleApiClient mGoogleApiClient;
+
+	private static final int DRIVER_REQ = 0x99;
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
+
+	/**
+	 * Handler for {@link com.itbooks.bus.LoginRequestEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link com.itbooks.bus.LoginRequestEvent}.
+	 */
+	public void onEvent(LoginRequestEvent e) {
+		if ( mRefreshLayout != null) {
+			Snackbar.make(mRefreshLayout, R.string.msg_sync_req_for_driver, Snackbar.LENGTH_LONG).setAction(
+					R.string.btn_login, new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							ConnectGoogleActivity.showInstance(MainActivity.this);
+						}
+					}).show();
+			mDrawerLayout.closeDrawers();
+		}
+	}
+
+	/**
+	 * Handler for {@link com.itbooks.bus.SyncEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link com.itbooks.bus.SyncEvent}.
+	 */
+	public void onEvent(SyncEvent e) {
+		if (!TextUtils.isEmpty(Prefs.getInstance(App.Instance).getGoogleId()) && mGoogleApiClient != null) {
+			Drive.DriveApi.newDriveContents(mGoogleApiClient);
+		}
+	}
 
 	/**
 	 * Handler for {@link com.itbooks.bus.DownloadCompleteEvent}.
@@ -745,6 +791,8 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	 * Exit current account, here unregister all push-elements etc.
 	 */
 	public void exitAccount() {
+		disestablishGoogleDriver();
+
 		Prefs prefs = Prefs.getInstance(App.Instance);
 		prefs.setGoogleId(null);
 		prefs.setGoogleThumbUrl(null);
@@ -761,6 +809,45 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		getBookmarks();
 	}
 
+	/**
+	 * When user logined, user can access Google Driver and save downloaded files. Here to establish connection.
+	 */
+	private void establishGoogleDriver() {
+		if (!TextUtils.isEmpty(Prefs.getInstance(App.Instance).getGoogleId()) && mGoogleApiClient == null) {
+			mGoogleApiClient = new GoogleApiClient.Builder(this).addApi(Drive.API).addScope(Drive.SCOPE_FILE)
+					.addOnConnectionFailedListener(new OnConnectionFailedListener() {
+						@Override
+						public void onConnectionFailed(ConnectionResult connectionResult) {
+							if (!connectionResult.hasResolution()) {
+								GoogleApiAvailability.getInstance().getErrorDialog(MainActivity.this,
+										connectionResult.getErrorCode(), 0).show();
+								return;
+							}
+							try {
+								connectionResult.startResolutionForResult(MainActivity.this, DRIVER_REQ);
+							} catch (SendIntentException e) {
+								Utils.showLongToast(App.Instance, R.string.msg_access_driver_failed);
+							}
+						}
+					}).build();
+		}
+		// Connect the client. Once connected, the camera is launched.
+		if (!TextUtils.isEmpty(Prefs.getInstance(App.Instance).getGoogleId())) {
+			mGoogleApiClient.connect();
+		}
+	}
+
+	/**
+	 * When user logined, user can access Google Driver and save downloaded files. Here to release connection.
+	 */
+	private void disestablishGoogleDriver() {
+		if (!TextUtils.isEmpty(Prefs.getInstance(App.Instance).getGoogleId()) &&
+				mGoogleApiClient != null &&
+				mGoogleApiClient.isConnected()) {
+			mGoogleApiClient.disconnect();
+		}
+	}
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
@@ -770,6 +857,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -875,10 +963,13 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		}
 		showPushInfo();
 		showUserInfo(prefs);
+
+		establishGoogleDriver();
 	}
 
 	@Override
 	protected void onPause() {
+		disestablishGoogleDriver();
 		super.onPause();
 		Prefs.getInstance(getApplication()).setLastSearched(mKeyword);
 	}

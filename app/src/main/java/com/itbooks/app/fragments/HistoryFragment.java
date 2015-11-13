@@ -14,7 +14,12 @@ import android.support.v4.content.Loader;
 import android.support.v4.os.AsyncTaskCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -29,6 +34,8 @@ import com.itbooks.bus.DownloadCopyEvent;
 import com.itbooks.bus.DownloadDeleteEvent;
 import com.itbooks.bus.DownloadMoveEvent;
 import com.itbooks.bus.DownloadMovedEvent;
+import com.itbooks.bus.LoginRequestEvent;
+import com.itbooks.bus.SyncEvent;
 import com.itbooks.db.DB;
 import com.itbooks.net.download.Download;
 import com.itbooks.utils.Prefs;
@@ -51,7 +58,7 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 	private RecyclerView mHistoryRv;
 	private HistoryAdapter mHistoryAdapter;
 	private View mEmptyV;
-
+	private Toolbar mToolbar;
 
 	//------------------------------------------------
 	//Subscribes, event-handlers
@@ -180,9 +187,11 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 			mHistoryAdapter.setData(data);
 			mHistoryAdapter.notifyDataSetChanged();
 			mHistoryRv.setVisibility(View.VISIBLE);
-			mEmptyV.setVisibility(View.GONE);
+			mToolbar.setVisibility(View.VISIBLE);
+			mEmptyV.setVisibility(View.INVISIBLE);
 		} else {
-			mHistoryRv.setVisibility(View.GONE);
+			mHistoryRv.setVisibility(View.INVISIBLE);
+			mToolbar.setVisibility(View.INVISIBLE);
 			mEmptyV.setVisibility(View.VISIBLE);
 		}
 	}
@@ -211,8 +220,20 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 		mHistoryRv.setLayoutManager(new LinearLayoutManager(getActivity()));
 		mHistoryRv.setAdapter(mHistoryAdapter = new HistoryAdapter(null));
 		mEmptyV = view.findViewById(R.id.empty_ll);
+		mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
+		mToolbar.inflateMenu(R.menu.history_list_menu);
+		Menu menu = mToolbar.getMenu();
+		menu.findItem(R.id.action_sync)
+				.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+				   @Override
+				   public boolean onMenuItemClick(MenuItem item) {
+					   EventBus.getDefault().post(!TextUtils.isEmpty(Prefs.getInstance(App.Instance).getGoogleId()) ?
+							   new SyncEvent() : new LoginRequestEvent());
+					   return true;
+				   }
+			   }
 
-
+		);
 	}
 
 	@Override
