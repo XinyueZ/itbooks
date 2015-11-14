@@ -5,7 +5,11 @@ import java.io.File;
 import android.app.Dialog;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.IntentSender.SendIntentException;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
@@ -15,6 +19,7 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.os.AsyncTaskCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -34,6 +39,7 @@ import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -50,6 +56,8 @@ import com.chopping.utils.DeviceUtils;
 import com.chopping.utils.DeviceUtils.ScreenSize;
 import com.chopping.utils.Utils;
 import com.github.johnpersano.supertoasts.SuperToast;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.itbooks.R;
 import com.itbooks.app.App;
 import com.itbooks.app.adapters.AbstractBookViewAdapter;
@@ -137,6 +145,37 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	private View mAppListV;
 	private volatile boolean mUIVisible;
 
+
+	/**
+	 * Request code for auto Google Play Services error resolution for Google Driver.
+	 */
+	private static final int REQUEST_CODE_RESOLUTION = 0x88;
+	/**
+	 * Handler filter for error of Google Client when connects Google Driver.
+	 */
+	private IntentFilter mConnectErrorHandlerFilter = new IntentFilter(SyncService.ACTION_CONNECT_ERROR);
+	/**
+	 * Handler for error of Google Client when connects Google Driver.
+	 */
+	private BroadcastReceiver mConnectErrorHandler = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			ConnectionResult connectionResult = intent.getParcelableExtra(SyncService.EXTRAS_ERROR_RESULT);
+			if (!connectionResult.hasResolution()) {
+				// show the localized error dialog.
+				GoogleApiAvailability.getInstance().getErrorDialog(MainActivity.this, connectionResult.getErrorCode(),
+						0).show();
+				return;
+			}
+			try {
+				connectionResult.startResolutionForResult(MainActivity.this, REQUEST_CODE_RESOLUTION);
+			} catch (SendIntentException e) {
+				Log.e(MainActivity.class.getSimpleName(),
+						"Exception while starting resolution activity for Google Driver connect.", e);
+			}
+		}
+	};
+
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -169,7 +208,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	public void onEvent(SyncEvent e) {
 		startService(new Intent(App.Instance, SyncService.class));
 	}
-
 
 
 	/**
@@ -298,7 +336,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	private void getBookmarks() {
 		BookmarkManger.getInstance().loadAllBookmarks();
 	}
-
 
 
 	/**
@@ -716,7 +753,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	}
 
 
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(MAIN_MENU, menu);
@@ -800,12 +836,16 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	}
 
 
-
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
 		case ConnectGoogleActivity.REQ:
 			getBookmarks();
+			break;
+		case REQUEST_CODE_RESOLUTION:
+			if (resultCode == RESULT_OK) {
+				startService(new Intent(App.Instance, SyncService.class));
+			}
 			break;
 		}
 		super.onActivityResult(requestCode, resultCode, data);
@@ -816,6 +856,9 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(LAYOUT);
+		LocalBroadcastManager.getInstance(App.Instance).registerReceiver(mConnectErrorHandler,
+				mConnectErrorHandlerFilter);
+
 		mAppListV = findViewById(R.id.app_list_sv);
 		setupDrawerContent((NavigationView) findViewById(R.id.nav_view));
 
@@ -926,6 +969,8 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 
 	@Override
 	protected void onDestroy() {
+		LocalBroadcastManager.getInstance(App.Instance).unregisterReceiver(mConnectErrorHandler);
+
 		super.onDestroy();
 		mUIVisible = false;
 		TaskHelper.getRequestQueue().cancelAll(GsonRequestTask.TAG);
