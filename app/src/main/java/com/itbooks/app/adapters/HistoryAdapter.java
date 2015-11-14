@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.itbooks.R;
+import com.itbooks.app.App;
 import com.itbooks.bus.DownloadCopyEvent;
 import com.itbooks.bus.DownloadDeleteEvent;
 import com.itbooks.bus.DownloadMoveEvent;
@@ -106,7 +107,7 @@ public final class HistoryAdapter extends AbstractBookViewAdapter<HistoryAdapter
 			viewHolder.mContentV.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					File to = new File(viewHolder.itemView.getContext().getExternalFilesDir(
+					File to = new File(App.Instance.getExternalFilesDir(
 							Environment.DIRECTORY_DOWNLOADS), download.getTargetName());
 					if (to.exists()) {
 						EventBus.getDefault().post(new DownloadOpenEvent(to));

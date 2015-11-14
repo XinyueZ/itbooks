@@ -6,7 +6,6 @@ import android.app.Dialog;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.Intent;
-import android.content.IntentSender.SendIntentException;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
@@ -51,11 +50,6 @@ import com.chopping.utils.DeviceUtils;
 import com.chopping.utils.DeviceUtils.ScreenSize;
 import com.chopping.utils.Utils;
 import com.github.johnpersano.supertoasts.SuperToast;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-import com.google.android.gms.drive.Drive;
 import com.itbooks.R;
 import com.itbooks.app.App;
 import com.itbooks.app.adapters.AbstractBookViewAdapter;
@@ -81,6 +75,7 @@ import com.itbooks.data.rest.RSBook;
 import com.itbooks.data.rest.RSBookList;
 import com.itbooks.data.rest.RSBookQuery;
 import com.itbooks.gcm.RegGCMTask;
+import com.itbooks.net.SyncService;
 import com.itbooks.net.api.Api;
 import com.itbooks.net.api.ApiNotInitializedException;
 import com.itbooks.net.bookmark.BookmarkManger;
@@ -141,12 +136,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	private ImageView mUserIv;
 	private View mAppListV;
 	private volatile boolean mUIVisible;
-	/**
-	 * Google Driver access client.
-	 */
-	private GoogleApiClient mGoogleApiClient;
 
-	private static final int DRIVER_REQ = 0x99;
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -158,7 +148,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	 * 		Event {@link com.itbooks.bus.LoginRequestEvent}.
 	 */
 	public void onEvent(LoginRequestEvent e) {
-		if ( mRefreshLayout != null) {
+		if (mRefreshLayout != null) {
 			Snackbar.make(mRefreshLayout, R.string.msg_sync_req_for_driver, Snackbar.LENGTH_LONG).setAction(
 					R.string.btn_login, new OnClickListener() {
 						@Override
@@ -177,10 +167,10 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	 * 		Event {@link com.itbooks.bus.SyncEvent}.
 	 */
 	public void onEvent(SyncEvent e) {
-		if (!TextUtils.isEmpty(Prefs.getInstance(App.Instance).getGoogleId()) && mGoogleApiClient != null) {
-			Drive.DriveApi.newDriveContents(mGoogleApiClient);
-		}
+		startService(new Intent(App.Instance, SyncService.class));
 	}
+
+
 
 	/**
 	 * Handler for {@link com.itbooks.bus.DownloadCompleteEvent}.
@@ -309,88 +299,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		BookmarkManger.getInstance().loadAllBookmarks();
 	}
 
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(MAIN_MENU, menu);
-		final MenuItem searchMenu = menu.findItem(R.id.action_search);
-		mSearchView = (SearchView) MenuItemCompat.getActionView(searchMenu);
-		if (!TextUtils.isEmpty(mKeyword)) {
-			mSearchView.setQuery(mKeyword, false);
-		}
-		mSearchView.setQueryHint(Html.fromHtml("<font color = #ffffff>" + mKeyword + "</font>"));
-		mSearchView.setOnQueryTextListener(this);
-		SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
-		if (searchManager != null) {
-			SearchableInfo info = searchManager.getSearchableInfo(getComponentName());
-			mSearchView.setSearchableInfo(info);
-		}
-
-		if (Prefs.getInstance(getApplicationContext()).getViewStyle() == 2) {
-			menu.findItem(R.id.action_view_style_list).setVisible(false);
-			menu.findItem(R.id.action_view_style_grid).setVisible(true);
-		} else {
-			menu.findItem(R.id.action_view_style_list).setVisible(true);
-			menu.findItem(R.id.action_view_style_grid).setVisible(false);
-		}
-		return true;
-	}
-
-	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		MenuItem menuShare = menu.findItem(R.id.action_share_app);
-		//Getting the actionprovider associated with the menu item whose id is share.
-		android.support.v7.widget.ShareActionProvider provider =
-				(android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(menuShare);
-		//Setting a share intent.
-		if (provider != null) {
-			String subject = getString(R.string.lbl_share_app);
-			String text = getString(R.string.lbl_share_app_content);
-			Intent intent = getDefaultShareIntent(provider, subject, text);
-			if (intent != null) {
-				provider.setShareIntent(intent);
-			}
-		}
-		return super.onPrepareOptionsMenu(menu);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(final MenuItem item) {
-		if (item.getItemId() == android.R.id.home && mBookmarkSpl.isOpen()) {
-			mBookmarkSpl.closePane();
-			return true;
-		}
-
-		if (mDrawerToggle != null && mDrawerToggle.onOptionsItemSelected(item)) {
-			return true;
-		}
-
-		switch (item.getItemId()) {
-		case R.id.action_about:
-			showDialogFragment(AboutDialogFragment.newInstance(this), null);
-			break;
-		case R.id.action_clear_bookmarks:
-			BookmarkManger.getInstance().removeAllRemoteBookmarks();
-			openBookmarkList();
-			EventBus.getDefault().post(new CleanBookmarkEvent());
-			break;
-		case R.id.action_view_style_list:
-			mRv.setLayoutManager(mLayoutManager = new LinearLayoutManager(this));
-			mRv.setAdapter(new BookListAdapter(((AbstractBookViewAdapter) mRv.getAdapter()).getData(),
-					com.itbooks.utils.Utils.showImage(App.Instance)));
-			Prefs.getInstance(getApplicationContext()).setViewStyle(2);
-			supportInvalidateOptionsMenu();
-			break;
-		case R.id.action_view_style_grid:
-			mRv.setLayoutManager(mLayoutManager = new GridLayoutManager(this, GRID_COL_COUNT));
-			mRv.setAdapter(new BookGridAdapter(((AbstractBookViewAdapter) mRv.getAdapter()).getData(), GRID_COL_COUNT,
-					mScreenSize, com.itbooks.utils.Utils.showImage(App.Instance)));
-			Prefs.getInstance(getApplicationContext()).setViewStyle(1);
-			supportInvalidateOptionsMenu();
-			break;
-		}
-		return super.onOptionsItemSelected(item);
-	}
 
 
 	/**
@@ -791,8 +699,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	 * Exit current account, here unregister all push-elements etc.
 	 */
 	public void exitAccount() {
-		disestablishGoogleDriver();
-
 		Prefs prefs = Prefs.getInstance(App.Instance);
 		prefs.setGoogleId(null);
 		prefs.setGoogleThumbUrl(null);
@@ -809,44 +715,91 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		getBookmarks();
 	}
 
-	/**
-	 * When user logined, user can access Google Driver and save downloaded files. Here to establish connection.
-	 */
-	private void establishGoogleDriver() {
-		if (!TextUtils.isEmpty(Prefs.getInstance(App.Instance).getGoogleId()) && mGoogleApiClient == null) {
-			mGoogleApiClient = new GoogleApiClient.Builder(this).addApi(Drive.API).addScope(Drive.SCOPE_FILE)
-					.addOnConnectionFailedListener(new OnConnectionFailedListener() {
-						@Override
-						public void onConnectionFailed(ConnectionResult connectionResult) {
-							if (!connectionResult.hasResolution()) {
-								GoogleApiAvailability.getInstance().getErrorDialog(MainActivity.this,
-										connectionResult.getErrorCode(), 0).show();
-								return;
-							}
-							try {
-								connectionResult.startResolutionForResult(MainActivity.this, DRIVER_REQ);
-							} catch (SendIntentException e) {
-								Utils.showLongToast(App.Instance, R.string.msg_access_driver_failed);
-							}
-						}
-					}).build();
+
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(MAIN_MENU, menu);
+		final MenuItem searchMenu = menu.findItem(R.id.action_search);
+		mSearchView = (SearchView) MenuItemCompat.getActionView(searchMenu);
+		if (!TextUtils.isEmpty(mKeyword)) {
+			mSearchView.setQuery(mKeyword, false);
 		}
-		// Connect the client. Once connected, the camera is launched.
-		if (!TextUtils.isEmpty(Prefs.getInstance(App.Instance).getGoogleId())) {
-			mGoogleApiClient.connect();
+		mSearchView.setQueryHint(Html.fromHtml("<font color = #ffffff>" + mKeyword + "</font>"));
+		mSearchView.setOnQueryTextListener(this);
+		SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
+		if (searchManager != null) {
+			SearchableInfo info = searchManager.getSearchableInfo(getComponentName());
+			mSearchView.setSearchableInfo(info);
 		}
+
+		if (Prefs.getInstance(getApplicationContext()).getViewStyle() == 2) {
+			menu.findItem(R.id.action_view_style_list).setVisible(false);
+			menu.findItem(R.id.action_view_style_grid).setVisible(true);
+		} else {
+			menu.findItem(R.id.action_view_style_list).setVisible(true);
+			menu.findItem(R.id.action_view_style_grid).setVisible(false);
+		}
+		return true;
 	}
 
-	/**
-	 * When user logined, user can access Google Driver and save downloaded files. Here to release connection.
-	 */
-	private void disestablishGoogleDriver() {
-		if (!TextUtils.isEmpty(Prefs.getInstance(App.Instance).getGoogleId()) &&
-				mGoogleApiClient != null &&
-				mGoogleApiClient.isConnected()) {
-			mGoogleApiClient.disconnect();
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		MenuItem menuShare = menu.findItem(R.id.action_share_app);
+		//Getting the actionprovider associated with the menu item whose id is share.
+		android.support.v7.widget.ShareActionProvider provider =
+				(android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(menuShare);
+		//Setting a share intent.
+		if (provider != null) {
+			String subject = getString(R.string.lbl_share_app);
+			String text = getString(R.string.lbl_share_app_content);
+			Intent intent = getDefaultShareIntent(provider, subject, text);
+			if (intent != null) {
+				provider.setShareIntent(intent);
+			}
 		}
+		return super.onPrepareOptionsMenu(menu);
 	}
+
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		if (item.getItemId() == android.R.id.home && mBookmarkSpl.isOpen()) {
+			mBookmarkSpl.closePane();
+			return true;
+		}
+
+		if (mDrawerToggle != null && mDrawerToggle.onOptionsItemSelected(item)) {
+			return true;
+		}
+
+		switch (item.getItemId()) {
+		case R.id.action_about:
+			showDialogFragment(AboutDialogFragment.newInstance(this), null);
+			break;
+		case R.id.action_clear_bookmarks:
+			BookmarkManger.getInstance().removeAllRemoteBookmarks();
+			openBookmarkList();
+			EventBus.getDefault().post(new CleanBookmarkEvent());
+			break;
+		case R.id.action_view_style_list:
+			mRv.setLayoutManager(mLayoutManager = new LinearLayoutManager(this));
+			mRv.setAdapter(new BookListAdapter(((AbstractBookViewAdapter) mRv.getAdapter()).getData(),
+					com.itbooks.utils.Utils.showImage(App.Instance)));
+			Prefs.getInstance(getApplicationContext()).setViewStyle(2);
+			supportInvalidateOptionsMenu();
+			break;
+		case R.id.action_view_style_grid:
+			mRv.setLayoutManager(mLayoutManager = new GridLayoutManager(this, GRID_COL_COUNT));
+			mRv.setAdapter(new BookGridAdapter(((AbstractBookViewAdapter) mRv.getAdapter()).getData(), GRID_COL_COUNT,
+					mScreenSize, com.itbooks.utils.Utils.showImage(App.Instance)));
+			Prefs.getInstance(getApplicationContext()).setViewStyle(1);
+			supportInvalidateOptionsMenu();
+			break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -963,13 +916,10 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		}
 		showPushInfo();
 		showUserInfo(prefs);
-
-		establishGoogleDriver();
 	}
 
 	@Override
 	protected void onPause() {
-		disestablishGoogleDriver();
 		super.onPause();
 		Prefs.getInstance(getApplication()).setLastSearched(mKeyword);
 	}
