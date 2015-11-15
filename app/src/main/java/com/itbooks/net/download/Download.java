@@ -218,4 +218,65 @@ public final class Download extends RSBook {
 	public void setTimeStamp(long timeStamp) {
 		mTimeStamp = timeStamp;
 	}
+
+
+	@Override
+	public String getName() {
+		return mBook.getName();
+	}
+
+	@Override
+	public String getAuthor() {
+		return mBook.getAuthor();
+	}
+
+	@Override
+	public String getSize() {
+		return mBook.getSize();
+	}
+
+	@Override
+	public String getPages() {
+		return mBook.getPages();
+	}
+
+	@Override
+	public String getLink() {
+		return mBook.getLink();
+	}
+
+	@Override
+	public String getISBN() {
+		return mBook.getISBN();
+	}
+
+	@Override
+	public String getYear() {
+		return mBook.getYear();
+	}
+
+	@Override
+	public String getPublisher() {
+		return mBook.getPublisher();
+	}
+
+	@Override
+	public String getDescription() {
+		return mBook.getDescription();
+	}
+
+	@Override
+	public String getCoverUrl() {
+		return mBook.getCoverUrl();
+	}
+
+	@Override
+	public String[] toArray() {
+		return mBook.toArray();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		return mBook.equals(o);
+	}
 }

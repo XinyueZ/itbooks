@@ -32,6 +32,7 @@ import com.google.android.gms.drive.DriveResource.MetadataResult;
 import com.google.android.gms.drive.Metadata;
 import com.google.android.gms.drive.MetadataBuffer;
 import com.google.android.gms.drive.MetadataChangeSet;
+import com.google.android.gms.drive.metadata.CustomPropertyKey;
 import com.google.android.gms.drive.query.Filters;
 import com.google.android.gms.drive.query.Query;
 import com.google.android.gms.drive.query.SearchableField;
@@ -155,8 +156,32 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 								OutputStream driverStream = contents.getOutputStream();//Write data on stream is fine.
 								driverStream.write(IOUtils.toByteArray(FileUtils.openInputStream(new File(downloadsDir,
 										download.getTargetName()))));
-								MetadataChangeSet createdFileMeta = new MetadataChangeSet.Builder().setMimeType(
-										mimeType).setTitle(download.getTargetName()).build();
+
+
+								CustomPropertyKey bookName = new CustomPropertyKey("book_name", CustomPropertyKey.PUBLIC);
+								CustomPropertyKey bookAuthor = new CustomPropertyKey("book_author", CustomPropertyKey.PUBLIC);
+								CustomPropertyKey bookSize = new CustomPropertyKey("book_size", CustomPropertyKey.PUBLIC);
+								CustomPropertyKey bookPages = new CustomPropertyKey("book_pages", CustomPropertyKey.PUBLIC);
+								CustomPropertyKey bookLink = new CustomPropertyKey("book_link", CustomPropertyKey.PUBLIC);
+								CustomPropertyKey bookISBN = new CustomPropertyKey("book_isbn", CustomPropertyKey.PUBLIC);
+								CustomPropertyKey bookYear = new CustomPropertyKey("book_year", CustomPropertyKey.PUBLIC);
+								CustomPropertyKey bookPublisher = new CustomPropertyKey("book_publisher", CustomPropertyKey.PUBLIC);
+								CustomPropertyKey bookDescription = new CustomPropertyKey("book_description", CustomPropertyKey.PUBLIC);
+								CustomPropertyKey bookCover = new CustomPropertyKey("book_cover", CustomPropertyKey.PUBLIC);
+								MetadataChangeSet createdFileMeta = new MetadataChangeSet.Builder()
+										.setMimeType(mimeType)
+										.setTitle(download.getTargetName())
+										.setCustomProperty(bookName, download.getName())
+										.setCustomProperty(bookAuthor, download.getAuthor())
+										.setCustomProperty(bookSize, download.getSize())
+										.setCustomProperty(bookPages, download.getPages())
+										.setCustomProperty(bookLink, download.getLink())
+										.setCustomProperty(bookISBN, download.getISBN())
+										.setCustomProperty(bookYear, download.getYear())
+										.setCustomProperty(bookPublisher, download.getPublisher())
+										.setCustomProperty(bookCover, download.getCoverUrl())
+										.setDescription( download.getDescription())
+										.build();
 								DriveFileResult fileResult = itBooksFolder.createFile(mGoogleApiClient, createdFileMeta,
 										contents).await();
 								if (fileResult.getStatus().isSuccess()) {
@@ -188,6 +213,9 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 		}
 	}
 
+	private void pull() {
+
+	}
 
 	/**
 	 * When user logined, user can access Google Driver and save downloaded files. Here to establish connection.
@@ -242,6 +270,7 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 					long gap = thisSyncTime - timeLastSync;
 					if (timeLastSync < 0 || gap > SYNC_LIMIT) {
 						push();
+						pull();
 						disestablishGoogleDriver();
 						prefs.setLastTimeSync(thisSyncTime);
 					} else {
