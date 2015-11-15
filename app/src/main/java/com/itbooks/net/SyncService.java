@@ -3,6 +3,7 @@ package com.itbooks.net;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 import android.app.Service;
 import android.content.Intent;
@@ -35,6 +36,8 @@ import com.google.android.gms.drive.query.Filters;
 import com.google.android.gms.drive.query.Query;
 import com.google.android.gms.drive.query.SearchableField;
 import com.itbooks.app.App;
+import com.itbooks.db.DB;
+import com.itbooks.net.download.Download;
 import com.itbooks.utils.Prefs;
 
 import org.apache.commons.io.FileUtils;
@@ -48,6 +51,10 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 	private volatile GoogleApiClient mGoogleApiClient;
 	public static final String EXTRAS_ERROR_RESULT = SyncService.class.getName() + ".EXTRAS.error_result";
 	public static final String ACTION_CONNECT_ERROR = SyncService.class.getName() + ".ACTION.SyncService.connect_error";
+	/**
+	 * Sync can be continued to use when limit's passed.
+	 */
+	private static final long SYNC_LIMIT = 60000;// AlarmManager.INTERVAL_FIFTEEN_MINUTES;
 
 	public SyncService() {
 	}
@@ -64,7 +71,7 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 	}
 
 	//SYNC JOB FOR ALL DOWNLOADED PDF-FILES.
-	private void sync() {
+	private void push() {
 		if (!TextUtils.isEmpty(Prefs.getInstance(App.Instance).getGoogleId()) && mGoogleApiClient != null) {
 			DriveId folderId = null;
 			DriveFolder itBooksFolder;
@@ -77,7 +84,7 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 					Filters.eq(SearchableField.TITLE, folderName)).addFilter(Filters.eq(SearchableField.MIME_TYPE,
 					DriveFolder.MIME_TYPE)).build();
 			MetadataBufferResult folderResult = rootFolder.queryChildren(mGoogleApiClient, query).await();
-//			MetadataBufferResult folderResult = rootFolder.listChildren(mGoogleApiClient).await();
+			//			MetadataBufferResult folderResult = rootFolder.listChildren(mGoogleApiClient).await();
 			if (folderResult.getStatus().isSuccess()) {
 				MetadataBuffer metadataBuffer = folderResult.getMetadataBuffer();
 				for (Metadata metaData : metadataBuffer) {
@@ -118,15 +125,17 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 
 			String mimeType = "application/pdf";
 			File downloadsDir = App.Instance.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
-			String[] pdfs = downloadsDir.list();
-			if (pdfs != null && pdfs.length > 0) {
-				for (String file : pdfs) {
+			List<Download> downloads = DB.getInstance(getApplication()).getDownloads();
+			int downloadTotal = downloads.size();
+			if (downloadTotal > 0) {
+				for (Download download : downloads) {
 					boolean fileExist = false;
 					MetadataBufferResult fileBufferResult = itBooksFolder.listChildren(mGoogleApiClient).await();
 					if (fileBufferResult.getStatus().isSuccess()) {
 						MetadataBuffer metadataBuffer = fileBufferResult.getMetadataBuffer();
 						for (Metadata metaData : metadataBuffer) {
-							if (!metaData.isFolder() && TextUtils.equals(file, metaData.getTitle())) {
+							if (!metaData.isFolder() && TextUtils.equals(download.getTargetName(),
+									metaData.getTitle())) {
 								fileExist = true;
 								break;
 							}
@@ -135,19 +144,19 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 					}
 
 					if (fileExist) {
-						Log.i(TAG, "File already sync: " + file);
+						Log.i(TAG, "File already pushed: " + download.getTargetName());
 					} else {
 						try {
-							Log.i(TAG, "Start sync: " + file);
+							Log.i(TAG, "Start push: " + download.getTargetName());
 							DriveContentsResult driveContentsResult = Drive.DriveApi.newDriveContents(mGoogleApiClient)
 									.await();
 							if (driveContentsResult.getStatus().isSuccess()) {
 								DriveContents contents = driveContentsResult.getDriveContents();
 								OutputStream driverStream = contents.getOutputStream();//Write data on stream is fine.
 								driverStream.write(IOUtils.toByteArray(FileUtils.openInputStream(new File(downloadsDir,
-										file))));
+										download.getTargetName()))));
 								MetadataChangeSet createdFileMeta = new MetadataChangeSet.Builder().setMimeType(
-										mimeType).setTitle(file).build();
+										mimeType).setTitle(download.getTargetName()).build();
 								DriveFileResult fileResult = itBooksFolder.createFile(mGoogleApiClient, createdFileMeta,
 										contents).await();
 								if (fileResult.getStatus().isSuccess()) {
@@ -156,14 +165,14 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 									MetadataResult newFileMeta = fileResult.getDriveFile().getMetadata(mGoogleApiClient)
 											.await();
 									if (newFileMeta.getStatus().isSuccess()) {
-										Log.i(TAG, "File has been sync: " + file);
+										Log.i(TAG, "File has been pushed: " + download.getTargetName());
 									} else {
 										//Error.
-										Log.e(TAG, "File can not be found: " + file);
+										Log.e(TAG, "File can not be found: " + download.getTargetName());
 									}
 								} else {
 									//Error.
-									Log.e(TAG, "File can not be created: " + file);
+									Log.e(TAG, "File can not be created: " + download.getTargetName());
 								}
 							} else {
 								//Error.
@@ -171,7 +180,7 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 							}
 						} catch (IOException e1) {
 							//Error.
-							Log.e(TAG, "File can not be sync: " + file);
+							Log.e(TAG, "File can not be pushed: " + download.getTargetName());
 						}
 					}
 				}
@@ -197,7 +206,7 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 	/**
 	 * When user logined, user can access Google Driver and save downloaded files. Here to release connection.
 	 */
-	private synchronized void disestablishGoogleDriver() {
+	private void disestablishGoogleDriver() {
 		if (!TextUtils.isEmpty(Prefs.getInstance(App.Instance).getGoogleId()) &&
 				mGoogleApiClient != null &&
 				mGoogleApiClient.isConnected()) {
@@ -209,7 +218,9 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		disestablishGoogleDriver();
+		synchronized (TAG) {
+			disestablishGoogleDriver();
+		}
 	}
 
 	@Override
@@ -224,8 +235,21 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				sync();
-				disestablishGoogleDriver();
+				synchronized (TAG) {
+					Prefs prefs = Prefs.getInstance(App.Instance);
+					long timeLastSync = Prefs.getInstance(App.Instance).getLastTimeSync();
+					long thisSyncTime = System.currentTimeMillis();
+					long gap = thisSyncTime - timeLastSync;
+					if (timeLastSync < 0 || gap > SYNC_LIMIT) {
+						push();
+						disestablishGoogleDriver();
+						prefs.setLastTimeSync(thisSyncTime);
+					} else {
+						Log.w(TAG,
+								"Abort sync because duration between last sync point and this sync point must be larger than 15 minutes, you tried still in elapsed range:" + gap);
+					}
+					stopSelf();
+				}
 			}
 		}).start();
 	}

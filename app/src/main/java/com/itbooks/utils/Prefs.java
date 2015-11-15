@@ -53,6 +53,8 @@ public final class Prefs extends BasicPrefs {
 	 * Url to user's profile-image.
 	 */
 	private static final String KEY_GOOGLE_THUMB_URL = "key.google.thumb.url";
+
+	private static final String KEY_LAST_TIME_SYNC = "key.last.time.sync";
 	/**
 	 * Created a DeviceData storage.
 	 *
@@ -291,5 +293,21 @@ public final class Prefs extends BasicPrefs {
 	 */
 	public String getGoogleThumbUrl() {
 		return getString(KEY_GOOGLE_THUMB_URL, null);
+	}
+
+
+
+	/**
+	 * Set the time to last sync-point.
+	 */
+	public void setLastTimeSync(long time) {
+		setLong(KEY_LAST_TIME_SYNC, time);
+	}
+
+	/**
+	 * Time to last sync-point.
+	 */
+	public long getLastTimeSync() {
+		return getLong(KEY_LAST_TIME_SYNC, -1);
 	}
 }
