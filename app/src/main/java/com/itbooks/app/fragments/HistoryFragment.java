@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -11,6 +15,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.os.AsyncTaskCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,6 +40,7 @@ import com.itbooks.bus.DownloadDeleteEvent;
 import com.itbooks.bus.LoginRequestEvent;
 import com.itbooks.bus.SyncEvent;
 import com.itbooks.db.DB;
+import com.itbooks.net.SyncService;
 import com.itbooks.net.download.Download;
 import com.itbooks.utils.Prefs;
 
@@ -57,11 +63,16 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 	private HistoryAdapter mHistoryAdapter;
 	private View mEmptyV;
 	private Toolbar mToolbar;
-
+	private IntentFilter mDownloadedFileHandlerFilter = new IntentFilter(SyncService.ACTION_FILE_DOWNLOADED);
+	private BroadcastReceiver mDownloadedFileHandler = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			getLoaderManager().initLoader(3, null, HistoryFragment.this).forceLoad();
+		}
+	};
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
-
 
 
 	/**
@@ -194,7 +205,7 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-
+		LocalBroadcastManager.getInstance(App.Instance).registerReceiver(mDownloadedFileHandler, mDownloadedFileHandlerFilter);
 		mHistoryRv = (RecyclerView) view.findViewById(R.id.history_rv);
 		mHistoryRv.setLayoutManager(new LinearLayoutManager(getActivity()));
 		mHistoryRv.setAdapter(mHistoryAdapter = new HistoryAdapter(null));
@@ -213,6 +224,12 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 			   }
 
 		);
+	}
+
+	@Override
+	public void onDestroyView() {
+		LocalBroadcastManager.getInstance(App.Instance).unregisterReceiver(mDownloadedFileHandler);
+		super.onDestroyView();
 	}
 
 	@Override

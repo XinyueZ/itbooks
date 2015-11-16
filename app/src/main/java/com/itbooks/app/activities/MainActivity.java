@@ -17,6 +17,7 @@ import android.provider.SearchRecentSuggestions;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager.OnBackStackChangedListener;
 import android.support.v4.content.LocalBroadcastManager;
@@ -92,6 +93,8 @@ import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorListenerAdapter;
 import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.squareup.picasso.Picasso;
+
+import net.steamcrafted.loadtoast.LoadToast;
 
 import de.greenrobot.event.EventBus;
 import retrofit.Callback;
@@ -175,7 +178,44 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 			}
 		}
 	};
-
+	/**
+	 * Indicator for sync progress.
+	 */
+	private LoadToast mLoadToast;
+	/**
+	 * Handler filter begin sync.
+	 */
+	private IntentFilter mSyncBeginHandlerFilter = new IntentFilter(SyncService.ACTION_SYNC_BEGIN);
+	/**
+	 * Handler   begin sync.
+	 */
+	private BroadcastReceiver mSyncBeginHandler = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (mLoadToast == null) {
+				mLoadToast = new LoadToast(MainActivity.this).setText(getString(R.string.msg_sync_in_progress))
+						.setBackgroundColor(ActivityCompat.getColor(App.Instance, R.color.green_mid)).setProgressColor(
+								ActivityCompat.getColor(App.Instance, R.color.primary_color)).setTextColor(
+								ActivityCompat.getColor(App.Instance, R.color.text_common_white)).setTranslationY(
+								Utils.getActionBarHeight(App.Instance)).show();
+			}
+		}
+	};
+	/**
+	 * Handler filter end sync.
+	 */
+	private IntentFilter mSyncEndHandlerFilter = new IntentFilter(SyncService.ACTION_SYNC_END);
+	/**
+	 * Handler   end sync.
+	 */
+	private BroadcastReceiver mSyncEndHandler = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (mLoadToast != null) {
+				mLoadToast.success();
+			}
+		}
+	};
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
@@ -732,6 +772,12 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		}
 	}
 
+	private void startSync(int resultCode) {
+		if (resultCode == RESULT_OK) {
+			startService(new Intent(App.Instance, SyncService.class));
+		}
+	}
+
 	/**
 	 * Exit current account, here unregister all push-elements etc.
 	 */
@@ -841,11 +887,10 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		switch (requestCode) {
 		case ConnectGoogleActivity.REQ:
 			getBookmarks();
+			startSync(resultCode);
 			break;
 		case REQUEST_CODE_RESOLUTION:
-			if (resultCode == RESULT_OK) {
-				startService(new Intent(App.Instance, SyncService.class));
-			}
+			startSync(resultCode);
 			break;
 		}
 		super.onActivityResult(requestCode, resultCode, data);
@@ -858,6 +903,8 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		setContentView(LAYOUT);
 		LocalBroadcastManager.getInstance(App.Instance).registerReceiver(mConnectErrorHandler,
 				mConnectErrorHandlerFilter);
+		LocalBroadcastManager.getInstance(App.Instance).registerReceiver(mSyncBeginHandler, mSyncBeginHandlerFilter);
+		LocalBroadcastManager.getInstance(App.Instance).registerReceiver(mSyncEndHandler, mSyncEndHandlerFilter);
 
 		mAppListV = findViewById(R.id.app_list_sv);
 		setupDrawerContent((NavigationView) findViewById(R.id.nav_view));
@@ -970,6 +1017,8 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	@Override
 	protected void onDestroy() {
 		LocalBroadcastManager.getInstance(App.Instance).unregisterReceiver(mConnectErrorHandler);
+		LocalBroadcastManager.getInstance(App.Instance).unregisterReceiver(mSyncBeginHandler);
+		LocalBroadcastManager.getInstance(App.Instance).unregisterReceiver(mSyncEndHandler);
 
 		super.onDestroy();
 		mUIVisible = false;

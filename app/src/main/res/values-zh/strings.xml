@@ -116,5 +116,5 @@
     <string name="msg_file_can_be_found_to_delete">无法找到要删除的目标文件</string>
     <string name="msg_access_driver_failed">无法接触谷歌网盘。</string>
     <string name="msg_sync_req_for_driver">你必须登录后才能用谷歌网盘来同步。</string>
-
+    <string name="msg_sync_in_progress">同步传输中</string>
 </resources>

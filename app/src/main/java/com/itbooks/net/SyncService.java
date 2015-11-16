@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Map;
 
+import android.app.DownloadManager;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,6 +25,7 @@ import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveApi.DriveContentsResult;
 import com.google.android.gms.drive.DriveApi.MetadataBufferResult;
 import com.google.android.gms.drive.DriveContents;
+import com.google.android.gms.drive.DriveFile;
 import com.google.android.gms.drive.DriveFolder;
 import com.google.android.gms.drive.DriveFolder.DriveFileResult;
 import com.google.android.gms.drive.DriveFolder.DriveFolderResult;
@@ -37,6 +40,7 @@ import com.google.android.gms.drive.query.Filters;
 import com.google.android.gms.drive.query.Query;
 import com.google.android.gms.drive.query.SearchableField;
 import com.itbooks.app.App;
+import com.itbooks.data.rest.RSBook;
 import com.itbooks.db.DB;
 import com.itbooks.net.download.Download;
 import com.itbooks.utils.Prefs;
@@ -46,18 +50,28 @@ import org.apache.commons.io.IOUtils;
 
 public class SyncService extends Service implements ConnectionCallbacks, OnConnectionFailedListener {
 	private static final String TAG = SyncService.class.getSimpleName();
-	/**
-	 * Google Driver access client.
-	 */
 	private volatile GoogleApiClient mGoogleApiClient;
 	public static final String EXTRAS_ERROR_RESULT = SyncService.class.getName() + ".EXTRAS.error_result";
 	public static final String ACTION_CONNECT_ERROR = SyncService.class.getName() + ".ACTION.SyncService.connect_error";
+	public static final String ACTION_FILE_DOWNLOADED = SyncService.class.getName() + ".ACTION.SyncService.file_downloaded";
+	public static final String ACTION_SYNC_BEGIN = SyncService.class.getName() + ".ACTION.SyncService.sync_begin";
+	public static final String ACTION_SYNC_END = SyncService.class.getName() + ".ACTION.SyncService.sync_end";
+	private static final String FOLDER_NAME = "itbooks";
+	private static final String MIME_TYPE = "application/pdf";
+	private static final String BOOK_NAME = "book_name";
+	private static final String BOOK_AUTHOR = "book_author";
+	private static final String BOOK_SIZE = "book_size";
+	private static final String BOOK_PAGES = "book_pages";
+	private static final String BOOK_LINK = "book_link";
+	private static final String BOOK_ISBN = "book_isbn";
+	private static final String BOOK_YEAR = "book_year";
+	private static final String BOOK_PUBLISHER = "book_publisher";
+	private static final String BOOK_COVER = "book_cover";
 	/**
 	 * Sync can be continued to use when limit's passed.
 	 */
-	private static final long SYNC_LIMIT = 60000;// AlarmManager.INTERVAL_FIFTEEN_MINUTES;
-
-	private static final String FOLDER_NAME = "itbooks";
+	private static final long SYNC_LIMIT = 60000;
+//	private static final long SYNC_LIMIT =  AlarmManager.INTERVAL_FIFTEEN_MINUTES;
 
 	public SyncService() {
 	}
@@ -126,7 +140,6 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 
 	private static void uploadFiles(GoogleApiClient client, DriveFolder itBooksFolder) {
 		if (itBooksFolder != null) {
-			String mimeType = "application/pdf";
 			File downloadsDir = App.Instance.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
 			List<Download> downloads = DB.getInstance(App.Instance).getDownloads();
 			int downloadTotal = downloads.size();
@@ -150,7 +163,7 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 						Log.i(TAG, "File already pushed: " + download.getTargetName());
 					} else {
 						try {
-							Log.i(TAG, "Start push: " + download.getTargetName());
+							Log.i(TAG, "Start pushing: " + download.getTargetName());
 							DriveContentsResult driveContentsResult = Drive.DriveApi.newDriveContents(client).await();
 							if (driveContentsResult.getStatus().isSuccess()) {
 								DriveContents contents = driveContentsResult.getDriveContents();
@@ -159,26 +172,26 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 										download.getTargetName()))));
 
 
-								CustomPropertyKey bookName = new CustomPropertyKey("book_name",
+								CustomPropertyKey bookName = new CustomPropertyKey(BOOK_NAME,
 										CustomPropertyKey.PUBLIC);
-								CustomPropertyKey bookAuthor = new CustomPropertyKey("book_author",
+								CustomPropertyKey bookAuthor = new CustomPropertyKey(BOOK_AUTHOR,
 										CustomPropertyKey.PUBLIC);
-								CustomPropertyKey bookSize = new CustomPropertyKey("book_size",
+								CustomPropertyKey bookSize = new CustomPropertyKey(BOOK_SIZE,
 										CustomPropertyKey.PUBLIC);
-								CustomPropertyKey bookPages = new CustomPropertyKey("book_pages",
+								CustomPropertyKey bookPages = new CustomPropertyKey(BOOK_PAGES,
 										CustomPropertyKey.PUBLIC);
-								CustomPropertyKey bookLink = new CustomPropertyKey("book_link",
+								CustomPropertyKey bookLink = new CustomPropertyKey(BOOK_LINK,
 										CustomPropertyKey.PUBLIC);
-								CustomPropertyKey bookISBN = new CustomPropertyKey("book_isbn",
+								CustomPropertyKey bookISBN = new CustomPropertyKey(BOOK_ISBN,
 										CustomPropertyKey.PUBLIC);
-								CustomPropertyKey bookYear = new CustomPropertyKey("book_year",
+								CustomPropertyKey bookYear = new CustomPropertyKey(BOOK_YEAR,
 										CustomPropertyKey.PUBLIC);
-								CustomPropertyKey bookPublisher = new CustomPropertyKey("book_publisher",
+								CustomPropertyKey bookPublisher = new CustomPropertyKey(BOOK_PUBLISHER,
 										CustomPropertyKey.PUBLIC);
-								CustomPropertyKey bookCover = new CustomPropertyKey("book_cover",
+								CustomPropertyKey bookCover = new CustomPropertyKey(BOOK_COVER,
 										CustomPropertyKey.PUBLIC);
 								MetadataChangeSet createdFileMeta = new MetadataChangeSet.Builder().setMimeType(
-										mimeType).setTitle(download.getTargetName()).setCustomProperty(bookName,
+										MIME_TYPE).setTitle(download.getTargetName()).setCustomProperty(bookName,
 										download.getName()).setCustomProperty(bookAuthor, download.getAuthor())
 										.setCustomProperty(bookSize, download.getSize()).setCustomProperty(bookPages,
 												download.getPages()).setCustomProperty(bookLink, download.getLink())
@@ -226,10 +239,88 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 		}
 	}
 
+	private static void downloadFiles(GoogleApiClient client, DriveFolder itBooksFolder) {
+		if (itBooksFolder != null) {
+			Query query = new Query.Builder()
+					.addFilter(Filters.eq(SearchableField.MIME_TYPE, MIME_TYPE))
+					.addFilter(Filters.contains(SearchableField.TITLE, FOLDER_NAME + "_"))
+					.build();
+			MetadataBufferResult filesBufferResult =  itBooksFolder.queryChildren(client, query).await();
+			if (filesBufferResult.getStatus().isSuccess()) {
+				Log.i(TAG, "Download files.");
+				MetadataBuffer metadataBuffer = filesBufferResult.getMetadataBuffer();
+				for (Metadata metaData : metadataBuffer) {
+					String description = metaData.getDescription();
+					Map<CustomPropertyKey, String> propertyKeyStringMap =  metaData.getCustomProperties();
+					CustomPropertyKey bookName = new CustomPropertyKey(BOOK_NAME,
+							CustomPropertyKey.PUBLIC);
+					CustomPropertyKey bookAuthor = new CustomPropertyKey(BOOK_AUTHOR,
+							CustomPropertyKey.PUBLIC);
+					CustomPropertyKey bookSize = new CustomPropertyKey(BOOK_SIZE,
+							CustomPropertyKey.PUBLIC);
+					CustomPropertyKey bookPages = new CustomPropertyKey(BOOK_PAGES,
+							CustomPropertyKey.PUBLIC);
+					CustomPropertyKey bookLink = new CustomPropertyKey(BOOK_LINK,
+							CustomPropertyKey.PUBLIC);
+					CustomPropertyKey bookISBN = new CustomPropertyKey(BOOK_ISBN,
+							CustomPropertyKey.PUBLIC);
+					CustomPropertyKey bookYear = new CustomPropertyKey(BOOK_YEAR,
+							CustomPropertyKey.PUBLIC);
+					CustomPropertyKey bookPublisher = new CustomPropertyKey(BOOK_PUBLISHER,
+							CustomPropertyKey.PUBLIC);
+					CustomPropertyKey bookCover = new CustomPropertyKey(BOOK_COVER,
+							CustomPropertyKey.PUBLIC);
+//					String name, String author, String size, String pages, String link, String ISBN, String year,
+//							String publisher, String description, String coverUrl
+					RSBook book = new RSBook(
+							propertyKeyStringMap.get(bookName),
+							propertyKeyStringMap.get(bookAuthor),
+							propertyKeyStringMap.get(bookSize),
+							propertyKeyStringMap.get(bookPages),
+							propertyKeyStringMap.get(bookLink),
+							propertyKeyStringMap.get(bookISBN),
+							propertyKeyStringMap.get(bookYear),
+							propertyKeyStringMap.get(bookPublisher),
+							description,
+							propertyKeyStringMap.get(bookCover)
+					);
+					DB db = DB.getInstance(App.Instance);
+					List<Download> downloads = db.getDownloads(book);
+					if(downloads.size() == 0) {
+						DriveId driveId = metaData.getDriveId();
+						DriveFile file = driveId.asDriveFile();
+						DriveContentsResult result = file.open(client, DriveFile.MODE_READ_ONLY, null).await();
+						Log.i(TAG, "Start downloading book: " + book.getName());
+						DriveContents contents = result.getDriveContents();
+						File localFile = new File(App.Instance.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
+								metaData.getTitle());
+						try {
+							FileUtils.copyInputStreamToFile(contents.getInputStream(), localFile);
+							Download download = new Download(book);
+							download.setTimeStamp(System.currentTimeMillis());
+							download.setStatus(DownloadManager.STATUS_SUCCESSFUL);
+							download.setDownloadId(System.currentTimeMillis());
+							db.insertNewDownload(download);
+							LocalBroadcastManager.getInstance(App.Instance).sendBroadcast(new Intent(ACTION_FILE_DOWNLOADED));
+							Log.i(TAG, "Downloaded file successfully: " + download.getTargetName());
+						} catch (IOException e) {
+							Log.e(TAG, "Can not write remote file to local: " + metaData.getTitle() + " for " + book.getName());
+						}
+					} else {
+						Log.w(TAG, "Download book reject because it is already there local: " + book.getName());
+					}
+				}
+			}
+		}
+	}
 
 	//PULL JOB FOR ALL DOWNLOADED PDF-FILES.
 	private void pull() {
-
+		if (!TextUtils.isEmpty(Prefs.getInstance(App.Instance).getGoogleId()) && mGoogleApiClient != null) {
+			DriveId folderId = getITBooksFolderId(mGoogleApiClient);
+			DriveFolder itBooksFolder = getITBooksFolder(mGoogleApiClient, folderId);
+			downloadFiles(mGoogleApiClient, itBooksFolder);
+		}
 	}
 
 	/**
@@ -284,10 +375,14 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 					long thisSyncTime = System.currentTimeMillis();
 					long gap = thisSyncTime - timeLastSync;
 					if (timeLastSync < 0 || gap > SYNC_LIMIT) {
+						LocalBroadcastManager lbm =
+								LocalBroadcastManager.getInstance(App.Instance);
+						lbm.sendBroadcast(new Intent(ACTION_SYNC_BEGIN));
 						push();
 						pull();
 						disestablishGoogleDriver();
 						prefs.setLastTimeSync(thisSyncTime);
+						lbm.sendBroadcast(new Intent(ACTION_SYNC_END));
 					} else {
 						Log.w(TAG,
 								"Abort sync because duration between last sync point and this sync point must be larger than 15 minutes, you tried still in elapsed range:" +
@@ -303,4 +398,6 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 	public void onConnectionSuspended(int i) {
 
 	}
+
+
 }

@@ -133,4 +133,5 @@
     <string name="msg_cell_network_no_image">Turn off all images(ex.Bookmark-List) under non-WIFI.</string>
     <string name="msg_access_driver_failed">Can not access Google Driver.</string>
     <string name="msg_sync_req_for_driver">You need login to access Google Driver for sync.</string>
+    <string name="msg_sync_in_progress">Sync in progress</string>
 </resources>
