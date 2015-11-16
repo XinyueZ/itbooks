@@ -13,7 +13,24 @@
             android:defaultValue="false" />
     </PreferenceCategory>
 
-
+    <PreferenceCategory
+        android:layout="@layout/setting_entry"
+        android:title="@string/setting_sync">
+        <CheckBoxPreference
+            android:key="key.sync.charging"
+            android:title="@string/setting_sync_when_charging"
+            android:summaryOn="@string/btn_yes"
+            android:summaryOff="@string/btn_no"
+            android:layout="@layout/setting_item"
+            android:defaultValue="true" />
+        <CheckBoxPreference
+            android:key="key.sync.wifi"
+            android:title="@string/setting_sync_when_wifi"
+            android:summaryOn="@string/btn_yes"
+            android:summaryOff="@string/btn_no"
+            android:layout="@layout/setting_item"
+            android:defaultValue="true" />
+    </PreferenceCategory>
 
     <PreferenceCategory
         android:layout="@layout/setting_entry"

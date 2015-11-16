@@ -69,8 +69,13 @@ public final class SettingActivity extends PreferenceActivity implements Prefere
 
 		CheckBoxPreference push = (CheckBoxPreference) findPreference(Prefs.KEY_PUSH_SETTING);
 		push.setOnPreferenceChangeListener(this);
+		CheckBoxPreference syncCharging = (CheckBoxPreference) findPreference(Prefs.KEY_SYNC_CHARGING);
+		syncCharging.setOnPreferenceChangeListener(this);
+		CheckBoxPreference syncWifi = (CheckBoxPreference) findPreference(Prefs.KEY_SYNC_WIFI);
+		syncWifi.setOnPreferenceChangeListener(this);
 		((MarginLayoutParams) findViewById(android.R.id.list).getLayoutParams()).topMargin = Utils.getActionBarHeight(
 				this);
+		((MarginLayoutParams) findViewById(android.R.id.list).getLayoutParams()).bottomMargin = getResources().getDimensionPixelSize(R.dimen.common_padding);
 	}
 
 
@@ -126,6 +131,10 @@ public final class SettingActivity extends PreferenceActivity implements Prefere
 					}
 				});
 			}
+		}
+		if (preference.getKey().equals(Prefs.KEY_SYNC_CHARGING) ||
+				preference.getKey().equals(Prefs.KEY_SYNC_WIFI)) {
+			com.itbooks.utils.Utils.startAppGuardService(App.Instance);
 		}
 		return true;
 	}

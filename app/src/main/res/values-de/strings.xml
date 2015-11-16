@@ -15,6 +15,8 @@
     <string name="btn_reset">Änderen</string>
     <string name="btn_login">Anmelden</string>
     <string name="btn_not_yet">Nicht jetzt</string>
+    <string name="btn_yes">Ja</string>
+    <string name="btn_no">Nein</string>
 
     <string name="lbl_about">About</string>
     <string name="lbl_share_app">Teilen</string>
@@ -87,7 +89,9 @@
     <string name="setting_show_image_on_wifi">Momentan: Nur wenn W-LAN</string>
     <string name="setting_show_image_off_wifi">Momentan: WLAN, auch andere Netzwerk</string>
 
-
+    <string name="setting_sync">Sync(mit Anmelden)</string>
+    <string name="setting_sync_when_charging">Sync bei der Batterieladung</string>
+    <string name="setting_sync_when_wifi">Sync bei W-LAN</string>
 
     <string name="btn_turn_on">Einschalten</string>
 
@@ -113,4 +117,5 @@
     <string name="msg_access_driver_failed">Google Driver ist nicht erreichbar.</string>
     <string name="msg_sync_req_for_driver">Damit Google Driver für Sync verwendet werden kann, musst Du einloggen.</string>
     <string name="msg_sync_in_progress">Sync läuft gerade</string>
+    <string name="msg_scheduled_sync_done">Eine Sync-Aufgabe fertigt</string>
 </resources>

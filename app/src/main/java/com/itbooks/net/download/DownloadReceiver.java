@@ -132,7 +132,7 @@ public final class DownloadReceiver extends BroadcastReceiver {
 			PendingIntent contentIntent) {
 		NotificationManager mgr = (NotificationManager) cxt.getSystemService(Context.NOTIFICATION_SERVICE);
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(cxt).setWhen(id).setSmallIcon(
-				R.drawable.ic_download).setTicker(title).setContentTitle(title).setContentText(desc).setStyle(
+				R.drawable.ic_download_notify).setTicker(title).setContentTitle(title).setContentText(desc).setStyle(
 				new BigPictureStyle().bigPicture(image).setBigContentTitle(title)).setAutoCancel(true).setLargeIcon(
 				image);
 		builder.setContentIntent(contentIntent);
@@ -144,7 +144,7 @@ public final class DownloadReceiver extends BroadcastReceiver {
 	private void fallbackNotify(Context cxt, long id, String title, String desc, PendingIntent contentIntent) {
 		NotificationManager mgr = (NotificationManager) cxt.getSystemService(Context.NOTIFICATION_SERVICE);
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(cxt).setWhen(id).setSmallIcon(
-				R.drawable.ic_download).setTicker(title).setContentTitle(title).setContentText(desc).setStyle(
+				R.drawable.ic_download_notify).setTicker(title).setContentTitle(title).setContentText(desc).setStyle(
 				new BigTextStyle().bigText(desc).setBigContentTitle(title)).setAutoCancel(true);
 		builder.setContentIntent(contentIntent);
 		ringWorks(cxt, builder);

@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
+import android.app.AlarmManager;
 import android.app.DownloadManager;
 import android.app.Service;
 import android.content.Context;
@@ -80,8 +81,8 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 	/**
 	 * Sync can be continued to use when limit's passed.
 	 */
-	private static final long SYNC_LIMIT = 60000;
-	//	private static final long SYNC_LIMIT =  AlarmManager.INTERVAL_FIFTEEN_MINUTES;
+	//private static final long SYNC_LIMIT = 60000;
+	private static final long SYNC_LIMIT =  AlarmManager.INTERVAL_FIFTEEN_MINUTES;
 
 	public static void startSync(Context cxt) {
 		Intent intent = new Intent(cxt, SyncService.class);

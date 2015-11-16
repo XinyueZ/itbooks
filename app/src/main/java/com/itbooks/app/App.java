@@ -41,6 +41,7 @@ import com.crashlytics.android.Crashlytics;
 import com.facebook.stetho.Stetho;
 import com.itbooks.db.DB;
 import com.itbooks.net.bookmark.BookmarkManger;
+import com.itbooks.utils.Utils;
 
 import cn.bmob.v3.Bmob;
 import io.fabric.sdk.android.Fabric;
@@ -81,5 +82,7 @@ public final class App extends MultiDexApplication {
 		}
 		TaskHelper.init(getApplicationContext());
 		DB.getInstance(this).open();
+
+		Utils.startAppGuardService(App.Instance);
 	}
 }

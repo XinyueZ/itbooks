@@ -17,10 +17,11 @@ public final class Prefs extends BasicPrefs {
 	private static final String KEY_KNOWN_BOOKMARK = "key.known.bookmark";
 	private static final String KEY_KNOWN_PUSH = "key.known.push";
 	public static final String KEY_PUSH_REG_ID = "key.push.regid";
-	private static final String KEY_APP_VERSION_FOR_PUSH ="key.app.version.push";
 	public static final String KEY_PUSH_SETTING = "key.push.setting";
 	public static final String KEY_NO_IMAGES = "key.no.images";
 	public static final String KEY_SHOW_IMAGES_WIFI = "key.show.images.wifi";
+	public static final String KEY_SYNC_CHARGING = "key.sync.charging";
+	public static final String KEY_SYNC_WIFI = "key.sync.wifi";
 	private static final String KEY_SHOWN_DETAILS_TIMES = "key.details.shown.times";
 	private static final String KEY_VIEW_STYLE = "key.view.style";
 	private static final String KEY_SHOWN_DETAILS_ADS_TIMES = "ads";
@@ -32,13 +33,7 @@ public final class Prefs extends BasicPrefs {
 	 * {@code true} if EULA has been shown and agreed.
 	 */
 	private static final String KEY_EULA_SHOWN = "key_eula_shown";
-
-
-	private static final String API_SEARCH_BOOKS = "api_search_books";
-	private static final String API_BOOK_DETAIL = "api_book_detail";
-	private static final String API_DEFAULT_BOOKS = "api_default_books";
 	private static final String REST_API = "rest_api";
-	private static final String PUSH_HOST  = "push_host";
 	private static final String PUSH_SENDER_ID  = "push_sender_id";
 
 	/**
@@ -53,9 +48,7 @@ public final class Prefs extends BasicPrefs {
 	 * Url to user's profile-image.
 	 */
 	private static final String KEY_GOOGLE_THUMB_URL = "key.google.thumb.url";
-
 	private static final String KEY_LAST_TIME_SYNC = "key.last.time.sync";
-
 	private static final String KEY_ASK_LOGIN = "key.ask.login";
 	/**
 	 * Created a DeviceData storage.
@@ -82,17 +75,6 @@ public final class Prefs extends BasicPrefs {
 		return sInstance;
 	}
 
-	public String getApiSearchBooks() {
-		return getString(API_SEARCH_BOOKS, null);
-	}
-
-	public String getApiBookDetail() {
-		return getString(API_BOOK_DETAIL, null);
-	}
-
-	public String getApiDefaultBooks() {
-		return getString(API_DEFAULT_BOOKS, null);
-	}
 
 	/**
 	 * Whether the "End User License Agreement" has been shown and agreed at application's first start.
@@ -149,17 +131,6 @@ public final class Prefs extends BasicPrefs {
 		return getString(KEY_PUSH_REG_ID, null);
 	}
 
-	public void setAppVerionForPush(String appVersion) {
-		setString(KEY_APP_VERSION_FOR_PUSH, appVersion);
-	}
-
-	public String getAppVersionForPush() {
-		return getString(KEY_APP_VERSION_FOR_PUSH, null);
-	}
-
-	private String getPushHost() {
-		return getString(PUSH_HOST, null);
-	}
 
 	public long getPushSenderId() {
 		return getLong(PUSH_SENDER_ID, -1);
@@ -181,16 +152,18 @@ public final class Prefs extends BasicPrefs {
 		return getBoolean(KEY_NO_IMAGES, false);
 	}
 
-	public void setNoImages(boolean noImages) {
-		setBoolean(KEY_NO_IMAGES, noImages);
-	}
 
 	public boolean showImagesOnlyWifi() {
 		return getBoolean(KEY_SHOW_IMAGES_WIFI, false);
 	}
 
-	public void setshowImagesOnlyWifi(boolean onlyWifi) {
-		setBoolean(KEY_SHOW_IMAGES_WIFI, onlyWifi);
+	public boolean syncCharging() {
+		return getBoolean(KEY_SYNC_CHARGING, true);
+	}
+
+
+	public boolean syncWifi() {
+		return getBoolean(KEY_SYNC_WIFI, true);
 	}
 
 	public void setShownDetailsTimes(int times) {
