@@ -57,6 +57,8 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 	 */
 	private static final long SYNC_LIMIT = 60000;// AlarmManager.INTERVAL_FIFTEEN_MINUTES;
 
+	private static final String FOLDER_NAME = "itbooks";
+
 	public SyncService() {
 	}
 
@@ -71,67 +73,67 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 		return ServiceCompat.START_STICKY;
 	}
 
-	//SYNC JOB FOR ALL DOWNLOADED PDF-FILES.
-	private void push() {
-		if (!TextUtils.isEmpty(Prefs.getInstance(App.Instance).getGoogleId()) && mGoogleApiClient != null) {
-			DriveId folderId = null;
-			DriveFolder itBooksFolder;
-			String folderName = "itbooks";
-
-			// Create the file in the "itbooks" folder, again calling await() to
-			// block until the request finishes.
-			DriveFolder rootFolder = Drive.DriveApi.getRootFolder(mGoogleApiClient);
-			Query query = new Query.Builder().addFilter(Filters.eq(SearchableField.TRASHED, false)).addFilter(
-					Filters.eq(SearchableField.TITLE, folderName)).addFilter(Filters.eq(SearchableField.MIME_TYPE,
-					DriveFolder.MIME_TYPE)).build();
-			MetadataBufferResult folderResult = rootFolder.queryChildren(mGoogleApiClient, query).await();
-			//			MetadataBufferResult folderResult = rootFolder.listChildren(mGoogleApiClient).await();
-			if (folderResult.getStatus().isSuccess()) {
-				MetadataBuffer metadataBuffer = folderResult.getMetadataBuffer();
-				for (Metadata metaData : metadataBuffer) {
-					if (metaData.isFolder() && TextUtils.equals(folderName, metaData.getTitle())) {
-						folderId = metaData.getDriveId();
-						break;
-					}
+	private static DriveId getITBooksFolderId(GoogleApiClient client) {
+		DriveId folderId = null;
+		// Create the file in the "itbooks" folder, again calling await() to
+		// block until the request finishes.
+		DriveFolder rootFolder = Drive.DriveApi.getRootFolder(client);
+		Query query = new Query.Builder().addFilter(Filters.eq(SearchableField.TRASHED, false)).addFilter(Filters.eq(
+				SearchableField.TITLE, FOLDER_NAME)).addFilter(Filters.eq(SearchableField.MIME_TYPE,
+				DriveFolder.MIME_TYPE)).build();
+		MetadataBufferResult folderResult = rootFolder.queryChildren(client, query).await();
+		//			MetadataBufferResult folderResult = rootFolder.listChildren(mGoogleApiClient).await();
+		if (folderResult.getStatus().isSuccess()) {
+			MetadataBuffer metadataBuffer = folderResult.getMetadataBuffer();
+			for (Metadata metaData : metadataBuffer) {
+				if (metaData.isFolder() && TextUtils.equals(FOLDER_NAME, metaData.getTitle())) {
+					folderId = metaData.getDriveId();
+					break;
 				}
-				metadataBuffer.close();
 			}
+			metadataBuffer.close();
+		}
+		return folderId;
+	}
 
-			if (folderId == null) {
-				Log.i(TAG, "Can not find folder and try to create new one: " + folderName);
-				//Not success, then create a new one.
-				MetadataChangeSet changeSet = new MetadataChangeSet.Builder().setTitle(folderName).build();
-				DriveFolderResult folderCreatedResult = rootFolder.createFolder(mGoogleApiClient, changeSet).await();
-				if (folderCreatedResult.getStatus().isSuccess()) {
-					itBooksFolder = folderCreatedResult.getDriveFolder();
-					DriveResource.MetadataResult checkFolderResult = itBooksFolder.getMetadata(mGoogleApiClient)
-							.await();
-					if (!checkFolderResult.getStatus().isSuccess()) {
-						//Error
-						Log.e(TAG, "Can not get newly created folder: " + folderName);
-						return;
-					} else {
-						Log.i(TAG, "Created successfully dir: " + folderName);
-					}
-				} else {
+	private static DriveFolder getITBooksFolder(GoogleApiClient client, DriveId folderId) {
+		DriveFolder itBooksFolder = null;
+		if (folderId == null) {
+			Log.i(TAG, "Can not find folder and try to create new one: " + FOLDER_NAME);
+			//Not success, then create a new one.
+			DriveFolder rootFolder = Drive.DriveApi.getRootFolder(client);
+			MetadataChangeSet changeSet = new MetadataChangeSet.Builder().setTitle(FOLDER_NAME).build();
+			DriveFolderResult folderCreatedResult = rootFolder.createFolder(client, changeSet).await();
+			if (folderCreatedResult.getStatus().isSuccess()) {
+				itBooksFolder = folderCreatedResult.getDriveFolder();
+				DriveResource.MetadataResult checkFolderResult = itBooksFolder.getMetadata(client).await();
+				if (!checkFolderResult.getStatus().isSuccess()) {
 					//Error
-					Log.e(TAG, "Can not create folder: " + folderName);
-					return;
+					Log.e(TAG, "Can not get newly created folder: " + FOLDER_NAME);
+				} else {
+					Log.i(TAG, "Created successfully dir: " + FOLDER_NAME);
 				}
 			} else {
-				Log.i(TAG, "Dir exist: " + folderName);
-				itBooksFolder = folderId.asDriveFolder();
+				//Error
+				Log.e(TAG, "Can not create folder: " + FOLDER_NAME);
 			}
+		} else {
+			Log.i(TAG, "Dir exist: " + FOLDER_NAME);
+			itBooksFolder = folderId.asDriveFolder();
+		}
+		return itBooksFolder;
+	}
 
-
+	private static void uploadFiles(GoogleApiClient client, DriveFolder itBooksFolder) {
+		if (itBooksFolder != null) {
 			String mimeType = "application/pdf";
 			File downloadsDir = App.Instance.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
-			List<Download> downloads = DB.getInstance(getApplication()).getDownloads();
+			List<Download> downloads = DB.getInstance(App.Instance).getDownloads();
 			int downloadTotal = downloads.size();
 			if (downloadTotal > 0) {
 				for (Download download : downloads) {
 					boolean fileExist = false;
-					MetadataBufferResult fileBufferResult = itBooksFolder.listChildren(mGoogleApiClient).await();
+					MetadataBufferResult fileBufferResult = itBooksFolder.listChildren(client).await();
 					if (fileBufferResult.getStatus().isSuccess()) {
 						MetadataBuffer metadataBuffer = fileBufferResult.getMetadataBuffer();
 						for (Metadata metaData : metadataBuffer) {
@@ -149,8 +151,7 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 					} else {
 						try {
 							Log.i(TAG, "Start push: " + download.getTargetName());
-							DriveContentsResult driveContentsResult = Drive.DriveApi.newDriveContents(mGoogleApiClient)
-									.await();
+							DriveContentsResult driveContentsResult = Drive.DriveApi.newDriveContents(client).await();
 							if (driveContentsResult.getStatus().isSuccess()) {
 								DriveContents contents = driveContentsResult.getDriveContents();
 								OutputStream driverStream = contents.getOutputStream();//Write data on stream is fine.
@@ -158,37 +159,40 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 										download.getTargetName()))));
 
 
-								CustomPropertyKey bookName = new CustomPropertyKey("book_name", CustomPropertyKey.PUBLIC);
-								CustomPropertyKey bookAuthor = new CustomPropertyKey("book_author", CustomPropertyKey.PUBLIC);
-								CustomPropertyKey bookSize = new CustomPropertyKey("book_size", CustomPropertyKey.PUBLIC);
-								CustomPropertyKey bookPages = new CustomPropertyKey("book_pages", CustomPropertyKey.PUBLIC);
-								CustomPropertyKey bookLink = new CustomPropertyKey("book_link", CustomPropertyKey.PUBLIC);
-								CustomPropertyKey bookISBN = new CustomPropertyKey("book_isbn", CustomPropertyKey.PUBLIC);
-								CustomPropertyKey bookYear = new CustomPropertyKey("book_year", CustomPropertyKey.PUBLIC);
-								CustomPropertyKey bookPublisher = new CustomPropertyKey("book_publisher", CustomPropertyKey.PUBLIC);
-								CustomPropertyKey bookDescription = new CustomPropertyKey("book_description", CustomPropertyKey.PUBLIC);
-								CustomPropertyKey bookCover = new CustomPropertyKey("book_cover", CustomPropertyKey.PUBLIC);
-								MetadataChangeSet createdFileMeta = new MetadataChangeSet.Builder()
-										.setMimeType(mimeType)
-										.setTitle(download.getTargetName())
-										.setCustomProperty(bookName, download.getName())
-										.setCustomProperty(bookAuthor, download.getAuthor())
-										.setCustomProperty(bookSize, download.getSize())
-										.setCustomProperty(bookPages, download.getPages())
-										.setCustomProperty(bookLink, download.getLink())
-										.setCustomProperty(bookISBN, download.getISBN())
-										.setCustomProperty(bookYear, download.getYear())
-										.setCustomProperty(bookPublisher, download.getPublisher())
-										.setCustomProperty(bookCover, download.getCoverUrl())
-										.setDescription( download.getDescription())
+								CustomPropertyKey bookName = new CustomPropertyKey("book_name",
+										CustomPropertyKey.PUBLIC);
+								CustomPropertyKey bookAuthor = new CustomPropertyKey("book_author",
+										CustomPropertyKey.PUBLIC);
+								CustomPropertyKey bookSize = new CustomPropertyKey("book_size",
+										CustomPropertyKey.PUBLIC);
+								CustomPropertyKey bookPages = new CustomPropertyKey("book_pages",
+										CustomPropertyKey.PUBLIC);
+								CustomPropertyKey bookLink = new CustomPropertyKey("book_link",
+										CustomPropertyKey.PUBLIC);
+								CustomPropertyKey bookISBN = new CustomPropertyKey("book_isbn",
+										CustomPropertyKey.PUBLIC);
+								CustomPropertyKey bookYear = new CustomPropertyKey("book_year",
+										CustomPropertyKey.PUBLIC);
+								CustomPropertyKey bookPublisher = new CustomPropertyKey("book_publisher",
+										CustomPropertyKey.PUBLIC);
+								CustomPropertyKey bookCover = new CustomPropertyKey("book_cover",
+										CustomPropertyKey.PUBLIC);
+								MetadataChangeSet createdFileMeta = new MetadataChangeSet.Builder().setMimeType(
+										mimeType).setTitle(download.getTargetName()).setCustomProperty(bookName,
+										download.getName()).setCustomProperty(bookAuthor, download.getAuthor())
+										.setCustomProperty(bookSize, download.getSize()).setCustomProperty(bookPages,
+												download.getPages()).setCustomProperty(bookLink, download.getLink())
+										.setCustomProperty(bookISBN, download.getISBN()).setCustomProperty(bookYear,
+												download.getYear()).setCustomProperty(bookPublisher,
+												download.getPublisher()).setCustomProperty(bookCover,
+												download.getCoverUrl()).setDescription(download.getDescription())
 										.build();
-								DriveFileResult fileResult = itBooksFolder.createFile(mGoogleApiClient, createdFileMeta,
-										contents).await();
+								DriveFileResult fileResult = itBooksFolder.createFile(client, createdFileMeta, contents)
+										.await();
 								if (fileResult.getStatus().isSuccess()) {
 									// Finally, fetch the metadata for the newly created file, again
 									// calling await to block until the request finishes.
-									MetadataResult newFileMeta = fileResult.getDriveFile().getMetadata(mGoogleApiClient)
-											.await();
+									MetadataResult newFileMeta = fileResult.getDriveFile().getMetadata(client).await();
 									if (newFileMeta.getStatus().isSuccess()) {
 										Log.i(TAG, "File has been pushed: " + download.getTargetName());
 									} else {
@@ -213,6 +217,17 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 		}
 	}
 
+	//PUSH JOB FOR ALL DOWNLOADED PDF-FILES.
+	private void push() {
+		if (!TextUtils.isEmpty(Prefs.getInstance(App.Instance).getGoogleId()) && mGoogleApiClient != null) {
+			DriveId folderId = getITBooksFolderId(mGoogleApiClient);
+			DriveFolder itBooksFolder = getITBooksFolder(mGoogleApiClient, folderId);
+			uploadFiles(mGoogleApiClient, itBooksFolder);
+		}
+	}
+
+
+	//PULL JOB FOR ALL DOWNLOADED PDF-FILES.
 	private void pull() {
 
 	}
@@ -275,7 +290,8 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 						prefs.setLastTimeSync(thisSyncTime);
 					} else {
 						Log.w(TAG,
-								"Abort sync because duration between last sync point and this sync point must be larger than 15 minutes, you tried still in elapsed range:" + gap);
+								"Abort sync because duration between last sync point and this sync point must be larger than 15 minutes, you tried still in elapsed range:" +
+										gap);
 					}
 					stopSelf();
 				}
