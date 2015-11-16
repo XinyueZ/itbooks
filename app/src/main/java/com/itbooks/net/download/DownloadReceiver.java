@@ -56,6 +56,7 @@ public final class DownloadReceiver extends BroadcastReceiver {
 					download.end(context);
 					AsyncTaskCompat.executeParallel(new AsyncTask<Download, Void, Bitmap>() {
 						private Download mDownload;
+
 						@Override
 						protected Bitmap doInBackground(Download... params) {
 							mDownload = params[0];
@@ -74,18 +75,14 @@ public final class DownloadReceiver extends BroadcastReceiver {
 									mDownload.getTargetName());
 							if (to.exists()) {
 								PendingIntent pi = getIntent(App.Instance, to);
-								if(image != null) {
+								if (image != null) {
 									notifyDownloadCompleted(App.Instance, System.currentTimeMillis(),
 											App.Instance.getString(R.string.application_name), App.Instance.getString(
-											R.string.msg_one_book_downloaded), image, pi);
+													R.string.msg_one_book_downloaded), image, pi);
 								} else {
-									fallbackNotify(
-											App.Instance,
-											System.currentTimeMillis(),
-											App.Instance.getString( R.string.application_name),
-											App.Instance.getString(R.string.msg_one_book_downloaded),
-											pi
-									);
+									fallbackNotify(App.Instance, System.currentTimeMillis(), App.Instance.getString(
+											R.string.application_name), App.Instance.getString(
+											R.string.msg_one_book_downloaded), pi);
 								}
 							}
 						}
@@ -115,23 +112,11 @@ public final class DownloadReceiver extends BroadcastReceiver {
 			//Download pdf-reader.
 			String pdfReader = "com.adobe.reader";
 			contentIntent = PendingIntent.getActivity(cxt, (int) System.currentTimeMillis(), new Intent(
-					Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + pdfReader)),
+							Intent.ACTION_VIEW, Uri.parse(
+							"https://play.google.com/store/apps/details?id=" + pdfReader)),
 					PendingIntent.FLAG_ONE_SHOT);
 		}
 		return contentIntent;
-	}
-
-
-	private static void notifyDownloadCompleted(Context cxt, long id, String title, String desc, Bitmap image,
-			PendingIntent contentIntent )  {
-		NotificationManager mgr = (NotificationManager) cxt.getSystemService(Context.NOTIFICATION_SERVICE);
-		NotificationCompat.Builder builder = new NotificationCompat.Builder(cxt).setWhen(id).setSmallIcon(
-				R.drawable.ic_download).setTicker(title).setContentTitle(title).setContentText(desc).setStyle(
-				new BigPictureStyle().bigPicture(image).setBigContentTitle(title)).setAutoCancel(true).setLargeIcon(
-				image);
-		builder.setContentIntent(contentIntent);
-		ringWorks(cxt, builder);
-		mgr.notify(Utils.randInt(1, 9999), builder.build());
 	}
 
 	private static void ringWorks(Context cxt, Builder builder) {
@@ -142,6 +127,19 @@ public final class DownloadReceiver extends BroadcastReceiver {
 		}
 		builder.setLights(ContextCompat.getColor(App.Instance, R.color.primary_color), 1000, 1000);
 	}
+
+	private static void notifyDownloadCompleted(Context cxt, long id, String title, String desc, Bitmap image,
+			PendingIntent contentIntent) {
+		NotificationManager mgr = (NotificationManager) cxt.getSystemService(Context.NOTIFICATION_SERVICE);
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(cxt).setWhen(id).setSmallIcon(
+				R.drawable.ic_download).setTicker(title).setContentTitle(title).setContentText(desc).setStyle(
+				new BigPictureStyle().bigPicture(image).setBigContentTitle(title)).setAutoCancel(true).setLargeIcon(
+				image);
+		builder.setContentIntent(contentIntent);
+		ringWorks(cxt, builder);
+		mgr.notify(Utils.randInt(1, 9999), builder.build());
+	}
+
 
 	private void fallbackNotify(Context cxt, long id, String title, String desc, PendingIntent contentIntent) {
 		NotificationManager mgr = (NotificationManager) cxt.getSystemService(Context.NOTIFICATION_SERVICE);
