@@ -70,8 +70,8 @@
     <string name="menu_more_apps">More Apps</string>
     <string name="menu_book_delete">Delete</string>
     <string name="menu_book_copy">Copy</string>
-    <string name="menu_book_move">Move</string>
     <string name="menu_sync">Sync</string>
+    <string name="menu_book_info">Info</string>
 
     <!--debug:-->
     <!--<string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>-->
@@ -126,7 +126,6 @@
     <string name="msg_welcome_2_0">Welcome…</string>
     <string name="msg_welcome">Welcome…</string>
     <string name="msg_one_book_downloaded">One book has been downloaded, please check.</string>
-    <string name="msg_file_moved">File has been moved.</string>
     <string name="msg_file_copied">File has been copied.</string>
     <string name="msg_file_deleted">File has been deleted.</string>
     <string name="msg_file_duplicated">Target file is already existed. Operation stopped.</string>

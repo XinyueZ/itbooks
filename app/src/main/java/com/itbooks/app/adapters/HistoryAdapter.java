@@ -20,8 +20,8 @@ import com.itbooks.R;
 import com.itbooks.app.App;
 import com.itbooks.bus.DownloadCopyEvent;
 import com.itbooks.bus.DownloadDeleteEvent;
-import com.itbooks.bus.DownloadMoveEvent;
 import com.itbooks.bus.DownloadOpenEvent;
+import com.itbooks.bus.OpenBookDetailEvent;
 import com.itbooks.data.rest.RSBook;
 import com.itbooks.net.download.Download;
 
@@ -74,8 +74,8 @@ public final class HistoryAdapter extends AbstractBookViewAdapter<HistoryAdapter
 				case R.id.action_copy:
 					EventBus.getDefault().post(new DownloadCopyEvent(download));
 					break;
-				case R.id.action_move:
-					EventBus.getDefault().post(new DownloadMoveEvent(download));
+				case R.id.action_book_info:
+					EventBus.getDefault().post(new OpenBookDetailEvent(download));
 					break;
 				}
 				return true;
@@ -133,7 +133,7 @@ public final class HistoryAdapter extends AbstractBookViewAdapter<HistoryAdapter
 			mFileV = convertView.findViewById(R.id.file_btn);
 			final PopupMenu menu = new PopupMenu(convertView.getContext(), mFileV);
 			mFileV.setTag(menu);
-			menu.inflate(R.menu.downloaded_item);
+			menu.inflate(R.menu.history_item_menu);
 			mFileV.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {

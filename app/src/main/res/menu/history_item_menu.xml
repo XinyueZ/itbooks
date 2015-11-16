@@ -10,8 +10,9 @@
         android:id="@+id/action_copy"
         android:title="@string/menu_book_copy"
         app:showAsAction="never" />
+
     <item
-        android:id="@+id/action_move"
-        android:title="@string/menu_book_move"
+        android:id="@+id/action_book_info"
+        android:title="@string/menu_book_info"
         app:showAsAction="never" />
 </menu>

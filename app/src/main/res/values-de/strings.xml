@@ -65,7 +65,6 @@
     <string name="menu_more_apps">Mehr Apps</string>
     <string name="menu_book_delete">Löschen</string>
     <string name="menu_book_copy">Kopieren</string>
-    <string name="menu_book_move">Verschieben</string>
 
     <string name="lbl_bookmark_empty">Merkliste ist leer.</string>
     <string name="menu_setting">Einstellung</string>
@@ -103,8 +102,7 @@
     <string name="msg_welcome_2_0">Willkommen 2.0…</string>
     <string name="msg_welcome">Willkommen…</string>
     <string name="msg_one_book_downloaded">Ein Buch ist heruntergeladen, bitte durchchecken.</string>
-    <string name="msg_file_moved">Datei ist verschoben worden.</string>
-    <string name="msg_file_copied">Datei ist kopiert worden.</string>
+     <string name="msg_file_copied">Datei ist kopiert worden.</string>
     <string name="msg_file_deleted">Datei ist gelöscht worden.</string>
     <string name="msg_file_duplicated">Die Operation is anzuhalten, weil die Zieldatei schon vorhanden ist.</string>
     <string name="msg_file_can_be_found_to_delete">Die Zieldatei wird nicht gelöscht, weil die Datei nicht gefunden werden kann.</string>

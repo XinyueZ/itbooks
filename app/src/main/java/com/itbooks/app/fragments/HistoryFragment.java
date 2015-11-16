@@ -32,8 +32,6 @@ import com.itbooks.app.adapters.HistoryAdapter;
 import com.itbooks.bus.DownloadCompleteEvent;
 import com.itbooks.bus.DownloadCopyEvent;
 import com.itbooks.bus.DownloadDeleteEvent;
-import com.itbooks.bus.DownloadMoveEvent;
-import com.itbooks.bus.DownloadMovedEvent;
 import com.itbooks.bus.LoginRequestEvent;
 import com.itbooks.bus.SyncEvent;
 import com.itbooks.db.DB;
@@ -64,16 +62,7 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 	//Subscribes, event-handlers
 	//------------------------------------------------
 
-	/**
-	 * Handler for {@link DownloadMovedEvent}.
-	 *
-	 * @param e
-	 * 		Event {@link DownloadMovedEvent}.
-	 */
-	public void onEvent(DownloadMovedEvent e) {
-		getLoaderManager().initLoader(4, null, this).forceLoad();
-		EventBus.getDefault().removeAllStickyEvents();
-	}
+
 
 	/**
 	 * Handler for {@link com.itbooks.bus.DownloadCompleteEvent}.
@@ -133,16 +122,6 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 
 	public void onEvent(DownloadCopyEvent e) {
 		showDirChooser(DownloadDirChooserDialogFragment.COPY, e.getDownload());
-	}
-
-	/**
-	 * Handler for {@link com.itbooks.bus.DownloadMoveEvent}.
-	 *
-	 * @param e
-	 * 		Event {@link com.itbooks.bus.DownloadMoveEvent}.
-	 */
-	public void onEvent(DownloadMoveEvent e) {
-		showDirChooser(DownloadDirChooserDialogFragment.MOVE, e.getDownload());
 	}
 
 

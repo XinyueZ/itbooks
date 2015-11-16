@@ -13,20 +13,15 @@ import android.view.View;
 import com.chopping.utils.Utils;
 import com.itbooks.R;
 import com.itbooks.app.App;
-import com.itbooks.bus.DownloadMovedEvent;
-import com.itbooks.db.DB;
 import com.itbooks.net.download.Download;
 import com.turhanoz.android.reactivedirectorychooser.event.OnDirectoryChosenEvent;
 import com.turhanoz.android.reactivedirectorychooser.ui.DirectoryChooserFragment;
 
 import org.apache.commons.io.FileUtils;
 
-import de.greenrobot.event.EventBus;
-
 
 public final class DownloadDirChooserDialogFragment extends DirectoryChooserFragment {
 	public static final int COPY = 4;
-	public static final int MOVE = 5;
 	private static final String EXTRAS_DOWNLOAD = DownloadDirChooserDialogFragment.class.getName() + ".EXTRAS.download";
 	private static final String EXTRAS_COPY_OR_MOVE =
 			DownloadDirChooserDialogFragment.class.getName() + ".EXTRAS.copyOrMove";
@@ -73,31 +68,6 @@ public final class DownloadDirChooserDialogFragment extends DirectoryChooserFrag
 					}
 				}, from, to);
 				break;
-			case MOVE: //move
-				AsyncTaskCompat.executeParallel(new AsyncTask<File, Void, IOException>() {
-					@Override
-					protected IOException doInBackground(File... params) {
-						try {
-							FileUtils.moveFile(params[0], params[1]);
-							DB.getInstance(App.Instance).deleteDownload(download.getDownloadId());
-							return null;
-						} catch (IOException e1) {
-							return e1;
-						}
-					}
-
-					@Override
-					protected void onPostExecute(IOException e) {
-						super.onPostExecute(e);
-						if (e == null) {
-							Utils.showLongToast(App.Instance, R.string.msg_file_moved);
-							EventBus.getDefault().postSticky(new DownloadMovedEvent());
-						} else {
-							Utils.showLongToast(App.Instance, R.string.lbl_status_failed);
-						}
-					}
-				}, from, to);
-				break;
 			}
 		} else {
 			if(to.exists()) {
@@ -125,9 +95,6 @@ public final class DownloadDirChooserDialogFragment extends DirectoryChooserFrag
 		switch (mCopyOrMove) {
 		case COPY: //copy
 			getDialog().setTitle(R.string.menu_book_copy);
-			break;
-		case MOVE: //move
-			getDialog().setTitle(R.string.menu_book_move);
 			break;
 		}
 	}
