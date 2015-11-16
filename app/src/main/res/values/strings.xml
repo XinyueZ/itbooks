@@ -16,6 +16,7 @@
     <string name="btn_turn_on">Turn on</string>
     <string name="btn_reset">Reset</string>
     <string name="btn_login">Login</string>
+    <string name="btn_not_yet">Not yet</string>
 
     <string name="suggestion_auth">com.itbooks</string>
 
@@ -52,6 +53,7 @@
     <string name="lbl_by">By</string>
     <string name="lbl_history">History</string>
     <string name="lbl_history_empty">No downloads</string>
+    <string name="lbl_login_benefit">Login with Google Account, you can save your Bookmarks and Downloaded files permanently.</string>
 
     <string name="lbl_status_pending">Pending</string>
     <string name="lbl_status_running">Downloading</string>

@@ -11,8 +11,11 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import com.itbooks.R;
+import com.itbooks.bus.AskedPushEvent;
 import com.itbooks.gcm.RegGCMTask;
 import com.itbooks.utils.Prefs;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Dialog to show some information about push
@@ -60,6 +63,7 @@ public final class PushInfoDialogFragment extends DialogFragment implements OnCl
 			AsyncTaskCompat.executeParallel(new RegGCMTask(getActivity()) );
 			break;
 		}
+		EventBus.getDefault().post(new AskedPushEvent());
 		dismiss();
 	}
 }

@@ -13,6 +13,7 @@
     <string name="btn_not_agree">拒绝</string>
     <string name="btn_reset">重置</string>
     <string name="btn_login">登录</string>
+    <string name="btn_not_yet">现在不</string>
 
     <string name="lbl_about">关于</string>
     <string name="lbl_share_app">分享</string>
@@ -54,6 +55,8 @@
     <string name="lbl_welcome">欢迎使用 %1$s，来下载您需要的IT书籍!</string>
     <string name="lbl_hello">你好 %1$s!</string>
     <string name="lbl_connect_google">正在连接谷歌后台…</string>
+    <string name="lbl_login_benefit">登录谷歌后，你可以长久保存[收藏夹]和[下载的书]。</string>
+
 
     <string name="menu_forward">向前</string>
     <string name="menu_backward">向后</string>

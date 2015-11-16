@@ -8,6 +8,7 @@ import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender.SendIntentException;
@@ -70,6 +71,7 @@ import com.itbooks.app.fragments.AboutDialogFragment;
 import com.itbooks.app.fragments.AppListImpFragment;
 import com.itbooks.app.fragments.BookmarkListFragment;
 import com.itbooks.app.fragments.PushInfoDialogFragment;
+import com.itbooks.bus.AskedPushEvent;
 import com.itbooks.bus.BookmarksLoadedEvent;
 import com.itbooks.bus.CleanBookmarkEvent;
 import com.itbooks.bus.DownloadCompleteEvent;
@@ -220,6 +222,16 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	//------------------------------------------------
 	//Subscribes, event-handlers
 	//------------------------------------------------
+
+	/**
+	 * Handler for {@link com.itbooks.bus.AskedPushEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link com.itbooks.bus.AskedPushEvent}.
+	 */
+	public void onEvent(AskedPushEvent e) {
+		showAskLogin();
+	}
 
 	/**
 	 * Handler for {@link com.itbooks.bus.LoginRequestEvent}.
@@ -583,6 +595,35 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		Prefs prefs = Prefs.getInstance(getApplication());
 		if (prefs.isEULAOnceConfirmed() && !prefs.hasKnownPush()) {
 			showDialogFragment(PushInfoDialogFragment.newInstance(getApplication()), null);
+		} else {
+				showAskLogin();
+		}
+	}
+
+	private void showAskLogin() {
+		Prefs prefs = Prefs.getInstance(getApplication());
+		if (prefs.isEULAOnceConfirmed() && !prefs.askLogin()) {
+			if (mDrawerLayout != null) {
+				Prefs.getInstance(App.Instance).setAskLogin(true);
+				mDrawerLayout.closeDrawer(GravityCompat.END);
+				mDrawerLayout.openDrawer(GravityCompat.START);
+				showDialogFragment(new DialogFragment() {
+					@Override
+					public Dialog onCreateDialog(Bundle savedInstanceState) {
+						// Use the Builder class for convenient dialog construction
+						AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+						builder.setTitle(R.string.application_name).setMessage(R.string.lbl_login_benefit)
+								.setNegativeButton(R.string.btn_not_yet, null).setPositiveButton(R.string.btn_login, new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+										ConnectGoogleActivity.showInstance(MainActivity.this);
+									}
+								});
+						// Create the AlertDialog object and return it
+						return builder.create();
+					}
+				}, null);
+			}
 		}
 	}
 

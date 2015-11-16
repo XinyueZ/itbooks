@@ -55,6 +55,8 @@ public final class Prefs extends BasicPrefs {
 	private static final String KEY_GOOGLE_THUMB_URL = "key.google.thumb.url";
 
 	private static final String KEY_LAST_TIME_SYNC = "key.last.time.sync";
+
+	private static final String KEY_ASK_LOGIN = "key.ask.login";
 	/**
 	 * Created a DeviceData storage.
 	 *
@@ -309,5 +311,20 @@ public final class Prefs extends BasicPrefs {
 	 */
 	public long getLastTimeSync() {
 		return getLong(KEY_LAST_TIME_SYNC, -1);
+	}
+
+
+	/**
+	 * Set whether has asked login benefit.
+	 */
+	public void setAskLogin(boolean asked) {
+		setBoolean(KEY_ASK_LOGIN, asked);
+	}
+
+	/**
+	 * Whether has asked login benefit.
+	 */
+	public boolean askLogin() {
+		return getBoolean(KEY_ASK_LOGIN, false);
 	}
 }

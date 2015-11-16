@@ -14,6 +14,7 @@
     <string name="btn_not_agree">Stimme nicht zu.</string>
     <string name="btn_reset">Änderen</string>
     <string name="btn_login">Anmelden</string>
+    <string name="btn_not_yet">Nicht jetzt</string>
 
     <string name="lbl_about">About</string>
     <string name="lbl_share_app">Teilen</string>
@@ -58,6 +59,7 @@
     <string name="lbl_welcome">Willkommen bei %1$s!</string>
     <string name="lbl_hello">Hallo %1$s!</string>
     <string name="lbl_connect_google">Verbindung an Google…</string>
+    <string name="lbl_login_benefit">Mit Google anmelden, damit Du die Merkliste und alle heruntergeladenen Bücher permanent sichern kannst.</string>
 
     <string name="menu_forward">Vorwärts</string>
     <string name="menu_backward">Rückwärts</string>
