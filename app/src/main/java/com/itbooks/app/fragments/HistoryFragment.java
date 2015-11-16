@@ -38,7 +38,6 @@ import com.itbooks.bus.DownloadCompleteEvent;
 import com.itbooks.bus.DownloadCopyEvent;
 import com.itbooks.bus.DownloadDeleteEvent;
 import com.itbooks.bus.LoginRequestEvent;
-import com.itbooks.bus.SyncEvent;
 import com.itbooks.db.DB;
 import com.itbooks.net.SyncService;
 import com.itbooks.net.download.Download;
@@ -217,8 +216,11 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 				.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 				   @Override
 				   public boolean onMenuItemClick(MenuItem item) {
-					   EventBus.getDefault().post(!TextUtils.isEmpty(Prefs.getInstance(App.Instance).getGoogleId()) ?
-							   new SyncEvent() : new LoginRequestEvent());
+					   if (!TextUtils.isEmpty(Prefs.getInstance(App.Instance).getGoogleId())) {
+						   SyncService.startSync(App.Instance);
+					   } else {
+						   EventBus.getDefault().post(new LoginRequestEvent());
+					   }
 					   return true;
 				   }
 			   }

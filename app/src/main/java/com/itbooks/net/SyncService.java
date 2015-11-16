@@ -3,11 +3,14 @@ package com.itbooks.net;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import android.app.DownloadManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -52,6 +55,9 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 	private static final String TAG = SyncService.class.getSimpleName();
 	private volatile GoogleApiClient mGoogleApiClient;
 	public static final String EXTRAS_ERROR_RESULT = SyncService.class.getName() + ".EXTRAS.error_result";
+	private static final String EXTRAS_LIST_DELETE = SyncService.class.getName() + ".EXTRAS.list_delete";
+	private static final String ACTION_SYNC_ONLY = SyncService.class.getName() + ".EXTRAS.sync_only";
+	private static final String ACTION_SYNC_DEL = SyncService.class.getName() + ".EXTRAS.sync_del";
 	public static final String ACTION_CONNECT_ERROR = SyncService.class.getName() + ".ACTION.SyncService.connect_error";
 	public static final String ACTION_FILE_DOWNLOADED = SyncService.class.getName() + ".ACTION.SyncService.file_downloaded";
 	public static final String ACTION_SYNC_BEGIN = SyncService.class.getName() + ".ACTION.SyncService.sync_begin";
@@ -67,25 +73,29 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 	private static final String BOOK_YEAR = "book_year";
 	private static final String BOOK_PUBLISHER = "book_publisher";
 	private static final String BOOK_COVER = "book_cover";
+
+	private  boolean mCmdSyncOnly = true;
+	private List<Integer> mDownloadDelList = null;
 	/**
 	 * Sync can be continued to use when limit's passed.
 	 */
 	private static final long SYNC_LIMIT = 60000;
 //	private static final long SYNC_LIMIT =  AlarmManager.INTERVAL_FIFTEEN_MINUTES;
 
-	public SyncService() {
+	public static void startSync(Context cxt) {
+		Intent intent = new Intent(cxt, SyncService.class);
+		intent.setAction(ACTION_SYNC_ONLY);
+		cxt.startService(intent);
 	}
 
-	@Override
-	public IBinder onBind(Intent intent) {
-		return null;
+	public static void startSyncDel(Context cxt, ArrayList<Download> listToDelete) {
+		Intent intent = new Intent(cxt, SyncService.class);
+		intent.setAction(ACTION_SYNC_DEL);
+		intent.putExtra(EXTRAS_LIST_DELETE, (Serializable)listToDelete);
+		cxt.startService(intent);
 	}
 
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		establishGoogleDriver();
-		return ServiceCompat.START_STICKY;
-	}
+
 
 	private static DriveId getITBooksFolderId(GoogleApiClient client) {
 		DriveId folderId = null;
@@ -323,6 +333,11 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 		}
 	}
 
+	//REMOVE FILE(s).
+	private void del() {
+
+	}
+
 	/**
 	 * When user logined, user can access Google Driver and save downloaded files. Here to establish connection.
 	 */
@@ -370,23 +385,26 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 			@Override
 			public void run() {
 				synchronized (TAG) {
-					Prefs prefs = Prefs.getInstance(App.Instance);
-					long timeLastSync = Prefs.getInstance(App.Instance).getLastTimeSync();
-					long thisSyncTime = System.currentTimeMillis();
-					long gap = thisSyncTime - timeLastSync;
-					if (timeLastSync < 0 || gap > SYNC_LIMIT) {
-						LocalBroadcastManager lbm =
-								LocalBroadcastManager.getInstance(App.Instance);
-						lbm.sendBroadcast(new Intent(ACTION_SYNC_BEGIN));
-						push();
-						pull();
-						disestablishGoogleDriver();
-						prefs.setLastTimeSync(thisSyncTime);
-						lbm.sendBroadcast(new Intent(ACTION_SYNC_END));
+					if(mCmdSyncOnly) {
+						Prefs prefs = Prefs.getInstance(App.Instance);
+						long timeLastSync = Prefs.getInstance(App.Instance).getLastTimeSync();
+						long thisSyncTime = System.currentTimeMillis();
+						long gap = thisSyncTime - timeLastSync;
+						if (timeLastSync < 0 || gap > SYNC_LIMIT) {
+							LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(App.Instance);
+							lbm.sendBroadcast(new Intent(ACTION_SYNC_BEGIN));
+							push();
+							pull();
+							disestablishGoogleDriver();
+							prefs.setLastTimeSync(thisSyncTime);
+							lbm.sendBroadcast(new Intent(ACTION_SYNC_END));
+						} else {
+							Log.w(TAG,
+									"Abort sync because duration between last sync point and this sync point must be larger than 15 minutes, you tried still in elapsed range:" +
+											gap);
+						}
 					} else {
-						Log.w(TAG,
-								"Abort sync because duration between last sync point and this sync point must be larger than 15 minutes, you tried still in elapsed range:" +
-										gap);
+						del();
 					}
 					stopSelf();
 				}
@@ -399,5 +417,22 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 
 	}
 
+	public SyncService() {
+	}
+
+	@Override
+	public IBinder onBind(Intent intent) {
+		return null;
+	}
+
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		mCmdSyncOnly = TextUtils.equals(intent.getAction(), ACTION_SYNC_ONLY);
+		if(!mCmdSyncOnly ) {
+			mDownloadDelList = intent.getIntegerArrayListExtra(EXTRAS_LIST_DELETE);
+		}
+		establishGoogleDriver();
+		return ServiceCompat.START_STICKY;
+	}
 
 }
