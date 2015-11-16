@@ -175,7 +175,7 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 					}
 
 					if (fileExist) {
-						Log.i(TAG, "File already pushed: " + download.getTargetName());
+						Log.w(TAG, "File already pushed: " + download.getTargetName());
 					} else {
 						try {
 							Log.i(TAG, "Start pushing: " + download.getTargetName());

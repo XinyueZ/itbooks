@@ -79,7 +79,6 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 	private BroadcastReceiver mSyncEndHandler = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			Utils.showLongToast(App.Instance, R.string.msg_file_deleted);
 			getLoaderManager().initLoader(2, null, HistoryFragment.this).forceLoad();
 		}
 	};
@@ -116,6 +115,12 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 					downloadsList.add(params[0]);
 					SyncService.startSyncDel(App.Instance, downloadsList);
 					return null;
+				}
+
+				@Override
+				protected void onPostExecute(IOException e) {
+					super.onPostExecute(e);
+					Utils.showLongToast(App.Instance, R.string.msg_file_deleted);
 				}
 			}, e.getDownload());
 		} else {
@@ -245,6 +250,7 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 					@Override
 					public void onLoadFinished(Loader<List<Download>> loader, List<Download> downloadsList) {
 						SyncService.startSyncDel(App.Instance, downloadsList);
+						Utils.showLongToast(App.Instance, R.string.msg_file_deleted);
 					}
 
 					@Override
