@@ -1,6 +1,7 @@
 package com.itbooks.app.activities;
 
 import java.io.File;
+import java.util.List;
 
 import android.app.Dialog;
 import android.app.SearchManager;
@@ -14,6 +15,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.SearchRecentSuggestions;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -648,6 +650,18 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		}
 	}
 
+	private void initAdapters(@Nullable List<RSBook> books ) {
+		Prefs prefs = Prefs.getInstance(App.Instance);
+		if (prefs.getViewStyle() == 2) {
+			mRv.setLayoutManager(mLayoutManager = new LinearLayoutManager(this));
+			mRv.setAdapter(new BookListAdapter(books, com.itbooks.utils.Utils.showImage(App.Instance)));
+		} else {
+			mRv.setLayoutManager(mLayoutManager = new GridLayoutManager(this, GRID_COL_COUNT));
+			mRv.setAdapter(new BookGridAdapter(books, GRID_COL_COUNT, mScreenSize, com.itbooks.utils.Utils.showImage(
+					App.Instance)));
+		}
+	}
+
 	/**
 	 * Show feeds.
 	 *
@@ -659,9 +673,18 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 			if (bookList != null && bookList.getStatus() == 200 && bookList.getBooks() != null &&
 					bookList.getBooks().size() > 0) {
 				AbstractBookViewAdapter adp = (AbstractBookViewAdapter) mRv.getAdapter();
-				adp.setShowImage(com.itbooks.utils.Utils.showImage(App.Instance));
-				adp.setData(bookList.getBooks());
-				mRv.getAdapter().notifyDataSetChanged();
+
+				boolean shouldShowImages = com.itbooks.utils.Utils.showImage(App.Instance);
+				boolean showImageCurrently = adp.showImages();
+
+				if(showImageCurrently == shouldShowImages) {
+					adp.setShowImages(com.itbooks.utils.Utils.showImage(App.Instance));
+					adp.setData(bookList.getBooks());
+					mRv.getAdapter().notifyDataSetChanged();
+				} else {
+					initAdapters(bookList.getBooks());
+				}
+
 				setHasShownDataOnUI(true);
 				showInfoToast(String.format(getString(R.string.msg_items_count), bookList.getBooks().size()));
 			} else {
@@ -925,15 +948,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		mRefreshLayout.setRefreshing(true);
 
 		mRv = (RecyclerView) findViewById(R.id.books_rv);
-		Prefs prefs = Prefs.getInstance(getApplicationContext());
-		if (prefs.getViewStyle() == 2) {
-			mRv.setLayoutManager(mLayoutManager = new LinearLayoutManager(this));
-			mRv.setAdapter(new BookListAdapter(null, com.itbooks.utils.Utils.showImage(App.Instance)));
-		} else {
-			mRv.setLayoutManager(mLayoutManager = new GridLayoutManager(this, GRID_COL_COUNT));
-			mRv.setAdapter(new BookGridAdapter(null, GRID_COL_COUNT, mScreenSize, com.itbooks.utils.Utils.showImage(
-					App.Instance)));
-		}
+		initAdapters(null);
 
 		mRv.addOnScrollListener(new OnScrollListener() {
 			@Override
@@ -955,6 +970,8 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 
 		handleIntent(getIntent());
 
+
+		Prefs prefs = Prefs.getInstance(getApplicationContext());
 		mKeyword = prefs.getLastSearched();
 		initDrawer();
 		initSlidingPanel();
@@ -983,6 +1000,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		getBookmarks();
 		mUIVisible = true;
 	}
+
 
 	@Override
 	public void onResume() {

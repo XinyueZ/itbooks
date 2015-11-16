@@ -25,6 +25,11 @@ public final class BookListAdapter extends AbstractBookViewAdapter<BookListAdapt
 	 * Main layout for this component.
 	 */
 	private static final int ITEM_LAYOUT = R.layout.item_book_list;
+	/**
+	 * Main layout for this component.
+	 */
+	private static final int NO_IMAGE_ITEM_LAYOUT = R.layout.no_image_item_book_list;
+
 	private boolean mShowImages;
 
 	public BookListAdapter(List<RSBook> books, boolean showImages) {
@@ -37,7 +42,7 @@ public final class BookListAdapter extends AbstractBookViewAdapter<BookListAdapt
 	public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 		Context cxt = parent.getContext();
 		//		boolean landscape = cxt.getResources().getBoolean(R.bool.landscape);
-		View convertView = LayoutInflater.from(cxt).inflate(ITEM_LAYOUT, parent, false);
+		View convertView = LayoutInflater.from(cxt).inflate(mShowImages ? ITEM_LAYOUT : NO_IMAGE_ITEM_LAYOUT, parent, false);
 		return new BookListAdapter.ViewHolder(convertView);
 	}
 
@@ -52,9 +57,6 @@ public final class BookListAdapter extends AbstractBookViewAdapter<BookListAdapt
 			} catch (NullPointerException e) {
 				holder.mBookThumbIv.setImageResource(R.drawable.ic_book);
 			}
-			holder.mBookThumbIv.setVisibility(View.VISIBLE);
-		} else {
-			holder.mBookThumbIv.setVisibility(View.GONE);
 		}
 		holder.mBookTitleTv.setText(book.getName());
 		holder.mBookDescTv.setText(book.getDescription());
@@ -70,8 +72,13 @@ public final class BookListAdapter extends AbstractBookViewAdapter<BookListAdapt
 	}
 
 	@Override
-	public void setShowImage(boolean showImage) {
-		mShowImages = showImage;
+	public void setShowImages(boolean showImages) {
+		mShowImages = showImages;
+	}
+
+	@Override
+	public boolean showImages() {
+		return mShowImages;
 	}
 
 	public static class ViewHolder extends RecyclerView.ViewHolder {

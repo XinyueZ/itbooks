@@ -107,8 +107,13 @@ public final class BookGridAdapter extends AbstractBookViewAdapter<BookGridAdapt
 	}
 
 	@Override
-	public void setShowImage(boolean showImage) {
-		mShowImages = showImage;
+	public void setShowImages(boolean showImages) {
+		mShowImages = showImages;
+	}
+
+	@Override
+	public boolean showImages() {
+		return mShowImages;
 	}
 
 	public static class ViewHolder extends RecyclerView.ViewHolder {
