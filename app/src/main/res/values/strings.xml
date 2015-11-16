@@ -128,7 +128,7 @@
     <string name="msg_welcome">Welcome…</string>
     <string name="msg_one_book_downloaded">One book has been downloaded, please check.</string>
     <string name="msg_file_copied">File has been copied.</string>
-    <string name="msg_file_deleted">File has been deleted.</string>
+    <string name="msg_file_deleted">File deleted.</string>
     <string name="msg_file_duplicated">Target file is already existed. Operation stopped.</string>
     <string name="msg_file_can_be_found_to_delete">Target file can not be found to delete.</string>
     <string name="msg_cell_network_no_image">Turn off all images(ex.Bookmark-List) under non-WIFI.</string>

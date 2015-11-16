@@ -914,8 +914,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(LAYOUT);
-		LocalBroadcastManager.getInstance(App.Instance).registerReceiver(mConnectErrorHandler,
-				mConnectErrorHandlerFilter);
+		LocalBroadcastManager.getInstance(App.Instance).registerReceiver(mConnectErrorHandler, mConnectErrorHandlerFilter);
 		LocalBroadcastManager.getInstance(App.Instance).registerReceiver(mSyncBeginHandler, mSyncBeginHandlerFilter);
 		LocalBroadcastManager.getInstance(App.Instance).registerReceiver(mSyncEndHandler, mSyncEndHandlerFilter);
 

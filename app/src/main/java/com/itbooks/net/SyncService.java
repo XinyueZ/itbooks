@@ -3,8 +3,6 @@ package com.itbooks.net;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +22,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveApi.DriveContentsResult;
 import com.google.android.gms.drive.DriveApi.MetadataBufferResult;
@@ -59,7 +59,8 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 	private static final String ACTION_SYNC_ONLY = SyncService.class.getName() + ".EXTRAS.sync_only";
 	private static final String ACTION_SYNC_DEL = SyncService.class.getName() + ".EXTRAS.sync_del";
 	public static final String ACTION_CONNECT_ERROR = SyncService.class.getName() + ".ACTION.SyncService.connect_error";
-	public static final String ACTION_FILE_DOWNLOADED = SyncService.class.getName() + ".ACTION.SyncService.file_downloaded";
+	public static final String ACTION_FILE_DOWNLOADED =
+			SyncService.class.getName() + ".ACTION.SyncService.file_downloaded";
 	public static final String ACTION_SYNC_BEGIN = SyncService.class.getName() + ".ACTION.SyncService.sync_begin";
 	public static final String ACTION_SYNC_END = SyncService.class.getName() + ".ACTION.SyncService.sync_end";
 	private static final String FOLDER_NAME = "itbooks";
@@ -74,13 +75,13 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 	private static final String BOOK_PUBLISHER = "book_publisher";
 	private static final String BOOK_COVER = "book_cover";
 
-	private  boolean mCmdSyncOnly = true;
-	private List<Integer> mDownloadDelList = null;
+	private boolean mCmdSyncOnly = true;
+	private long[] mDownloadDelList = null;
 	/**
 	 * Sync can be continued to use when limit's passed.
 	 */
 	private static final long SYNC_LIMIT = 60000;
-//	private static final long SYNC_LIMIT =  AlarmManager.INTERVAL_FIFTEEN_MINUTES;
+	//	private static final long SYNC_LIMIT =  AlarmManager.INTERVAL_FIFTEEN_MINUTES;
 
 	public static void startSync(Context cxt) {
 		Intent intent = new Intent(cxt, SyncService.class);
@@ -88,13 +89,17 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 		cxt.startService(intent);
 	}
 
-	public static void startSyncDel(Context cxt, ArrayList<Download> listToDelete) {
+	public static void startSyncDel(Context cxt, List<Download> downloadsList) {
+		long[] downloadIds = new long[downloadsList.size()];
+		int i = 0;
+		for(Download download : downloadsList) {
+			downloadIds[i++] = download.getDownloadId();
+		}
 		Intent intent = new Intent(cxt, SyncService.class);
 		intent.setAction(ACTION_SYNC_DEL);
-		intent.putExtra(EXTRAS_LIST_DELETE, (Serializable)listToDelete);
+		intent.putExtra(EXTRAS_LIST_DELETE, downloadIds);
 		cxt.startService(intent);
 	}
-
 
 
 	private static DriveId getITBooksFolderId(GoogleApiClient client) {
@@ -182,20 +187,15 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 										download.getTargetName()))));
 
 
-								CustomPropertyKey bookName = new CustomPropertyKey(BOOK_NAME,
-										CustomPropertyKey.PUBLIC);
+								CustomPropertyKey bookName = new CustomPropertyKey(BOOK_NAME, CustomPropertyKey.PUBLIC);
 								CustomPropertyKey bookAuthor = new CustomPropertyKey(BOOK_AUTHOR,
 										CustomPropertyKey.PUBLIC);
-								CustomPropertyKey bookSize = new CustomPropertyKey(BOOK_SIZE,
-										CustomPropertyKey.PUBLIC);
+								CustomPropertyKey bookSize = new CustomPropertyKey(BOOK_SIZE, CustomPropertyKey.PUBLIC);
 								CustomPropertyKey bookPages = new CustomPropertyKey(BOOK_PAGES,
 										CustomPropertyKey.PUBLIC);
-								CustomPropertyKey bookLink = new CustomPropertyKey(BOOK_LINK,
-										CustomPropertyKey.PUBLIC);
-								CustomPropertyKey bookISBN = new CustomPropertyKey(BOOK_ISBN,
-										CustomPropertyKey.PUBLIC);
-								CustomPropertyKey bookYear = new CustomPropertyKey(BOOK_YEAR,
-										CustomPropertyKey.PUBLIC);
+								CustomPropertyKey bookLink = new CustomPropertyKey(BOOK_LINK, CustomPropertyKey.PUBLIC);
+								CustomPropertyKey bookISBN = new CustomPropertyKey(BOOK_ISBN, CustomPropertyKey.PUBLIC);
+								CustomPropertyKey bookYear = new CustomPropertyKey(BOOK_YEAR, CustomPropertyKey.PUBLIC);
 								CustomPropertyKey bookPublisher = new CustomPropertyKey(BOOK_PUBLISHER,
 										CustomPropertyKey.PUBLIC);
 								CustomPropertyKey bookCover = new CustomPropertyKey(BOOK_COVER,
@@ -251,52 +251,34 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 
 	private static void downloadFiles(GoogleApiClient client, DriveFolder itBooksFolder) {
 		if (itBooksFolder != null) {
-			Query query = new Query.Builder()
-					.addFilter(Filters.eq(SearchableField.MIME_TYPE, MIME_TYPE))
-					.addFilter(Filters.contains(SearchableField.TITLE, FOLDER_NAME + "_"))
-					.build();
-			MetadataBufferResult filesBufferResult =  itBooksFolder.queryChildren(client, query).await();
+			Query query = new Query.Builder().addFilter(Filters.eq(SearchableField.MIME_TYPE, MIME_TYPE)).addFilter(
+					Filters.contains(SearchableField.TITLE, FOLDER_NAME + "_")).build();
+			MetadataBufferResult filesBufferResult = itBooksFolder.queryChildren(client, query).await();
 			if (filesBufferResult.getStatus().isSuccess()) {
 				Log.i(TAG, "Download files.");
 				MetadataBuffer metadataBuffer = filesBufferResult.getMetadataBuffer();
 				for (Metadata metaData : metadataBuffer) {
 					String description = metaData.getDescription();
-					Map<CustomPropertyKey, String> propertyKeyStringMap =  metaData.getCustomProperties();
-					CustomPropertyKey bookName = new CustomPropertyKey(BOOK_NAME,
-							CustomPropertyKey.PUBLIC);
-					CustomPropertyKey bookAuthor = new CustomPropertyKey(BOOK_AUTHOR,
-							CustomPropertyKey.PUBLIC);
-					CustomPropertyKey bookSize = new CustomPropertyKey(BOOK_SIZE,
-							CustomPropertyKey.PUBLIC);
-					CustomPropertyKey bookPages = new CustomPropertyKey(BOOK_PAGES,
-							CustomPropertyKey.PUBLIC);
-					CustomPropertyKey bookLink = new CustomPropertyKey(BOOK_LINK,
-							CustomPropertyKey.PUBLIC);
-					CustomPropertyKey bookISBN = new CustomPropertyKey(BOOK_ISBN,
-							CustomPropertyKey.PUBLIC);
-					CustomPropertyKey bookYear = new CustomPropertyKey(BOOK_YEAR,
-							CustomPropertyKey.PUBLIC);
-					CustomPropertyKey bookPublisher = new CustomPropertyKey(BOOK_PUBLISHER,
-							CustomPropertyKey.PUBLIC);
-					CustomPropertyKey bookCover = new CustomPropertyKey(BOOK_COVER,
-							CustomPropertyKey.PUBLIC);
-//					String name, String author, String size, String pages, String link, String ISBN, String year,
-//							String publisher, String description, String coverUrl
-					RSBook book = new RSBook(
-							propertyKeyStringMap.get(bookName),
-							propertyKeyStringMap.get(bookAuthor),
-							propertyKeyStringMap.get(bookSize),
-							propertyKeyStringMap.get(bookPages),
-							propertyKeyStringMap.get(bookLink),
-							propertyKeyStringMap.get(bookISBN),
-							propertyKeyStringMap.get(bookYear),
-							propertyKeyStringMap.get(bookPublisher),
-							description,
-							propertyKeyStringMap.get(bookCover)
-					);
+					Map<CustomPropertyKey, String> propertyKeyStringMap = metaData.getCustomProperties();
+					CustomPropertyKey bookName = new CustomPropertyKey(BOOK_NAME, CustomPropertyKey.PUBLIC);
+					CustomPropertyKey bookAuthor = new CustomPropertyKey(BOOK_AUTHOR, CustomPropertyKey.PUBLIC);
+					CustomPropertyKey bookSize = new CustomPropertyKey(BOOK_SIZE, CustomPropertyKey.PUBLIC);
+					CustomPropertyKey bookPages = new CustomPropertyKey(BOOK_PAGES, CustomPropertyKey.PUBLIC);
+					CustomPropertyKey bookLink = new CustomPropertyKey(BOOK_LINK, CustomPropertyKey.PUBLIC);
+					CustomPropertyKey bookISBN = new CustomPropertyKey(BOOK_ISBN, CustomPropertyKey.PUBLIC);
+					CustomPropertyKey bookYear = new CustomPropertyKey(BOOK_YEAR, CustomPropertyKey.PUBLIC);
+					CustomPropertyKey bookPublisher = new CustomPropertyKey(BOOK_PUBLISHER, CustomPropertyKey.PUBLIC);
+					CustomPropertyKey bookCover = new CustomPropertyKey(BOOK_COVER, CustomPropertyKey.PUBLIC);
+					//					String name, String author, String size, String pages, String link, String ISBN, String year,
+					//							String publisher, String description, String coverUrl
+					RSBook book = new RSBook(propertyKeyStringMap.get(bookName), propertyKeyStringMap.get(bookAuthor),
+							propertyKeyStringMap.get(bookSize), propertyKeyStringMap.get(bookPages),
+							propertyKeyStringMap.get(bookLink), propertyKeyStringMap.get(bookISBN),
+							propertyKeyStringMap.get(bookYear), propertyKeyStringMap.get(bookPublisher), description,
+							propertyKeyStringMap.get(bookCover));
 					DB db = DB.getInstance(App.Instance);
 					List<Download> downloads = db.getDownloads(book);
-					if(downloads.size() == 0) {
+					if (downloads.size() == 0) {
 						DriveId driveId = metaData.getDriveId();
 						DriveFile file = driveId.asDriveFile();
 						DriveContentsResult result = file.open(client, DriveFile.MODE_READ_ONLY, null).await();
@@ -311,10 +293,12 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 							download.setStatus(DownloadManager.STATUS_SUCCESSFUL);
 							download.setDownloadId(System.currentTimeMillis());
 							db.insertNewDownload(download);
-							LocalBroadcastManager.getInstance(App.Instance).sendBroadcast(new Intent(ACTION_FILE_DOWNLOADED));
+							LocalBroadcastManager.getInstance(App.Instance).sendBroadcast(new Intent(
+									ACTION_FILE_DOWNLOADED));
 							Log.i(TAG, "Downloaded file successfully: " + download.getTargetName());
 						} catch (IOException e) {
-							Log.e(TAG, "Can not write remote file to local: " + metaData.getTitle() + " for " + book.getName());
+							Log.e(TAG, "Can not write remote file to local: " + metaData.getTitle() + " for " +
+									book.getName());
 						}
 					} else {
 						Log.w(TAG, "Download book reject because it is already there local: " + book.getName());
@@ -335,7 +319,41 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 
 	//REMOVE FILE(s).
 	private void del() {
-
+		if (!TextUtils.isEmpty(Prefs.getInstance(App.Instance).getGoogleId()) && mGoogleApiClient != null) {
+			DriveId folderId = getITBooksFolderId(mGoogleApiClient);
+			DriveFolder itBooksFolder = getITBooksFolder(mGoogleApiClient, folderId);
+			if (itBooksFolder != null) {
+				DB db = DB.getInstance(App.Instance);
+				for (long downloadId : mDownloadDelList) {
+					Download download = db.getDownload(downloadId);
+					Query query = new Query.Builder().addFilter(Filters.eq(SearchableField.MIME_TYPE, MIME_TYPE))
+							.addFilter(Filters.eq(SearchableField.TITLE, download.getTargetName())).build();
+					MetadataBufferResult fileBufferResult = itBooksFolder.queryChildren(mGoogleApiClient, query)
+							.await();
+					MetadataBuffer fileMetadataBuffer = fileBufferResult.getMetadataBuffer();
+					for (Metadata metaData : fileMetadataBuffer) {
+						DriveId driveId = metaData.getDriveId();
+						DriveFile file = driveId.asDriveFile();
+						PendingResult<Status> pendingResult = file.delete(mGoogleApiClient);
+						Status status = pendingResult.await();
+						if (status.isSuccess()) {
+							db.deleteDownload(downloadId);
+							try {
+								FileUtils.forceDelete(new File(App.Instance.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
+										download.getTargetName()));
+							} catch (IOException e) {
+								//Ignore...
+							}
+							Log.d(TAG, "Delete file local and remote successfully: " + download.getTargetName());
+						} else {
+							Log.d(TAG, "Delete file local and remote failed: " + download.getTargetName());
+						}
+					}
+				}
+			} else {
+				Log.d(TAG, "Delete file local and remote failed, folder is not found. ");
+			}
+		}
 	}
 
 	/**
@@ -385,19 +403,18 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 			@Override
 			public void run() {
 				synchronized (TAG) {
-					if(mCmdSyncOnly) {
+					LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(App.Instance);
+					lbm.sendBroadcast(new Intent(ACTION_SYNC_BEGIN));
+					if (mCmdSyncOnly) {
 						Prefs prefs = Prefs.getInstance(App.Instance);
 						long timeLastSync = Prefs.getInstance(App.Instance).getLastTimeSync();
 						long thisSyncTime = System.currentTimeMillis();
 						long gap = thisSyncTime - timeLastSync;
 						if (timeLastSync < 0 || gap > SYNC_LIMIT) {
-							LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(App.Instance);
-							lbm.sendBroadcast(new Intent(ACTION_SYNC_BEGIN));
 							push();
 							pull();
 							disestablishGoogleDriver();
 							prefs.setLastTimeSync(thisSyncTime);
-							lbm.sendBroadcast(new Intent(ACTION_SYNC_END));
 						} else {
 							Log.w(TAG,
 									"Abort sync because duration between last sync point and this sync point must be larger than 15 minutes, you tried still in elapsed range:" +
@@ -406,6 +423,7 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 					} else {
 						del();
 					}
+					lbm.sendBroadcast(new Intent(ACTION_SYNC_END));
 					stopSelf();
 				}
 			}
@@ -428,8 +446,8 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		mCmdSyncOnly = TextUtils.equals(intent.getAction(), ACTION_SYNC_ONLY);
-		if(!mCmdSyncOnly ) {
-			mDownloadDelList = intent.getIntegerArrayListExtra(EXTRAS_LIST_DELETE);
+		if (!mCmdSyncOnly) {
+			mDownloadDelList = intent.getLongArrayExtra(EXTRAS_LIST_DELETE);
 		}
 		establishGoogleDriver();
 		return ServiceCompat.START_STICKY;
