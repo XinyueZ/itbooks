@@ -64,6 +64,7 @@
     <string name="menu_remove_all_bookmarks">Merkliste leeren</string>
     <string name="menu_more_apps">Mehr Apps</string>
     <string name="menu_book_delete">Löschen</string>
+    <string name="menu_delete_all">Alle Löschen</string>
     <string name="menu_book_copy">Kopieren</string>
 
     <string name="lbl_bookmark_empty">Merkliste ist leer.</string>

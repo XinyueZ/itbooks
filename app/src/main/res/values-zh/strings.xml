@@ -63,6 +63,7 @@
     <string name="menu_book_copy">拷贝</string>
     <string name="menu_setting">设置</string>
     <string name="menu_sync">同步</string>
+    <string name="menu_delete_all">删除所有</string>
     <string name="menu_book_info">详细</string>
 
     <!-- Shown in the 'About' window of the app. -->
