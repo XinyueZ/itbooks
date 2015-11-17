@@ -4,22 +4,15 @@ import java.io.File;
 import java.io.IOException;
 
 import android.app.DownloadManager;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.media.AudioManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationCompat.BigPictureStyle;
-import android.support.v4.app.NotificationCompat.BigTextStyle;
-import android.support.v4.app.NotificationCompat.Builder;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.os.AsyncTaskCompat;
 
 import com.chopping.utils.Utils;
@@ -27,6 +20,7 @@ import com.itbooks.R;
 import com.itbooks.app.App;
 import com.itbooks.bus.DownloadCompleteEvent;
 import com.itbooks.db.DB;
+import com.itbooks.utils.NotifyUtils;
 import com.squareup.picasso.Picasso;
 
 import de.greenrobot.event.EventBus;
@@ -76,13 +70,14 @@ public final class DownloadReceiver extends BroadcastReceiver {
 							if (to.exists()) {
 								PendingIntent pi = getIntent(App.Instance, to);
 								if (image != null) {
-									notifyDownloadCompleted(App.Instance, System.currentTimeMillis(),
+									NotifyUtils.notifyWithBigImage(App.Instance, Utils.randInt(1, 9999),
 											App.Instance.getString(R.string.application_name), App.Instance.getString(
-													R.string.msg_one_book_downloaded), image, pi);
+											R.string.msg_one_book_downloaded), R.drawable.ic_download_notify, image, pi);
 								} else {
-									fallbackNotify(App.Instance, System.currentTimeMillis(), App.Instance.getString(
-											R.string.application_name), App.Instance.getString(
-											R.string.msg_one_book_downloaded), pi);
+									NotifyUtils.notifyWithoutBitImage(App.Instance, Utils.randInt(1, 9999),
+											App.Instance.getString(R.string.application_name), App.Instance.getString(
+													R.string.msg_one_book_downloaded), R.drawable.ic_download_notify,
+											pi);
 								}
 							}
 						}
@@ -100,54 +95,23 @@ public final class DownloadReceiver extends BroadcastReceiver {
 	}
 
 
-	public static PendingIntent getIntent(Context cxt, File pdf) {
+	private static PendingIntent getIntent(Context cxt, File pdf) {
 		PendingIntent contentIntent;
 		try {
 			Intent openFileIntent = new Intent(Intent.ACTION_VIEW);
 			openFileIntent.setDataAndType(Uri.fromFile(pdf), "application/pdf");
 			openFileIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-			contentIntent = PendingIntent.getActivity(cxt, (int) System.currentTimeMillis(), openFileIntent,
+			contentIntent = PendingIntent.getActivity(cxt, Utils.randInt(1, 9999), openFileIntent,
 					PendingIntent.FLAG_ONE_SHOT);
 		} catch (Exception ex) {
 			//Download pdf-reader.
 			String pdfReader = "com.adobe.reader";
-			contentIntent = PendingIntent.getActivity(cxt, (int) System.currentTimeMillis(), new Intent(
-							Intent.ACTION_VIEW, Uri.parse(
-							"https://play.google.com/store/apps/details?id=" + pdfReader)),
+			contentIntent = PendingIntent.getActivity(cxt, Utils.randInt(1, 9999), new Intent(Intent.ACTION_VIEW,
+							Uri.parse("https://play.google.com/store/apps/details?id=" + pdfReader)),
 					PendingIntent.FLAG_ONE_SHOT);
 		}
 		return contentIntent;
 	}
 
-	private static void ringWorks(Context cxt, Builder builder) {
-		AudioManager audioManager = (AudioManager) App.Instance.getSystemService(Context.AUDIO_SERVICE);
-		if (audioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
-			builder.setVibrate(new long[] { 1000, 1000, 1000, 1000 });
-			builder.setSound(Uri.parse(String.format("android.resource://%s/%s", cxt.getPackageName(), R.raw.signal)));
-		}
-		builder.setLights(ContextCompat.getColor(App.Instance, R.color.primary_color), 1000, 1000);
-	}
 
-	private static void notifyDownloadCompleted(Context cxt, long id, String title, String desc, Bitmap image,
-			PendingIntent contentIntent) {
-		NotificationManager mgr = (NotificationManager) cxt.getSystemService(Context.NOTIFICATION_SERVICE);
-		NotificationCompat.Builder builder = new NotificationCompat.Builder(cxt).setWhen(id).setSmallIcon(
-				R.drawable.ic_download_notify).setTicker(title).setContentTitle(title).setContentText(desc).setStyle(
-				new BigPictureStyle().bigPicture(image).setBigContentTitle(title)).setAutoCancel(true).setLargeIcon(
-				image);
-		builder.setContentIntent(contentIntent);
-		ringWorks(cxt, builder);
-		mgr.notify(Utils.randInt(1, 9999), builder.build());
-	}
-
-
-	private void fallbackNotify(Context cxt, long id, String title, String desc, PendingIntent contentIntent) {
-		NotificationManager mgr = (NotificationManager) cxt.getSystemService(Context.NOTIFICATION_SERVICE);
-		NotificationCompat.Builder builder = new NotificationCompat.Builder(cxt).setWhen(id).setSmallIcon(
-				R.drawable.ic_download_notify).setTicker(title).setContentTitle(title).setContentText(desc).setStyle(
-				new BigTextStyle().bigText(desc).setBigContentTitle(title)).setAutoCancel(true);
-		builder.setContentIntent(contentIntent);
-		ringWorks(cxt, builder);
-		mgr.notify(Utils.randInt(1, 9999), builder.build());
-	}
 }
