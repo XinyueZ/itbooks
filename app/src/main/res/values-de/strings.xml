@@ -17,6 +17,7 @@
     <string name="btn_not_yet">Nicht jetzt</string>
     <string name="btn_yes">Ja</string>
     <string name="btn_no">Nein</string>
+    <string name="btn_app_rating">App bewerten</string>
 
     <string name="lbl_about">About</string>
     <string name="lbl_share_app">Teilen</string>

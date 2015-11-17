@@ -16,6 +16,7 @@
     <string name="btn_not_yet">现在不</string>
     <string name="btn_yes">是</string>
     <string name="btn_no">不</string>
+    <string name="btn_app_rating">应用评价</string>
 
     <string name="lbl_about">关于</string>
     <string name="lbl_share_app">分享</string>

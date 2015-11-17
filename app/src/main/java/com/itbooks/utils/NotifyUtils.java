@@ -4,6 +4,7 @@ package com.itbooks.utils;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.net.Uri;
@@ -29,10 +30,10 @@ public final class NotifyUtils {
 	public static void notifyWithBigImage(Context cxt, int id, String title, String desc, @DrawableRes int icon,
 			Bitmap image, PendingIntent contentIntent) {
 		NotificationManager mgr = (NotificationManager) cxt.getSystemService(Context.NOTIFICATION_SERVICE);
-		Builder builder = new Builder(cxt).setWhen(System.currentTimeMillis())
-				.setSmallIcon(icon).setTicker(title).setContentTitle(title).setContentText(
-						desc).setStyle(new BigPictureStyle().bigPicture(image).setBigContentTitle(title)).setAutoCancel(
-						true).setLargeIcon(image);
+		Builder builder = new Builder(cxt).setWhen(System.currentTimeMillis()).setSmallIcon(icon).setTicker(title)
+				.setContentTitle(title).setContentText(desc).addAction(R.drawable.ic_rating, cxt.getString(
+						R.string.btn_app_rating), getAppPlayStore(cxt)).setStyle(new BigPictureStyle().bigPicture(image)
+						.setBigContentTitle(title)).setAutoCancel(true).setLargeIcon(image);
 		builder.setContentIntent(contentIntent);
 		ringWorks(cxt, builder);
 		mgr.notify(id, builder.build());
@@ -41,11 +42,19 @@ public final class NotifyUtils {
 	public static void notifyWithoutBitImage(Context cxt, int id, String title, String desc, @DrawableRes int icon,
 			PendingIntent contentIntent) {
 		NotificationManager mgr = (NotificationManager) cxt.getSystemService(Context.NOTIFICATION_SERVICE);
-		Builder builder = new Builder(cxt).setWhen(id).setSmallIcon(
-				icon	).setTicker(title).setContentTitle(title).setContentText(desc).setStyle(
-				new BigTextStyle().bigText(desc).setBigContentTitle(title)).setAutoCancel(true);
+		Builder builder = new Builder(cxt).setWhen(id).setSmallIcon(icon).setTicker(title).setContentTitle(title)
+				.setContentText(desc).addAction(R.drawable.ic_rating, cxt.getString(R.string.btn_app_rating),
+						getAppPlayStore(cxt)).setStyle(new BigTextStyle().bigText(desc).setBigContentTitle(title))
+				.setAutoCancel(true);
 		builder.setContentIntent(contentIntent);
 		ringWorks(cxt, builder);
 		mgr.notify(id, builder.build());
+	}
+
+
+	private static PendingIntent getAppPlayStore(Context cxt) {
+		PendingIntent contentIntent = PendingIntent.getActivity(cxt, com.chopping.utils.Utils.randInt(1, 9999),
+				new Intent(Intent.ACTION_VIEW, Uri.parse("http://tinyurl.com/kto2y59")), PendingIntent.FLAG_ONE_SHOT);
+		return contentIntent;
 	}
 }

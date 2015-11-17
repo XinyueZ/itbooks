@@ -19,6 +19,7 @@
     <string name="btn_not_yet">Not yet</string>
     <string name="btn_yes">Yes</string>
     <string name="btn_no">No</string>
+    <string name="btn_app_rating">App rating</string>
 
     <string name="suggestion_auth">com.itbooks</string>
 

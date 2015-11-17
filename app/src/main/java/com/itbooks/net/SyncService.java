@@ -318,44 +318,52 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 		}
 	}
 
+	private static void deleteFiles(GoogleApiClient client, long[] fileIDs, DriveFolder itBooksFolder) {
+		if (itBooksFolder != null) {
+			DB db = DB.getInstance(App.Instance);
+			for (long downloadId : fileIDs) {
+				Download download = db.getDownload(downloadId);
+				Query query = new Query.Builder().addFilter(Filters.eq(SearchableField.MIME_TYPE, MIME_TYPE))
+						.addFilter(Filters.eq(SearchableField.TITLE, download.getTargetName())).build();
+				MetadataBufferResult fileBufferResult = itBooksFolder.queryChildren(client, query)
+						.await();
+				MetadataBuffer fileMetadataBuffer = fileBufferResult.getMetadataBuffer();
+				for (Metadata metaData : fileMetadataBuffer) {
+					DriveId driveId = metaData.getDriveId();
+					DriveFile file = driveId.asDriveFile();
+					PendingResult<Status> pendingResult = file.delete(client);
+					Status status = pendingResult.await();
+					if (status.isSuccess()) {
+						db.deleteDownload(downloadId);
+						try {
+							File localFile = new File(App.Instance.getExternalFilesDir(
+									Environment.DIRECTORY_DOWNLOADS), download.getTargetName());
+							if (localFile.exists()) {
+								FileUtils.forceDelete(localFile);
+							}
+						} catch (Exception e) {
+							//Ignore...
+						}
+					} else {
+						Log.d(TAG, "Delete file local and remote failed: " + download.getTargetName());
+					}
+				}
+			}
+		} else {
+			Log.d(TAG, "Delete file local and remote failed, folder is not found. ");
+		}
+	}
+
 	//REMOVE FILE(s).
 	private void del() {
 		if (!TextUtils.isEmpty(Prefs.getInstance(App.Instance).getGoogleId()) && mGoogleApiClient != null) {
 			DriveId folderId = getITBooksFolderId(mGoogleApiClient);
 			DriveFolder itBooksFolder = getITBooksFolder(mGoogleApiClient, folderId);
-			if (itBooksFolder != null) {
-				DB db = DB.getInstance(App.Instance);
-				for (long downloadId : mDownloadDelList) {
-					Download download = db.getDownload(downloadId);
-					Query query = new Query.Builder().addFilter(Filters.eq(SearchableField.MIME_TYPE, MIME_TYPE))
-							.addFilter(Filters.eq(SearchableField.TITLE, download.getTargetName())).build();
-					MetadataBufferResult fileBufferResult = itBooksFolder.queryChildren(mGoogleApiClient, query)
-							.await();
-					MetadataBuffer fileMetadataBuffer = fileBufferResult.getMetadataBuffer();
-					for (Metadata metaData : fileMetadataBuffer) {
-						DriveId driveId = metaData.getDriveId();
-						DriveFile file = driveId.asDriveFile();
-						PendingResult<Status> pendingResult = file.delete(mGoogleApiClient);
-						Status status = pendingResult.await();
-						if (status.isSuccess()) {
-							db.deleteDownload(downloadId);
-							try {
-								FileUtils.forceDelete(new File(App.Instance.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
-										download.getTargetName()));
-							} catch (IOException e) {
-								//Ignore...
-							}
-							Log.d(TAG, "Delete file local and remote successfully: " + download.getTargetName());
-						} else {
-							Log.d(TAG, "Delete file local and remote failed: " + download.getTargetName());
-						}
-					}
-				}
-			} else {
-				Log.d(TAG, "Delete file local and remote failed, folder is not found. ");
-			}
+			deleteFiles(mGoogleApiClient, mDownloadDelList, itBooksFolder);
 		}
 	}
+
+
 
 	/**
 	 * When user logined, user can access Google Driver and save downloaded files. Here to establish connection.

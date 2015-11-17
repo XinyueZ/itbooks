@@ -116,12 +116,6 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 					SyncService.startSyncDel(App.Instance, downloadsList);
 					return null;
 				}
-
-				@Override
-				protected void onPostExecute(IOException e) {
-					super.onPostExecute(e);
-					Utils.showLongToast(App.Instance, R.string.msg_file_deleted);
-				}
 			}, e.getDownload());
 		} else {
 			Utils.showLongToast(App.Instance, R.string.msg_file_can_be_found_to_delete);
@@ -250,7 +244,6 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 					@Override
 					public void onLoadFinished(Loader<List<Download>> loader, List<Download> downloadsList) {
 						SyncService.startSyncDel(App.Instance, downloadsList);
-						Utils.showLongToast(App.Instance, R.string.msg_file_deleted);
 					}
 
 					@Override
