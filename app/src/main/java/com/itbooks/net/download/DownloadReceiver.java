@@ -70,11 +70,11 @@ public final class DownloadReceiver extends BroadcastReceiver {
 							if (to.exists()) {
 								PendingIntent pi = getIntent(App.Instance, to);
 								if (image != null) {
-									NotifyUtils.notifyWithBigImage(App.Instance, Utils.randInt(1, 9999),
+									NotifyUtils.notifyWithBigImage(App.Instance, (int)System.currentTimeMillis(),
 											App.Instance.getString(R.string.application_name), App.Instance.getString(
 											R.string.msg_one_book_downloaded), R.drawable.ic_download_notify, image, pi);
 								} else {
-									NotifyUtils.notifyWithoutBitImage(App.Instance, Utils.randInt(1, 9999),
+									NotifyUtils.notifyWithoutBitImage(App.Instance, (int)System.currentTimeMillis(),
 											App.Instance.getString(R.string.application_name), App.Instance.getString(
 													R.string.msg_one_book_downloaded), R.drawable.ic_download_notify,
 											pi);

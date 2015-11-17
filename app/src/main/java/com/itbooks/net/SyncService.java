@@ -43,10 +43,12 @@ import com.google.android.gms.drive.metadata.CustomPropertyKey;
 import com.google.android.gms.drive.query.Filters;
 import com.google.android.gms.drive.query.Query;
 import com.google.android.gms.drive.query.SearchableField;
+import com.itbooks.R;
 import com.itbooks.app.App;
 import com.itbooks.data.rest.RSBook;
 import com.itbooks.db.DB;
 import com.itbooks.net.download.Download;
+import com.itbooks.utils.NotifyUtils;
 import com.itbooks.utils.Prefs;
 
 import org.apache.commons.io.FileUtils;
@@ -76,8 +78,14 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 	private static final String BOOK_PUBLISHER = "book_publisher";
 	private static final String BOOK_COVER = "book_cover";
 
+	private static final int NOTIFY_ERROR_DEL_ID = 0x06;
+	private static final int NOTIFY_ERROR_PUSH_ID = 0x16;
+	private static final int NOTIFY_ERROR_PULL_ID = 0x26;
+
 	private boolean mCmdSyncOnly = true;
 	private long[] mDownloadDelList = null;
+
+
 	/**
 	 * Sync can be continued to use when limit's passed.
 	 */
@@ -154,7 +162,7 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 		return itBooksFolder;
 	}
 
-	private static void uploadFiles(GoogleApiClient client, DriveFolder itBooksFolder) {
+	private static void pushFiles(GoogleApiClient client, DriveFolder itBooksFolder) {
 		if (itBooksFolder != null) {
 			File downloadsDir = App.Instance.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
 			List<Download> downloads = DB.getInstance(App.Instance).getDownloads();
@@ -218,22 +226,49 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 									// calling await to block until the request finishes.
 									MetadataResult newFileMeta = fileResult.getDriveFile().getMetadata(client).await();
 									if (newFileMeta.getStatus().isSuccess()) {
-										Log.i(TAG, "File has been pushed: " + download.getTargetName());
+										NotifyUtils.notifyWithoutBitImage(
+												App.Instance,(int)System.currentTimeMillis(),
+												App.Instance.getString(R.string.application_name),
+												App.Instance.getString(R.string.msg_push_success) +  download.getTargetName(),
+												android.R.drawable.stat_notify_sync, NotifyUtils.getDrive(
+														App.Instance, itBooksFolder.getDriveId()));
+
+
 									} else {
-										//Error.
-										Log.e(TAG, "File can not be found: " + download.getTargetName());
+										NotifyUtils.notifyWithoutBitImage(
+												App.Instance, NOTIFY_ERROR_PUSH_ID,
+												App.Instance.getString(R.string.application_name),
+												App.Instance.getString(R.string.msg_push_failed),
+												android.R.drawable.stat_notify_error,
+												NotifyUtils.getDrive(App.Instance, itBooksFolder.getDriveId())
+										);
 									}
 								} else {
-									//Error.
-									Log.e(TAG, "File can not be created: " + download.getTargetName());
+									NotifyUtils.notifyWithoutBitImage(
+											App.Instance, NOTIFY_ERROR_PUSH_ID,
+											App.Instance.getString(R.string.application_name),
+											App.Instance.getString(R.string.msg_push_failed),
+											android.R.drawable.stat_notify_error,
+											NotifyUtils.getDrive(App.Instance, itBooksFolder.getDriveId())
+									);
 								}
 							} else {
-								//Error.
-								Log.i(TAG, "Google Driver can not be found.");
+								NotifyUtils.notifyWithoutBitImage(
+										App.Instance, NOTIFY_ERROR_PUSH_ID,
+										App.Instance.getString(R.string.application_name),
+										App.Instance.getString(R.string.msg_push_failed),
+										android.R.drawable.stat_notify_error,
+										NotifyUtils.getDrive(App.Instance, itBooksFolder.getDriveId())
+								);
 							}
 						} catch (IOException e1) {
-							//Error.
-							Log.e(TAG, "File can not be pushed: " + download.getTargetName());
+							NotifyUtils.notifyWithoutBitImage(
+									App.Instance, NOTIFY_ERROR_PUSH_ID,
+									App.Instance.getString(R.string.application_name),
+									App.Instance.getString(R.string.msg_push_failed),
+									android.R.drawable.stat_notify_error,
+									NotifyUtils.getDrive(App.Instance, itBooksFolder.getDriveId())
+							);
 						}
 					}
 				}
@@ -246,11 +281,11 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 		if (!TextUtils.isEmpty(Prefs.getInstance(App.Instance).getGoogleId()) && mGoogleApiClient != null) {
 			DriveId folderId = getITBooksFolderId(mGoogleApiClient);
 			DriveFolder itBooksFolder = getITBooksFolder(mGoogleApiClient, folderId);
-			uploadFiles(mGoogleApiClient, itBooksFolder);
+			pushFiles(mGoogleApiClient, itBooksFolder);
 		}
 	}
 
-	private static void downloadFiles(GoogleApiClient client, DriveFolder itBooksFolder) {
+	private static void pullFiles(GoogleApiClient client, DriveFolder itBooksFolder) {
 		if (itBooksFolder != null) {
 			Query query = new Query.Builder().addFilter(Filters.eq(SearchableField.MIME_TYPE, MIME_TYPE)).addFilter(
 					Filters.contains(SearchableField.TITLE, FOLDER_NAME + "_")).build();
@@ -296,13 +331,23 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 							db.insertNewDownload(download);
 							LocalBroadcastManager.getInstance(App.Instance).sendBroadcast(new Intent(
 									ACTION_FILE_DOWNLOADED));
-							Log.i(TAG, "Downloaded file successfully: " + download.getTargetName());
+							NotifyUtils.notifyWithoutBitImage(
+									App.Instance, (int)System.currentTimeMillis(),
+									App.Instance.getString(R.string.application_name),
+									App.Instance.getString(R.string.msg_pull_success)  + download.getTargetName(),
+									android.R.drawable.stat_notify_sync,
+									NotifyUtils.getDrive(App.Instance,itBooksFolder.getDriveId()));
+
+
 						} catch (IOException e) {
-							Log.e(TAG, "Can not write remote file to local: " + metaData.getTitle() + " for " +
-									book.getName());
+							NotifyUtils.notifyWithoutBitImage(
+									App.Instance, NOTIFY_ERROR_PULL_ID,
+									App.Instance.getString(R.string.application_name),
+									App.Instance.getString(R.string.msg_pull_failed),
+									android.R.drawable.stat_notify_error,
+									NotifyUtils.getDrive(App.Instance, itBooksFolder.getDriveId())
+							);
 						}
-					} else {
-						Log.w(TAG, "Download book reject because it is already there local: " + book.getName());
 					}
 				}
 			}
@@ -314,7 +359,7 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 		if (!TextUtils.isEmpty(Prefs.getInstance(App.Instance).getGoogleId()) && mGoogleApiClient != null) {
 			DriveId folderId = getITBooksFolderId(mGoogleApiClient);
 			DriveFolder itBooksFolder = getITBooksFolder(mGoogleApiClient, folderId);
-			downloadFiles(mGoogleApiClient, itBooksFolder);
+			pullFiles(mGoogleApiClient, itBooksFolder);
 		}
 	}
 
@@ -329,28 +374,39 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 						.await();
 				MetadataBuffer fileMetadataBuffer = fileBufferResult.getMetadataBuffer();
 				for (Metadata metaData : fileMetadataBuffer) {
+					db.deleteDownload(downloadId);
+					try {
+						File localFile = new File(App.Instance.getExternalFilesDir(
+								Environment.DIRECTORY_DOWNLOADS), download.getTargetName());
+						if (localFile.exists()) {
+							FileUtils.forceDelete(localFile);
+						}
+					} catch (Exception e) {
+						//Ignore...
+					}
+
 					DriveId driveId = metaData.getDriveId();
 					DriveFile file = driveId.asDriveFile();
 					PendingResult<Status> pendingResult = file.delete(client);
 					Status status = pendingResult.await();
 					if (status.isSuccess()) {
-						db.deleteDownload(downloadId);
-						try {
-							File localFile = new File(App.Instance.getExternalFilesDir(
-									Environment.DIRECTORY_DOWNLOADS), download.getTargetName());
-							if (localFile.exists()) {
-								FileUtils.forceDelete(localFile);
-							}
-						} catch (Exception e) {
-							//Ignore...
-						}
+						NotifyUtils.notifyWithoutBitImage(
+								App.Instance, (int)System.currentTimeMillis(),
+								App.Instance.getString(R.string.application_name),
+								App.Instance.getString(R.string.msg_file_delete_success) + download.getTargetName(),
+								android.R.drawable.stat_notify_sync,
+								NotifyUtils.getDrive(App.Instance,itBooksFolder.getDriveId()));
 					} else {
-						Log.d(TAG, "Delete file local and remote failed: " + download.getTargetName());
+						NotifyUtils.notifyWithoutBitImage(
+								App.Instance, NOTIFY_ERROR_DEL_ID,
+								App.Instance.getString(R.string.application_name),
+								App.Instance.getString(R.string.msg_file_delete_failed),
+								android.R.drawable.stat_notify_error,
+								NotifyUtils.getDrive(App.Instance, itBooksFolder.getDriveId())
+						);
 					}
 				}
 			}
-		} else {
-			Log.d(TAG, "Delete file local and remote failed, folder is not found. ");
 		}
 	}
 

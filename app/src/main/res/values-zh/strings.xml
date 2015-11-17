@@ -123,9 +123,14 @@
      <string name="msg_file_copied">拷贝了文件</string>
     <string name="msg_file_deleted">删除了文件</string>
     <string name="msg_file_duplicated">目标文件已经存在，终止操作</string>
-    <string name="msg_file_can_be_found_to_delete">无法找到要删除的目标文件</string>
     <string name="msg_access_driver_failed">无法接触谷歌网盘。</string>
     <string name="msg_sync_req_for_driver">你必须登录后才能用谷歌网盘来同步。</string>
     <string name="msg_sync_in_progress">同步传输中</string>
     <string name="msg_scheduled_sync_done">定期同步数据结束</string>
+    <string name="msg_file_delete_failed">无法删除目标文件，请手动删除。</string>
+    <string name="msg_pull_failed">文件无法下载下来，请手动删除。</string>
+    <string name="msg_push_failed">文件无法推送上服务器，请手动删除。</string>
+    <string name="msg_file_delete_success">文件删除， bitte checken.</string>
+    <string name="msg_pull_success">文件已经下载，请检查。</string>
+    <string name="msg_push_success">文件已经推送，请检查。</string>
 </resources>

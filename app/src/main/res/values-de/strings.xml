@@ -113,10 +113,15 @@
      <string name="msg_file_copied">Datei ist kopiert worden.</string>
     <string name="msg_file_deleted">Datei entfernt.</string>
     <string name="msg_file_duplicated">Die Operation is anzuhalten, weil die Zieldatei schon vorhanden ist.</string>
-    <string name="msg_file_can_be_found_to_delete">Die Zieldatei wird nicht gelöscht, weil die Datei nicht gefunden werden kann.</string>
     <string name="msg_cell_network_no_image">Alle Bilder(außerhalb Merkliste) werden ausgeblendet, wenn Du nicht mit W-LAN unterwegs bist.</string>
     <string name="msg_access_driver_failed">Google Driver ist nicht erreichbar.</string>
     <string name="msg_sync_req_for_driver">Damit Google Driver für Sync verwendet werden kann, musst Du einloggen.</string>
     <string name="msg_sync_in_progress">Sync läuft gerade</string>
     <string name="msg_scheduled_sync_done">Eine Sync-Aufgabe fertigt</string>
+    <string name="msg_file_delete_failed">Fehler, die Datei kann nicht gelöscht werden. Bitte versucht manuell.</string>
+    <string name="msg_pull_failed">Die Datein können nicht heruntergeladen werden. Bitte versucht manuell.</string>
+    <string name="msg_push_failed">Die Datein können nicht hochgeladen werden. Bitte versucht manuell.</string>
+    <string name="msg_file_delete_success">Datein gelöscht, bitte checken.</string>
+    <string name="msg_pull_success">Datein heruntergeladen, bitte checken.</string>
+    <string name="msg_push_success">Datein hochgeladen, bitte checken.</string>
 </resources>

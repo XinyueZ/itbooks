@@ -27,12 +27,12 @@ public final class AppGuardService extends GcmTaskService {
 			boolean isWifiOn = NetworkUtils.getCurrentNetworkType(App.Instance) == NetworkUtils.CONNECTION_WIFI;
 			if (syncWifi) {
 				if (isWifiOn) {
-					SyncService.startSync(this);
 					notifySync(this);
+					SyncService.startSync(this);
 				}
 			} else {
-				SyncService.startSync(this);
 				notifySync(this);
+				SyncService.startSync(this);
 			}
 		}
 		return GcmNetworkManager.RESULT_SUCCESS;
@@ -41,9 +41,9 @@ public final class AppGuardService extends GcmTaskService {
 	private static void notifySync(Context cxt) {
 		Intent intent = new Intent(cxt, BookDetailActivity.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		PendingIntent contentIntent = PendingIntent.getActivity(cxt, (int) System.currentTimeMillis(), intent,
+		PendingIntent contentIntent = PendingIntent.getActivity(cxt, com.chopping.utils.Utils.randInt(1, 9999), intent,
 				PendingIntent.FLAG_ONE_SHOT);
 		NotifyUtils.notifyWithoutBitImage(cxt, NOTIFY_ID, cxt.getString(R.string.application_name), cxt.getString(
-				R.string.msg_scheduled_sync_done), R.drawable.ic_background_sync, contentIntent);
+				R.string.msg_scheduled_sync_done), android.R.drawable.stat_notify_sync, contentIntent);
 	}
 }

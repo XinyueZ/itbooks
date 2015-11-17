@@ -118,7 +118,7 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 				}
 			}, e.getDownload());
 		} else {
-			Utils.showLongToast(App.Instance, R.string.msg_file_can_be_found_to_delete);
+			Utils.showLongToast(App.Instance, R.string.msg_file_delete_failed);
 		}
 	}
 

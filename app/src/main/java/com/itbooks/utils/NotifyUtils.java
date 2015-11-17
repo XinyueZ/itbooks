@@ -14,8 +14,10 @@ import android.support.v4.app.NotificationCompat.BigTextStyle;
 import android.support.v4.app.NotificationCompat.Builder;
 import android.support.v4.content.ContextCompat;
 
+import com.google.android.gms.drive.DriveId;
 import com.itbooks.R;
 import com.itbooks.app.App;
+import com.itbooks.app.activities.MainActivity;
 
 public final class NotifyUtils {
 	private static void ringWorks(Context cxt, Builder builder) {
@@ -52,9 +54,24 @@ public final class NotifyUtils {
 	}
 
 
-	private static PendingIntent getAppPlayStore(Context cxt) {
-		PendingIntent contentIntent = PendingIntent.getActivity(cxt, com.chopping.utils.Utils.randInt(1, 9999),
-				new Intent(Intent.ACTION_VIEW, Uri.parse("http://tinyurl.com/kto2y59")), PendingIntent.FLAG_ONE_SHOT);
-		return contentIntent;
+	public static PendingIntent getAppPlayStore(Context cxt) {
+		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(
+				"https://play.google.com/store/apps/details?id=" + cxt.getPackageName()));
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		return PendingIntent.getActivity(cxt, com.chopping.utils.Utils.randInt(1, 9999), intent,
+				PendingIntent.FLAG_ONE_SHOT);
+	}
+
+	public static PendingIntent getAppHome(Context cxt) {
+		Intent intent = new Intent(cxt, MainActivity.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		return PendingIntent.getActivity(cxt, com.chopping.utils.Utils.randInt(1, 9999), intent, PendingIntent.FLAG_ONE_SHOT);
+	}
+
+	public static PendingIntent getDrive(Context cxt, DriveId id) {
+		String to = new StringBuilder().append("https://drive.google.com/drive/folders/").append(id.getResourceId()).toString();
+		Intent intent = new Intent(Intent.ACTION_VIEW);
+		intent.setData(Uri.parse(to));
+		return PendingIntent.getActivity(cxt, com.chopping.utils.Utils.randInt(1, 9999), intent, PendingIntent.FLAG_ONE_SHOT);
 	}
 }
