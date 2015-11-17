@@ -43,7 +43,7 @@ public final class AppGuardService extends GcmTaskService {
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		PendingIntent contentIntent = PendingIntent.getActivity(cxt, com.chopping.utils.Utils.randInt(1, 9999), intent,
 				PendingIntent.FLAG_ONE_SHOT);
-		NotifyUtils.notifyWithoutBitImage(cxt, NOTIFY_ID, cxt.getString(R.string.application_name), cxt.getString(
+		NotifyUtils.notifyWithoutBigImage(cxt, NOTIFY_ID, cxt.getString(R.string.application_name), cxt.getString(
 				R.string.msg_scheduled_sync_done), android.R.drawable.stat_notify_sync, contentIntent);
 	}
 }

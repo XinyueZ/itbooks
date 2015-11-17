@@ -11,6 +11,7 @@ import android.app.DownloadManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
@@ -19,6 +20,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.chopping.utils.Utils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -50,6 +52,7 @@ import com.itbooks.db.DB;
 import com.itbooks.net.download.Download;
 import com.itbooks.utils.NotifyUtils;
 import com.itbooks.utils.Prefs;
+import com.squareup.picasso.Picasso;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -62,8 +65,6 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 	private static final String ACTION_SYNC_ONLY = SyncService.class.getName() + ".EXTRAS.sync_only";
 	private static final String ACTION_SYNC_DEL = SyncService.class.getName() + ".EXTRAS.sync_del";
 	public static final String ACTION_CONNECT_ERROR = SyncService.class.getName() + ".ACTION.SyncService.connect_error";
-	public static final String ACTION_FILE_DOWNLOADED =
-			SyncService.class.getName() + ".ACTION.SyncService.file_downloaded";
 	public static final String ACTION_SYNC_BEGIN = SyncService.class.getName() + ".ACTION.SyncService.sync_begin";
 	public static final String ACTION_SYNC_END = SyncService.class.getName() + ".ACTION.SyncService.sync_end";
 	private static final String FOLDER_NAME = "itbooks";
@@ -226,49 +227,47 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 									// calling await to block until the request finishes.
 									MetadataResult newFileMeta = fileResult.getDriveFile().getMetadata(client).await();
 									if (newFileMeta.getStatus().isSuccess()) {
-										NotifyUtils.notifyWithoutBitImage(
-												App.Instance,(int)System.currentTimeMillis(),
-												App.Instance.getString(R.string.application_name),
-												App.Instance.getString(R.string.msg_push_success) +  download.getTargetName(),
-												android.R.drawable.stat_notify_sync, NotifyUtils.getDrive(
-														App.Instance, itBooksFolder.getDriveId()));
-
-
+										try {
+											Bitmap image =  Picasso.with(App.Instance).load(Utils.uriStr2URI(
+													download.getCoverUrl()).toASCIIString()).get();
+											NotifyUtils.notifyWithBigImage(App.Instance,
+													(int) System.currentTimeMillis(), App.Instance.getString(
+															R.string.application_name), App.Instance.getString(
+															R.string.msg_push_success) + download.getTargetName(),
+													android.R.drawable.stat_notify_sync, image, NotifyUtils.getDrive(
+															App.Instance, itBooksFolder.getDriveId()));
+										} catch (IOException e) {
+											NotifyUtils.notifyWithoutBigImage(App.Instance,
+													(int) System.currentTimeMillis(), App.Instance.getString(
+															R.string.application_name), App.Instance.getString(
+															R.string.msg_push_success) + download.getTargetName(),
+													android.R.drawable.stat_notify_sync, NotifyUtils.getDrive(
+															App.Instance, itBooksFolder.getDriveId()));
+										}
 									} else {
-										NotifyUtils.notifyWithoutBitImage(
-												App.Instance, NOTIFY_ERROR_PUSH_ID,
+										NotifyUtils.notifyWithoutBigImage(App.Instance, NOTIFY_ERROR_PUSH_ID,
 												App.Instance.getString(R.string.application_name),
 												App.Instance.getString(R.string.msg_push_failed),
-												android.R.drawable.stat_notify_error,
-												NotifyUtils.getDrive(App.Instance, itBooksFolder.getDriveId())
-										);
+												android.R.drawable.stat_notify_error, NotifyUtils.getDrive(App.Instance,
+														itBooksFolder.getDriveId()));
 									}
 								} else {
-									NotifyUtils.notifyWithoutBitImage(
-											App.Instance, NOTIFY_ERROR_PUSH_ID,
-											App.Instance.getString(R.string.application_name),
-											App.Instance.getString(R.string.msg_push_failed),
-											android.R.drawable.stat_notify_error,
-											NotifyUtils.getDrive(App.Instance, itBooksFolder.getDriveId())
-									);
+									NotifyUtils.notifyWithoutBigImage(App.Instance, NOTIFY_ERROR_PUSH_ID,
+											App.Instance.getString(R.string.application_name), App.Instance.getString(
+													R.string.msg_push_failed), android.R.drawable.stat_notify_error,
+											NotifyUtils.getDrive(App.Instance, itBooksFolder.getDriveId()));
 								}
 							} else {
-								NotifyUtils.notifyWithoutBitImage(
-										App.Instance, NOTIFY_ERROR_PUSH_ID,
-										App.Instance.getString(R.string.application_name),
-										App.Instance.getString(R.string.msg_push_failed),
-										android.R.drawable.stat_notify_error,
-										NotifyUtils.getDrive(App.Instance, itBooksFolder.getDriveId())
-								);
+								NotifyUtils.notifyWithoutBigImage(App.Instance, NOTIFY_ERROR_PUSH_ID,
+										App.Instance.getString(R.string.application_name), App.Instance.getString(
+												R.string.msg_push_failed), android.R.drawable.stat_notify_error,
+										NotifyUtils.getDrive(App.Instance, itBooksFolder.getDriveId()));
 							}
 						} catch (IOException e1) {
-							NotifyUtils.notifyWithoutBitImage(
-									App.Instance, NOTIFY_ERROR_PUSH_ID,
-									App.Instance.getString(R.string.application_name),
-									App.Instance.getString(R.string.msg_push_failed),
-									android.R.drawable.stat_notify_error,
-									NotifyUtils.getDrive(App.Instance, itBooksFolder.getDriveId())
-							);
+							NotifyUtils.notifyWithoutBigImage(App.Instance, NOTIFY_ERROR_PUSH_ID,
+									App.Instance.getString(R.string.application_name), App.Instance.getString(
+											R.string.msg_push_failed), android.R.drawable.stat_notify_error,
+									NotifyUtils.getDrive(App.Instance, itBooksFolder.getDriveId()));
 						}
 					}
 				}
@@ -329,24 +328,32 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 							download.setStatus(DownloadManager.STATUS_SUCCESSFUL);
 							download.setDownloadId(System.currentTimeMillis());
 							db.insertNewDownload(download);
-							LocalBroadcastManager.getInstance(App.Instance).sendBroadcast(new Intent(
-									ACTION_FILE_DOWNLOADED));
-							NotifyUtils.notifyWithoutBitImage(
-									App.Instance, (int)System.currentTimeMillis(),
-									App.Instance.getString(R.string.application_name),
-									App.Instance.getString(R.string.msg_pull_success)  + download.getTargetName(),
-									android.R.drawable.stat_notify_sync,
-									NotifyUtils.getDrive(App.Instance,itBooksFolder.getDriveId()));
+							File to = new File(App.Instance.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
+									download.getTargetName());
+							try {
+								Bitmap image =  Picasso.with(App.Instance).load(Utils.uriStr2URI(
+										download.getCoverUrl()).toASCIIString()).get();
+
+
+								NotifyUtils.notifyWithBigImage(App.Instance, (int) System.currentTimeMillis(),
+										App.Instance.getString(R.string.application_name), App.Instance.getString(
+												R.string.msg_pull_success) + download.getTargetName(),
+										android.R.drawable.stat_notify_sync, image, NotifyUtils.getPDFReader(
+												App.Instance, to));
+
+							} catch (IOException e) {
+								NotifyUtils.notifyWithoutBigImage(App.Instance, (int) System.currentTimeMillis(),
+										App.Instance.getString(R.string.application_name), App.Instance.getString(
+												R.string.msg_pull_success) + download.getTargetName(),
+										android.R.drawable.stat_notify_sync, NotifyUtils.getPDFReader(App.Instance, to));
+							}
 
 
 						} catch (IOException e) {
-							NotifyUtils.notifyWithoutBitImage(
-									App.Instance, NOTIFY_ERROR_PULL_ID,
-									App.Instance.getString(R.string.application_name),
-									App.Instance.getString(R.string.msg_pull_failed),
-									android.R.drawable.stat_notify_error,
-									NotifyUtils.getDrive(App.Instance, itBooksFolder.getDriveId())
-							);
+							NotifyUtils.notifyWithoutBigImage(App.Instance, NOTIFY_ERROR_PULL_ID,
+									App.Instance.getString(R.string.application_name), App.Instance.getString(
+											R.string.msg_pull_failed), android.R.drawable.stat_notify_error,
+									NotifyUtils.getDrive(App.Instance, itBooksFolder.getDriveId()));
 						}
 					}
 				}
@@ -368,42 +375,37 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 			DB db = DB.getInstance(App.Instance);
 			for (long downloadId : fileIDs) {
 				Download download = db.getDownload(downloadId);
+				db.deleteDownload(downloadId);
+				try {
+					File localFile = new File(App.Instance.getExternalFilesDir(
+							Environment.DIRECTORY_DOWNLOADS), download.getTargetName());
+					if (localFile.exists()) {
+						FileUtils.forceDelete(localFile);
+					}
+				} catch (Exception e) {
+					//Ignore...
+				}
 				Query query = new Query.Builder().addFilter(Filters.eq(SearchableField.MIME_TYPE, MIME_TYPE))
 						.addFilter(Filters.eq(SearchableField.TITLE, download.getTargetName())).build();
 				MetadataBufferResult fileBufferResult = itBooksFolder.queryChildren(client, query)
 						.await();
 				MetadataBuffer fileMetadataBuffer = fileBufferResult.getMetadataBuffer();
 				for (Metadata metaData : fileMetadataBuffer) {
-					db.deleteDownload(downloadId);
-					try {
-						File localFile = new File(App.Instance.getExternalFilesDir(
-								Environment.DIRECTORY_DOWNLOADS), download.getTargetName());
-						if (localFile.exists()) {
-							FileUtils.forceDelete(localFile);
-						}
-					} catch (Exception e) {
-						//Ignore...
-					}
-
 					DriveId driveId = metaData.getDriveId();
 					DriveFile file = driveId.asDriveFile();
 					PendingResult<Status> pendingResult = file.delete(client);
 					Status status = pendingResult.await();
 					if (status.isSuccess()) {
-						NotifyUtils.notifyWithoutBitImage(
-								App.Instance, (int)System.currentTimeMillis(),
-								App.Instance.getString(R.string.application_name),
-								App.Instance.getString(R.string.msg_file_delete_success) + download.getTargetName(),
-								android.R.drawable.stat_notify_sync,
-								NotifyUtils.getDrive(App.Instance,itBooksFolder.getDriveId()));
+						NotifyUtils.notifyWithoutBigImage(App.Instance, (int) System.currentTimeMillis(),
+								App.Instance.getString(R.string.application_name), App.Instance.getString(
+										R.string.msg_file_delete_success) + download.getTargetName(),
+								android.R.drawable.stat_notify_sync, NotifyUtils.getDrive(App.Instance,
+										itBooksFolder.getDriveId()));
 					} else {
-						NotifyUtils.notifyWithoutBitImage(
-								App.Instance, NOTIFY_ERROR_DEL_ID,
-								App.Instance.getString(R.string.application_name),
-								App.Instance.getString(R.string.msg_file_delete_failed),
-								android.R.drawable.stat_notify_error,
-								NotifyUtils.getDrive(App.Instance, itBooksFolder.getDriveId())
-						);
+						NotifyUtils.notifyWithoutBigImage(App.Instance, NOTIFY_ERROR_DEL_ID, App.Instance.getString(
+										R.string.application_name), App.Instance.getString(
+										R.string.msg_file_delete_failed), android.R.drawable.stat_notify_error,
+								NotifyUtils.getDrive(App.Instance, itBooksFolder.getDriveId()));
 					}
 				}
 			}

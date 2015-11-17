@@ -62,13 +62,7 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 	private HistoryAdapter mHistoryAdapter;
 	private View mEmptyV;
 	private Toolbar mToolbar;
-	private IntentFilter mDownloadedFileHandlerFilter = new IntentFilter(SyncService.ACTION_FILE_DOWNLOADED);
-	private BroadcastReceiver mDownloadedFileHandler = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			getLoaderManager().initLoader(3, null, HistoryFragment.this).forceLoad();
-		}
-	};
+
 	/**
 	 * Handler filter end sync.
 	 */
@@ -208,7 +202,6 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		LocalBroadcastManager.getInstance(App.Instance).registerReceiver(mDownloadedFileHandler,	mDownloadedFileHandlerFilter);
 		LocalBroadcastManager.getInstance(App.Instance).registerReceiver(mSyncEndHandler, mSyncEndHandlerFilter);
 		mHistoryRv = (RecyclerView) view.findViewById(R.id.history_rv);
 		mHistoryRv.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -264,7 +257,6 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 
 	@Override
 	public void onDestroyView() {
-		LocalBroadcastManager.getInstance(App.Instance).unregisterReceiver(mDownloadedFileHandler);
 		LocalBroadcastManager.getInstance(App.Instance).unregisterReceiver(mSyncEndHandler);
 		super.onDestroyView();
 	}

@@ -1,6 +1,8 @@
 package com.itbooks.utils;
 
 
+import java.io.File;
+
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -41,7 +43,7 @@ public final class NotifyUtils {
 		mgr.notify(id, builder.build());
 	}
 
-	public static void notifyWithoutBitImage(Context cxt, int id, String title, String desc, @DrawableRes int icon,
+	public static void notifyWithoutBigImage(Context cxt, int id, String title, String desc, @DrawableRes int icon,
 			PendingIntent contentIntent) {
 		NotificationManager mgr = (NotificationManager) cxt.getSystemService(Context.NOTIFICATION_SERVICE);
 		Builder builder = new Builder(cxt).setWhen(id).setSmallIcon(icon).setTicker(title).setContentTitle(title)
@@ -73,5 +75,23 @@ public final class NotifyUtils {
 		Intent intent = new Intent(Intent.ACTION_VIEW);
 		intent.setData(Uri.parse(to));
 		return PendingIntent.getActivity(cxt, com.chopping.utils.Utils.randInt(1, 9999), intent, PendingIntent.FLAG_ONE_SHOT);
+	}
+
+	public static PendingIntent getPDFReader(Context cxt, File pdf) {
+		PendingIntent contentIntent;
+		try {
+			Intent openFileIntent = new Intent(Intent.ACTION_VIEW);
+			openFileIntent.setDataAndType(Uri.fromFile(pdf), "application/pdf");
+			openFileIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+			contentIntent = PendingIntent.getActivity(cxt, com.chopping.utils.Utils.randInt(1, 9999), openFileIntent,
+					PendingIntent.FLAG_ONE_SHOT);
+		} catch (Exception ex) {
+			//Download pdf-reader.
+			String pdfReader = "com.adobe.reader";
+			contentIntent = PendingIntent.getActivity(cxt, com.chopping.utils.Utils.randInt(1, 9999), new Intent(Intent.ACTION_VIEW,
+							Uri.parse("https://play.google.com/store/apps/details?id=" + pdfReader)),
+					PendingIntent.FLAG_ONE_SHOT);
+		}
+		return contentIntent;
 	}
 }

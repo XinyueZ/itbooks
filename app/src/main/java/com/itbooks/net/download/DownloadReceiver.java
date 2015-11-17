@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.v4.os.AsyncTaskCompat;
@@ -68,13 +67,13 @@ public final class DownloadReceiver extends BroadcastReceiver {
 							File to = new File(App.Instance.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
 									mDownload.getTargetName());
 							if (to.exists()) {
-								PendingIntent pi = getIntent(App.Instance, to);
+								PendingIntent pi = NotifyUtils.getPDFReader(App.Instance, to);
 								if (image != null) {
 									NotifyUtils.notifyWithBigImage(App.Instance, (int)System.currentTimeMillis(),
 											App.Instance.getString(R.string.application_name), App.Instance.getString(
 											R.string.msg_one_book_downloaded), R.drawable.ic_download_notify, image, pi);
 								} else {
-									NotifyUtils.notifyWithoutBitImage(App.Instance, (int)System.currentTimeMillis(),
+									NotifyUtils.notifyWithoutBigImage(App.Instance, (int) System.currentTimeMillis(),
 											App.Instance.getString(R.string.application_name), App.Instance.getString(
 													R.string.msg_one_book_downloaded), R.drawable.ic_download_notify,
 											pi);
@@ -92,25 +91,6 @@ public final class DownloadReceiver extends BroadcastReceiver {
 			}
 		}
 		EventBus.getDefault().post(new DownloadCompleteEvent(download));
-	}
-
-
-	private static PendingIntent getIntent(Context cxt, File pdf) {
-		PendingIntent contentIntent;
-		try {
-			Intent openFileIntent = new Intent(Intent.ACTION_VIEW);
-			openFileIntent.setDataAndType(Uri.fromFile(pdf), "application/pdf");
-			openFileIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-			contentIntent = PendingIntent.getActivity(cxt, Utils.randInt(1, 9999), openFileIntent,
-					PendingIntent.FLAG_ONE_SHOT);
-		} catch (Exception ex) {
-			//Download pdf-reader.
-			String pdfReader = "com.adobe.reader";
-			contentIntent = PendingIntent.getActivity(cxt, Utils.randInt(1, 9999), new Intent(Intent.ACTION_VIEW,
-							Uri.parse("https://play.google.com/store/apps/details?id=" + pdfReader)),
-					PendingIntent.FLAG_ONE_SHOT);
-		}
-		return contentIntent;
 	}
 
 
