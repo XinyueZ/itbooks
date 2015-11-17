@@ -184,7 +184,7 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 	 */
 	private void showDirChooser(int type, Download download) {
 		DownloadDirChooserDialogFragment directoryChooserFragment = DownloadDirChooserDialogFragment.newInstance(
-				App.Instance, type, download, App.Instance.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS));
+				App.Instance, type, download, Environment.getExternalStorageDirectory());
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
 		directoryChooserFragment.show(transaction, "RDC");
 	}
