@@ -134,6 +134,7 @@
     <string name="msg_require_external_storage">The downloading requires external storage or large built-in storage on the device, please check whether you have inserted SD card or not.</string>
     <string name="msg_op">Operating…</string>
     <string name="msg_welcome_2_0">Welcome…</string>
+    <string name="msg_welcome_3_0">Thank you for using this App…</string>
     <string name="msg_welcome">Welcome…</string>
     <string name="msg_one_book_downloaded">One book has been downloaded, please check.</string>
     <string name="msg_file_copied">File has been copied.</string>

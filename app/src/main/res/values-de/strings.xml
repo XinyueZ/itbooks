@@ -108,6 +108,7 @@
     <string name="msg_require_external_storage">Sie müssen durchsuchen, ob Sie eine SD-Karte schon genutzt haben oder nicht, weil die App unbedingt einen großen Speicherpltz braucht.</string>
     <string name="msg_op">Bearbeite…</string>
     <string name="msg_welcome_2_0">Willkommen 2.0…</string>
+    <string name="msg_welcome_3_0">Danke für Deine Aufmerksamkeit…</string>
     <string name="msg_welcome">Willkommen…</string>
     <string name="msg_one_book_downloaded">Ein Buch ist heruntergeladen, bitte durchchecken.</string>
      <string name="msg_file_copied">Datei ist kopiert worden.</string>

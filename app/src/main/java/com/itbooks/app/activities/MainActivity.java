@@ -64,6 +64,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.itbooks.R;
 import com.itbooks.app.App;
+import com.itbooks.app.Updated3_0Service;
 import com.itbooks.app.adapters.AbstractBookViewAdapter;
 import com.itbooks.app.adapters.BookGridAdapter;
 import com.itbooks.app.adapters.BookListAdapter;
@@ -1046,7 +1047,11 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 			}
 			prefs.setNewApiUpdated(false);
 		}
-
+		if (!prefs.isNewApiUpdated() && prefs.isUpdated3_0()) {
+			Utils.showLongToast(getApplicationContext(), R.string.msg_welcome_3_0);
+			Updated3_0Service.startFixPre3_0Bugs(App.Instance);
+			prefs.setUpdated3_0(false);
+		}
 
 		super.onResume();
 		if (mDrawerToggle != null) {

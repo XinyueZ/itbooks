@@ -154,7 +154,7 @@ public final class DB {
 	 * @param download An instance of {@link Download}.
 	 * @return {@code  true} if success.
 	 */
-	public synchronized boolean updateDownloadStatus(Download download) {
+	public synchronized boolean updateDownload(Download download) {
 		if (mDB == null || !mDB.isOpen()) {
 			open();
 		}

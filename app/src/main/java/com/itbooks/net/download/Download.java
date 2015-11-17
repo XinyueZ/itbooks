@@ -87,16 +87,18 @@ public final class Download extends RSBook {
 			} else {
 				DownloadManager downloadManager = (DownloadManager) cxt.getSystemService(Context.DOWNLOAD_SERVICE);
 				setTimeStamp(System.currentTimeMillis());
-
-				DownloadManager.Request request = new DownloadManager.Request(Uri.parse(Utils.uriStr2URI(
-						mBook.getLink()).toASCIIString()));
-				request.setDestinationInExternalFilesDir(cxt, Environment.DIRECTORY_DOWNLOADS, mTargetName);
-				request.setVisibleInDownloadsUi(false);//Can see the downloaded file in "download" app.
-				setStatus(DownloadManager.STATUS_PENDING);
-				setDownloadId(downloadManager.enqueue(request));
-				setStatus(DownloadManager.STATUS_RUNNING);
-				DB.getInstance(cxt).insertNewDownload(this);
-				EventBus.getDefault().post(new DownloadStartEvent(this));
+				try {
+					DownloadManager.Request request = new DownloadManager.Request(Uri.parse(Utils.uriStr2URI(mBook.getLink()).toASCIIString()));
+					request.setDestinationInExternalFilesDir(cxt, Environment.DIRECTORY_DOWNLOADS, mTargetName);
+					request.setVisibleInDownloadsUi(false);//Can see the downloaded file in "download" app.
+					setStatus(DownloadManager.STATUS_PENDING);
+					setDownloadId(downloadManager.enqueue(request));
+					setStatus(DownloadManager.STATUS_RUNNING);
+					DB.getInstance(cxt).insertNewDownload(this);
+					EventBus.getDefault().post(new DownloadStartEvent(this));
+				} catch (Exception e){
+					//Ignore....
+				}
 			}
 		}
 	}
@@ -200,7 +202,7 @@ public final class Download extends RSBook {
 	 */
 	public void setStatus(Context cxt, int status) {
 		mStatus = status;
-		DB.getInstance(cxt.getApplicationContext()).updateDownloadStatus(this);
+		DB.getInstance(cxt.getApplicationContext()).updateDownload(this);
 	}
 
 	/**

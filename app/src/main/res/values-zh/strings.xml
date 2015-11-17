@@ -118,6 +118,7 @@
     <string name="msg_op">操作中…</string>
     <string name="lbl_history_empty">无下载记录</string>
     <string name="msg_welcome_2_0">欢迎使用 2.0…</string>
+    <string name="msg_welcome_3_0">谢谢…</string>
     <string name="msg_welcome">欢迎…</string>
     <string name="msg_one_book_downloaded">有本书已经下载好了，请检查下。</string>
      <string name="msg_file_copied">拷贝了文件</string>

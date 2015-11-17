@@ -27,6 +27,7 @@ public final class Prefs extends BasicPrefs {
 	private static final String KEY_SHOWN_DETAILS_ADS_TIMES = "ads";
 	private static final String KEY_DEVICE_IDENT = "key.device.ident";
 	private static final String KEY_NEW_API_UPDATED = "key.new.api.updated";
+	private static final String KEY_NEW_3_0_UPDATED = "key.new.api.updated_3_0";
 	/**
 	 * Storage. Whether the "End User License Agreement" has been shown and agreed at application's first start.
 	 * <p/>
@@ -221,11 +222,28 @@ public final class Prefs extends BasicPrefs {
 	}
 
 	/**
-	 * Set flag to indicate that user run and has ran the new-api versionl
+	 * Set flag to indicate that user run and has ran the new-api version.
 	 * @param updated {@code true} if new-api version started.
 	 */
 	public void setNewApiUpdated(boolean updated) {
 		setBoolean(KEY_NEW_API_UPDATED, updated);
+	}
+
+
+	/**
+	 *
+	 * @return {@code true} if user has ran the application with 3.0 before.
+	 */
+	public boolean isUpdated3_0() {
+		return getBoolean(KEY_NEW_3_0_UPDATED, true);
+	}
+
+	/**
+	 * Set flag to indicate that user run and has ran the 3.0 version
+	 * @param updated {@code true} if new-api version started.
+	 */
+	public void setUpdated3_0(boolean updated) {
+		setBoolean(KEY_NEW_3_0_UPDATED, updated);
 	}
 
 	/**
