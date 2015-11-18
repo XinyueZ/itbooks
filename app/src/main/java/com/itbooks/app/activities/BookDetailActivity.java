@@ -449,6 +449,7 @@ public final class BookDetailActivity extends BaseActivity {
 
 
 		showBookDetail();
+		setALive(true);
 	}
 
 	@Override
@@ -463,5 +464,11 @@ public final class BookDetailActivity extends BaseActivity {
 				setDownloadButton();
 			}
 		}
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		setALive(false);
 	}
 }

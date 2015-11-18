@@ -64,6 +64,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.itbooks.R;
 import com.itbooks.app.App;
+import com.itbooks.app.SearchSuggestionProvider;
 import com.itbooks.app.Updated3_0Service;
 import com.itbooks.app.adapters.AbstractBookViewAdapter;
 import com.itbooks.app.adapters.BookGridAdapter;
@@ -150,7 +151,6 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	private TextView mLoginNameTv;
 	private ImageView mUserIv;
 	private View mAppListV;
-	private volatile boolean mUIVisible;
 
 
 	/**
@@ -365,7 +365,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	 * 		Event {@link com.itbooks.bus.BookmarksLoadedEvent}.
 	 */
 	public void onEvent(BookmarksLoadedEvent e) {
-		if (mUIVisible) {
+		if (alive()) {
 			getSupportFragmentManager().beginTransaction().replace(R.id.bookmark_list_container_fl,
 					BookmarkListFragment.newInstance(getApplicationContext())).commit();
 		}
@@ -701,7 +701,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	 * 		The result of REST call.
 	 */
 	public void showBookList(RSBookList bookList) {
-		if (mUIVisible) {
+		if (alive()) {
 			if (bookList != null && bookList.getStatus() == 200 && bookList.getBooks() != null &&
 					bookList.getBooks().size() > 0) {
 				AbstractBookViewAdapter adp = (AbstractBookViewAdapter) mRv.getAdapter();
@@ -1029,7 +1029,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		});
 
 		getBookmarks();
-		mUIVisible = true;
+		setALive(true);
 	}
 
 
@@ -1074,7 +1074,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		LocalBroadcastManager.getInstance(App.Instance).unregisterReceiver(mSyncEndHandler);
 
 		super.onDestroy();
-		mUIVisible = false;
+		setALive(false);
 		TaskHelper.getRequestQueue().cancelAll(GsonRequestTask.TAG);
 	}
 }

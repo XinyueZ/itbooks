@@ -1,4 +1,4 @@
-package com.itbooks.app.activities;
+package com.itbooks.app;
 
 import android.content.SearchRecentSuggestionsProvider;
 

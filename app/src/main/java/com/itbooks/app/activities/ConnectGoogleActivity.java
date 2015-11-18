@@ -55,7 +55,6 @@ public final class ConnectGoogleActivity extends BaseActivity {
 	 */
 	private GoogleApiClient mGoogleApiClient;
 
-	private volatile boolean mUIVisible;
 
 	/**
 	 * Show single instance of {@link ConnectGoogleActivity}
@@ -71,7 +70,7 @@ public final class ConnectGoogleActivity extends BaseActivity {
 
 
 	private void handleGoogleLogin(GoogleSignInResult result) {
-		if (result.isSuccess() && mUIVisible) {
+		if (result.isSuccess() && alive()) {
 			Prefs prefs = Prefs.getInstance(App.Instance);
 			GoogleSignInAccount acct = result.getSignInAccount();
 			if (acct != null) {
@@ -94,7 +93,7 @@ public final class ConnectGoogleActivity extends BaseActivity {
 				mBinding.closeBtn.startAnimation(shake);
 			}
 		} else {
-			if (mUIVisible) {
+			if (alive()) {
 				Snackbar.make(mBinding.loginContentLl, R.string.meta_load_error, Snackbar.LENGTH_LONG).setAction(
 						R.string.btn_close, new OnClickListener() {
 							@Override
@@ -130,7 +129,7 @@ public final class ConnectGoogleActivity extends BaseActivity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int responseCode, Intent intent) {
-		if (requestCode == RC_SIGN_IN && mUIVisible) {
+		if (requestCode == RC_SIGN_IN && alive()) {
 			GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(intent);
 			handleGoogleLogin(result);
 		}
@@ -141,7 +140,6 @@ public final class ConnectGoogleActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		mBinding = DataBindingUtil.setContentView(this, LAYOUT);
 		setUpErrorHandling((ViewGroup) findViewById(R.id.error_content));
-		mUIVisible = true;
 
 		mBinding.googleLoginBtn.setSize(SignInButton.SIZE_WIDE);
 		mBinding.helloTv.setText(getString(R.string.lbl_welcome, getString(R.string.application_name)));
@@ -169,11 +167,13 @@ public final class ConnectGoogleActivity extends BaseActivity {
 				ActivityCompat.finishAfterTransition(ConnectGoogleActivity.this);
 			}
 		});
+
+		setALive(true);
 	}
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		mUIVisible = false;
+		setALive(false);
 	}
 }
