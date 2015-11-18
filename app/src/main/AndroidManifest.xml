@@ -39,7 +39,7 @@
             android:value="com.itbooks.app.MainActivity" />
 
         <provider
-            android:name=".app.activities.SearchSuggestionProvider"
+            android:name=".app.SearchSuggestionProvider"
             android:authorities="@string/suggestion_auth" />
 
         <activity

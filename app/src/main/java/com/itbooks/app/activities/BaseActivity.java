@@ -46,9 +46,8 @@ import de.greenrobot.event.EventBus;
 
 public abstract class BaseActivity extends com.chopping.activities.BaseActivity implements OnRefreshListener {
 	protected SwipeRefreshLayout mRefreshLayout;
-
 	private ProgressDialog mProgressDialog;
-
+	private volatile boolean mALive;
 
 	//------------------------------------------------
 	//Subscribes, event-handlers
@@ -272,40 +271,46 @@ public abstract class BaseActivity extends com.chopping.activities.BaseActivity 
 	}
 
 	protected void showWarningToast(String text, SuperToast.OnClickListener clickListener) {
-		SuperCardToast toast = new SuperCardToast(this, Type.BUTTON);
-		toast.setAnimations(Animations.POPUP);
-		toast.setBackground(Background.BLUE);
-		toast.setText(text);
-		toast.setDuration(5000);
-		toast.setButtonText(getString(R.string.btn_confirm));
-		toast.setOnClickWrapper(new OnClickWrapper("showWarningToast", clickListener));
-		toast.setTextColor(getResources().getColor(R.color.common_white));
-		toast.setIcon(SuperToast.Icon.Dark.INFO, IconPosition.LEFT);
-		toast.show();
+		if(alive()) {//Fixed: #68
+			SuperCardToast toast = new SuperCardToast(this, Type.BUTTON);
+			toast.setAnimations(Animations.POPUP);
+			toast.setBackground(Background.BLUE);
+			toast.setText(text);
+			toast.setDuration(5000);
+			toast.setButtonText(getString(R.string.btn_confirm));
+			toast.setOnClickWrapper(new OnClickWrapper("showWarningToast", clickListener));
+			toast.setTextColor(getResources().getColor(R.color.common_white));
+			toast.setIcon(SuperToast.Icon.Dark.INFO, IconPosition.LEFT);
+			toast.show();
+		}
 	}
 
 	protected void showErrorToast(String text, SuperToast.OnClickListener clickListener) {
-		SuperCardToast toast = new SuperCardToast(this, Type.BUTTON);
-		toast.setAnimations(Animations.FADE);
-		toast.setBackground(Background.RED);
-		toast.setText(text);
-		toast.setDuration(10000);
-		toast.setButtonText(getString(R.string.btn_retry));
-		toast.setTextColor(getResources().getColor(R.color.common_white));
-		toast.setIcon(SuperToast.Icon.Dark.INFO, IconPosition.LEFT);
-		toast.setOnClickWrapper(new OnClickWrapper("showErrorToast", clickListener));
-		toast.show();
+		if(alive()) {//Fixed: #68
+			SuperCardToast toast = new SuperCardToast(this, Type.BUTTON);
+			toast.setAnimations(Animations.FADE);
+			toast.setBackground(Background.RED);
+			toast.setText(text);
+			toast.setDuration(10000);
+			toast.setButtonText(getString(R.string.btn_retry));
+			toast.setTextColor(getResources().getColor(R.color.common_white));
+			toast.setIcon(SuperToast.Icon.Dark.INFO, IconPosition.LEFT);
+			toast.setOnClickWrapper(new OnClickWrapper("showErrorToast", clickListener));
+			toast.show();
+		}
 	}
 
 	protected void showInfoToast(String text) {
-		SuperCardToast toast = new SuperCardToast(this, Type.STANDARD);
-		toast.setAnimations(Animations.FLYIN);
-		toast.setBackground(Background.GREEN);
-		toast.setText(text);
-		toast.setDuration(5000);
-		toast.setTextColor(getResources().getColor(R.color.common_white));
-		toast.setIcon(SuperToast.Icon.Dark.INFO, IconPosition.LEFT);
-		toast.show();
+		if(alive()) {//Fixed: #68
+			SuperCardToast toast = new SuperCardToast(this, Type.STANDARD);
+			toast.setAnimations(Animations.FLYIN);
+			toast.setBackground(Background.GREEN);
+			toast.setText(text);
+			toast.setDuration(5000);
+			toast.setTextColor(getResources().getColor(R.color.common_white));
+			toast.setIcon(SuperToast.Icon.Dark.INFO, IconPosition.LEFT);
+			toast.show();
+		}
 	}
 
 	@Override
@@ -313,5 +318,14 @@ public abstract class BaseActivity extends com.chopping.activities.BaseActivity 
 		super.onSaveInstanceState(outState);
 		SuperCardToast.onSaveState(outState);
 
+	}
+
+
+	protected boolean alive() {
+		return mALive;
+	}
+
+	protected void setALive(boolean isAlive) {
+		mALive = isAlive;
 	}
 }
