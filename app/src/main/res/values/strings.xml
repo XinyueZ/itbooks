@@ -155,4 +155,6 @@
     <string name="msg_sync_warning_1">You must now be synchronize? We will be spending a lot of network traffic and electricity.</string>
     <string name="msg_sync_warning_2">You must now be synchronize? You will be spending a lot of network traffic.</string>
     <string name="msg_sync_warning_3">You must now be synchronize? It will consume a lot of electricity.</string>
+
+    <string name="msg_sync_need_login">Sync can not be started, you should have to login with Google again.</string>
 </resources>

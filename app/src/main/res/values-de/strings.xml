@@ -130,4 +130,6 @@
     <string name="msg_sync_warning_1">Bist Du sicher, Sync zu machen? Es wird eine Menge von Netzwerkverkehr und viel Strom verbringen.</string>
     <string name="msg_sync_warning_2">Bist Du sicher, Sync zu machen? Es wird eine Menge von Netzwerkverkehr verbringen.</string>
     <string name="msg_sync_warning_3">Bist Du sicher, Sync zu machen? Es wird viel Strom verbrauchen.</string>
+
+    <string name="msg_sync_need_login">Sync findet nicht statt, weil Du mit Google erneut anmelden musst.</string>
 </resources>

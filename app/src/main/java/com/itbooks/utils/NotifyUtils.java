@@ -19,6 +19,7 @@ import android.support.v4.content.ContextCompat;
 import com.google.android.gms.drive.DriveId;
 import com.itbooks.R;
 import com.itbooks.app.App;
+import com.itbooks.app.activities.ConnectGoogleActivity;
 import com.itbooks.app.activities.MainActivity;
 
 public final class NotifyUtils {
@@ -74,6 +75,12 @@ public final class NotifyUtils {
 		String to = new StringBuilder().append("https://drive.google.com/drive/folders/").append(id.getResourceId()).toString();
 		Intent intent = new Intent(Intent.ACTION_VIEW);
 		intent.setData(Uri.parse(to));
+		return PendingIntent.getActivity(cxt, com.chopping.utils.Utils.randInt(1, 9999), intent, PendingIntent.FLAG_ONE_SHOT);
+	}
+
+	public static PendingIntent getGoogleLogin(Context cxt) {
+		Intent intent = new Intent(cxt, ConnectGoogleActivity.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		return PendingIntent.getActivity(cxt, com.chopping.utils.Utils.randInt(1, 9999), intent, PendingIntent.FLAG_ONE_SHOT);
 	}
 

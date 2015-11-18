@@ -82,6 +82,7 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 	private static final int NOTIFY_ERROR_DEL_ID = 0x06;
 	private static final int NOTIFY_ERROR_PUSH_ID = 0x16;
 	private static final int NOTIFY_ERROR_PULL_ID = 0x26;
+	public static final int NOTIFY_REQ_LOGIN = 0x27;
 
 	private boolean mCmdSyncOnly = true;
 	private long[] mDownloadDelList = null;
@@ -459,6 +460,15 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 
 	@Override
 	public void onConnectionFailed(ConnectionResult connectionResult) {
+		if(!connectionResult.hasResolution()) {
+			switch (connectionResult.getErrorCode()) {
+			case ConnectionResult.SIGN_IN_FAILED:
+			case ConnectionResult.SIGN_IN_REQUIRED:
+				NotifyUtils.notifyWithoutBigImage(App.Instance, NOTIFY_REQ_LOGIN, App.Instance.getString(R.string.application_name), App.Instance.getString(R.string.msg_sync_need_login),
+						android.R.drawable.stat_notify_error, NotifyUtils.getGoogleLogin(App.Instance));
+				break;
+			}
+		}
 		Intent intent = new Intent(ACTION_CONNECT_ERROR);
 		intent.putExtra(EXTRAS_ERROR_RESULT, connectionResult);
 		LocalBroadcastManager.getInstance(App.Instance).sendBroadcast(intent);

@@ -171,9 +171,17 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		public void onReceive(Context context, Intent intent) {
 			ConnectionResult connectionResult = intent.getParcelableExtra(SyncService.EXTRAS_ERROR_RESULT);
 			if (!connectionResult.hasResolution()) {
-				// show the localized error dialog.
-				GoogleApiAvailability.getInstance().getErrorDialog(MainActivity.this, connectionResult.getErrorCode(),
-						0).show();
+				switch (connectionResult.getErrorCode()){
+				case ConnectionResult.SIGN_IN_FAILED:
+				case ConnectionResult.SIGN_IN_REQUIRED:
+					ConnectGoogleActivity.showInstance(MainActivity.this);
+					break;
+				default:
+					// show the localized error dialog.
+					GoogleApiAvailability.getInstance().getErrorDialog(MainActivity.this, connectionResult.getErrorCode(),
+							0).show();
+					break;
+				}
 				return;
 			}
 			try {

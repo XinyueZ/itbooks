@@ -1,6 +1,7 @@
 package com.itbooks.app.activities;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -24,6 +25,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.itbooks.R;
 import com.itbooks.app.App;
 import com.itbooks.databinding.ActivityConnectGoogleBinding;
+import com.itbooks.net.SyncService;
 import com.itbooks.utils.Prefs;
 import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.squareup.picasso.Picasso;
@@ -138,6 +140,9 @@ public final class ConnectGoogleActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		NotificationManager mgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		mgr.cancel(SyncService.NOTIFY_REQ_LOGIN);
+
 		mBinding = DataBindingUtil.setContentView(this, LAYOUT);
 		setUpErrorHandling((ViewGroup) findViewById(R.id.error_content));
 

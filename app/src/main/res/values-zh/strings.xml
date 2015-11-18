@@ -138,4 +138,6 @@
     <string name="msg_sync_warning_1">一定现在要同步吗？会消费很多网络流量和电量的。</string>
     <string name="msg_sync_warning_2">一定现在要同步吗？会消费很多网络流量的。</string>
     <string name="msg_sync_warning_3">一定现在要同步吗？会消费很多电量的。</string>
+
+    <string name="msg_sync_need_login">无法同步，你现在必须重新登录谷歌。</string>
 </resources>
