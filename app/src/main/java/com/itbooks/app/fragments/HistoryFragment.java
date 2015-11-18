@@ -32,7 +32,6 @@ import android.view.ViewGroup;
 
 import com.chopping.application.BasicPrefs;
 import com.chopping.fragments.BaseFragment;
-import com.chopping.utils.Utils;
 import com.itbooks.R;
 import com.itbooks.app.App;
 import com.itbooks.app.adapters.HistoryAdapter;
@@ -45,6 +44,8 @@ import com.itbooks.db.DB;
 import com.itbooks.net.SyncService;
 import com.itbooks.net.download.Download;
 import com.itbooks.utils.Prefs;
+
+import org.apache.commons.io.FileUtils;
 
 import de.greenrobot.event.EventBus;
 
@@ -107,17 +108,39 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 		File from = new File(App.Instance.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
 				e.getDownload().getTargetName());
 		if (from.exists()) {
-			AsyncTaskCompat.executeParallel(new AsyncTask<Download, Void, IOException>() {
-				@Override
-				protected IOException doInBackground(Download... params) {
-					List<Download> downloadsList = new ArrayList<>();
-					downloadsList.add(params[0]);
-					SyncService.startSyncDel(App.Instance, downloadsList);
-					return null;
-				}
-			}, e.getDownload());
-		} else {
-			Utils.showLongToast(App.Instance, R.string.msg_file_delete_failed);
+			if (!TextUtils.isEmpty(Prefs.getInstance(App.Instance).getGoogleId())) {
+				//Login is on
+				AsyncTaskCompat.executeParallel(new AsyncTask<Download, Void, IOException>() {
+					@Override
+					protected IOException doInBackground(Download... params) {
+						List<Download> downloadsList = new ArrayList<>();
+						downloadsList.add(params[0]);
+						SyncService.startSyncDel(App.Instance, downloadsList);
+						return null;
+					}
+				}, e.getDownload());
+			} else {
+				//Login is off
+				AsyncTaskCompat.executeParallel(new AsyncTask<Download, Void, IOException>() {
+					@Override
+					protected IOException doInBackground(Download... params) {
+						File from = new File(App.Instance.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
+								e.getDownload().getTargetName());
+						if (from.exists()) {
+							from.delete();
+							DB db = DB.getInstance(App.Instance);
+							db.deleteDownload(params[0].getDownloadId());
+						}
+						return null;
+					}
+
+					@Override
+					protected void onPostExecute(IOException e) {
+						super.onPostExecute(e);
+						getLoaderManager().initLoader(4, null, HistoryFragment.this).forceLoad();
+					}
+				}, e.getDownload());
+			}
 		}
 	}
 
@@ -233,22 +256,49 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
 				item.setEnabled(false);
-				getLoaderManager().initLoader(3, null, new LoaderCallbacks<List<Download>>() {
-					@Override
-					public Loader<List<Download>> onCreateLoader(int id, Bundle args) {
-						return getAllDownloads();
-					}
+				if (!TextUtils.isEmpty(Prefs.getInstance(App.Instance).getGoogleId())) {
+					//Login is on
+					getLoaderManager().initLoader(3, null, new LoaderCallbacks<List<Download>>() {
+						@Override
+						public Loader<List<Download>> onCreateLoader(int id, Bundle args) {
+							return getAllDownloads();
+						}
 
-					@Override
-					public void onLoadFinished(Loader<List<Download>> loader, List<Download> downloadsList) {
-						SyncService.startSyncDel(App.Instance, downloadsList);
-					}
+						@Override
+						public void onLoadFinished(Loader<List<Download>> loader, List<Download> downloadsList) {
+							SyncService.startSyncDel(App.Instance, downloadsList);
+						}
 
-					@Override
-					public void onLoaderReset(Loader<List<Download>> loader) {
+						@Override
+						public void onLoaderReset(Loader<List<Download>> loader) {
 
-					}
-				}).forceLoad();
+						}
+					}).forceLoad();
+				} else {
+					//Login is off
+					AsyncTaskCompat.executeParallel(new AsyncTask<Download, Void, IOException>() {
+						@Override
+						protected IOException doInBackground(Download... params) {
+							try {
+								File dir = App.Instance.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+								if (dir != null) {
+									FileUtils.cleanDirectory(dir);
+									DB.getInstance(App.Instance).deleteDownload(-1);
+								}
+							} catch (IOException e) {
+								return e;
+							}
+							return null;
+						}
+						@Override
+						protected void onPostExecute(IOException e) {
+							super.onPostExecute(e);
+							if (e == null) {
+								getLoaderManager().initLoader(5, null, HistoryFragment.this).forceLoad();
+							}
+						}
+					});
+				}
 				return true;
 			}
 		});

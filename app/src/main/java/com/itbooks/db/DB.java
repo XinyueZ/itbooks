@@ -315,7 +315,7 @@ public final class DB {
 
 	/**
 	 * Delete a download history.
-	 * @param id The ident of a download entry.
+	 * @param id The ident of a download entry. If id<0, delete all.
 	 * @return {@code true} if delete, otherwise {@code false}.
 	 */
 	public synchronized boolean deleteDownload(long id) {
@@ -325,10 +325,15 @@ public final class DB {
 		boolean success;
 		try {
 			long rowId;
-			String whereClause = DownloadsTbl.DOWNLOAD_ID + "=?";
-			String[] whereArgs = new String[] { String.valueOf(id) };
-			rowId = mDB.delete(DownloadsTbl.TABLE_NAME, whereClause, whereArgs);
-			success = rowId > 0;
+			if (id < 0) {
+				rowId = mDB.delete(DownloadsTbl.TABLE_NAME, null, null);
+				success = rowId > 0;
+			} else {
+				String whereClause = DownloadsTbl.DOWNLOAD_ID + "=?";
+				String[] whereArgs = new String[] { String.valueOf(id) };
+				rowId = mDB.delete(DownloadsTbl.TABLE_NAME, whereClause, whereArgs);
+				success = rowId > 0;
+			}
 		} finally {
 			close();
 		}
