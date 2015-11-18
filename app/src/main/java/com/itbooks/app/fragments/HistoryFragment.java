@@ -40,6 +40,7 @@ import com.itbooks.bus.DownloadCompleteEvent;
 import com.itbooks.bus.DownloadCopyEvent;
 import com.itbooks.bus.DownloadDeleteEvent;
 import com.itbooks.bus.LoginRequestEvent;
+import com.itbooks.bus.SyncEvent;
 import com.itbooks.db.DB;
 import com.itbooks.net.SyncService;
 import com.itbooks.net.download.Download;
@@ -74,7 +75,7 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			getLoaderManager().initLoader(2, null, HistoryFragment.this).forceLoad();
-			if(mToolbar != null) {
+			if (mToolbar != null) {
 				Menu menu = mToolbar.getMenu();
 				menu.findItem(R.id.action_sync).setEnabled(true);
 				menu.findItem(R.id.action_delete_all).setEnabled(true);
@@ -219,13 +220,12 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 																	   @Override
 																	   public boolean onMenuItemClick(MenuItem item) {
 																		   item.setEnabled(false);
-																		   if (!TextUtils.isEmpty(Prefs.getInstance(
-																				   App.Instance).getGoogleId())) {
-																			   SyncService.startSync(App.Instance);
-																		   } else {
-																			   EventBus.getDefault().post(
-																					   new LoginRequestEvent());
-																		   }
+																		   EventBus.getDefault().post(
+																				   !TextUtils.isEmpty(Prefs.getInstance(
+																						   App.Instance)
+																						   .getGoogleId()) ?
+																						   new SyncEvent() :
+																						   new LoginRequestEvent());
 																		   return true;
 																	   }
 																   }

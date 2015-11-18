@@ -85,6 +85,7 @@ import com.itbooks.bus.NewAPIVersionUpdateEvent;
 import com.itbooks.bus.OpenBookDetailEvent;
 import com.itbooks.bus.OpenBookmarkEvent;
 import com.itbooks.bus.RefreshBookmarksEvent;
+import com.itbooks.bus.SyncEvent;
 import com.itbooks.data.rest.RSBook;
 import com.itbooks.data.rest.RSBookList;
 import com.itbooks.data.rest.RSBookQuery;
@@ -371,7 +372,15 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		}
 	}
 
-
+	/**
+	 * Handler for {@link com.itbooks.bus.SyncEvent}.
+	 *
+	 * @param e
+	 * 		Event {@link com.itbooks.bus.SyncEvent}.
+	 */
+	public void onEvent(SyncEvent e) {
+		startSync(RESULT_OK);
+	}
 	//------------------------------------------------
 
 
