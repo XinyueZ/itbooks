@@ -512,12 +512,14 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		mCmdSyncOnly = TextUtils.equals(intent.getAction(), ACTION_SYNC_ONLY);
-		if (!mCmdSyncOnly) {
-			mDownloadDelList = intent.getLongArrayExtra(EXTRAS_LIST_DELETE);
+		if(intent != null) {//Fixed: #69
+			mCmdSyncOnly = TextUtils.equals(intent.getAction(), ACTION_SYNC_ONLY);
+			if (!mCmdSyncOnly) {
+				mDownloadDelList = intent.getLongArrayExtra(EXTRAS_LIST_DELETE);
+			}
+			establishGoogleDriver();
+			return ServiceCompat.START_STICKY;
 		}
-		establishGoogleDriver();
-		return ServiceCompat.START_STICKY;
+		return super.onStartCommand(intent, flags, startId);
 	}
-
 }
