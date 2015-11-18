@@ -174,6 +174,7 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 				switch (connectionResult.getErrorCode()){
 				case ConnectionResult.SIGN_IN_FAILED:
 				case ConnectionResult.SIGN_IN_REQUIRED:
+				case ConnectionResult.INVALID_ACCOUNT:
 					ConnectGoogleActivity.showInstance(MainActivity.this);
 					break;
 				default:

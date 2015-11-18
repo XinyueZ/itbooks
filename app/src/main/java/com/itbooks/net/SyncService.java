@@ -464,6 +464,7 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 			switch (connectionResult.getErrorCode()) {
 			case ConnectionResult.SIGN_IN_FAILED:
 			case ConnectionResult.SIGN_IN_REQUIRED:
+			case ConnectionResult.INVALID_ACCOUNT:
 				NotifyUtils.notifyWithoutBigImage(App.Instance, NOTIFY_REQ_LOGIN, App.Instance.getString(R.string.application_name), App.Instance.getString(R.string.msg_sync_need_login),
 						android.R.drawable.stat_notify_error, NotifyUtils.getGoogleLogin(App.Instance));
 				break;
