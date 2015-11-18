@@ -114,7 +114,7 @@
      <string name="msg_file_copied">Datei ist kopiert worden.</string>
     <string name="msg_file_deleted">Datei entfernt.</string>
     <string name="msg_file_duplicated">Die Operation is anzuhalten, weil die Zieldatei schon vorhanden ist.</string>
-    <string name="msg_cell_network_no_image">Alle Bilder(außerhalb Merkliste) werden ausgeblendet, wenn Du nicht mit W-LAN unterwegs bist.</string>
+    <string name="msg_cell_network_no_image">Alle Bilder(außerhalb Merkliste) werden ausgeblendet, wenn Du nicht an W-LAN verbunden hast.</string>
     <string name="msg_access_driver_failed">Google Driver ist nicht erreichbar.</string>
     <string name="msg_sync_req_for_driver">Damit Google Driver für Sync verwendet werden kann, musst Du einloggen.</string>
     <string name="msg_sync_in_progress">Sync läuft gerade</string>

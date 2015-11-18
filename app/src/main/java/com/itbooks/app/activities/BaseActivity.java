@@ -35,6 +35,7 @@ import com.github.johnpersano.supertoasts.util.Wrappers;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.itbooks.R;
+import com.itbooks.app.App;
 import com.itbooks.app.fragments.AboutDialogFragment;
 import com.itbooks.bus.CellNetworkNoImageWarningEvent;
 import com.itbooks.bus.CloseProgressDialogEvent;
@@ -60,7 +61,8 @@ public abstract class BaseActivity extends com.chopping.activities.BaseActivity 
 	 * 		Event {@link com.itbooks.bus.CellNetworkNoImageWarningEvent}.
 	 */
 	public void onEvent(CellNetworkNoImageWarningEvent e) {
-		if (mRefreshLayout != null) {
+		if (mRefreshLayout != null && !App.Instance.isShow3GWarning()) {
+			App.Instance.setShow3GWarning(true);
 			Snackbar.make(mRefreshLayout, R.string.msg_cell_network_no_image, Snackbar.LENGTH_LONG).setAction(
 					R.string.btn_reset, new OnClickListener() {
 						@Override

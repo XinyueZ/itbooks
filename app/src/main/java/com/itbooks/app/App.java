@@ -65,9 +65,13 @@ public final class App extends MultiDexApplication {
 		Instance = this;
 	}
 
+	private boolean mShow3GWarning;
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		setShow3GWarning(false);
+
 		Fabric.with(this, new Crashlytics());
 		Stetho.initialize(Stetho.newInitializerBuilder(this).enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
 				.enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this)).build());
@@ -84,5 +88,14 @@ public final class App extends MultiDexApplication {
 		DB.getInstance(this).open();
 
 		Utils.startAppGuardService(App.Instance);
+	}
+
+
+	public boolean isShow3GWarning() {
+		return mShow3GWarning;
+	}
+
+	public void setShow3GWarning(boolean show3GWarning) {
+		mShow3GWarning = show3GWarning;
 	}
 }
