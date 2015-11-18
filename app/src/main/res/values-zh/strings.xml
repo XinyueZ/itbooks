@@ -17,11 +17,12 @@
     <string name="btn_yes">是</string>
     <string name="btn_no">不</string>
     <string name="btn_app_rating">应用评价</string>
+    <string name="btn_turn_on">启动</string>
 
     <string name="lbl_about">关于</string>
     <string name="lbl_share_app">分享</string>
     <string name="lbl_share_book">分享这本书</string>
-     <string name="lbl_share_app_content">你好！\n\n\u00A0\u00A0\u00A0\u00A0寻找更多IT书籍？\n\n下载: http://tinyurl.com/kto2y59</string>
+    <string name="lbl_share_app_content">你好！\n\n\u00A0\u00A0\u00A0\u00A0寻找更多IT书籍？\n\n下载: http://tinyurl.com/kto2y59</string>
       <string name="lbl_share_book_content">你好！\n\n\u00A0\u00A0\u00A0\u00A0我找到一本不错的IT书。\n\n《%1$s》\n\n作者：%2$s\n\nDownload:
         %3$s\n\n下载App:http://tinyurl.com/kto2y59</string>
     <string name="lbl_pull_to_load">下拉，重载数据。</string>
@@ -60,9 +61,8 @@
     <string name="lbl_connect_google">正在连接谷歌后台…</string>
     <string name="lbl_login_benefit">登录谷歌后，你可以长久保存[收藏夹]和[下载的书]。</string>
 
-    <string name="setting_sync">同步(登录后有效)</string>
-    <string name="setting_sync_when_charging">只在充电时候同步数据</string>
-    <string name="setting_sync_when_wifi">只在无线网络环境下同步数据</string>
+    <string name="lbl_history_empty">无下载记录</string>
+
 
     <string name="menu_forward">向前</string>
     <string name="menu_backward">向后</string>
@@ -101,9 +101,10 @@
     <string name="setting_show_image_off_wifi">当前在任何网络下显示图片</string>
 
 
+    <string name="setting_sync">同步(登录后有效)</string>
+    <string name="setting_sync_when_charging">只在充电时候同步数据</string>
+    <string name="setting_sync_when_wifi">只在无线网络环境下同步数据</string>
 
-
-    <string name="btn_turn_on">启动</string>
 
     <string name="msg_bookmark_the_book">收藏</string>
     <string name="msg_unbookmark_the_book">取消收藏</string>
@@ -116,12 +117,11 @@
     <string name="msg_new_api_version_update">您好，一个好，但也遗憾的消息。我必须告知您，我现在正使用新的API为您提供数据并支持直接下载，收藏夹将改为网络存储，这样您不用担心将来数据丢失。遗憾的是，旧的本地书签会因此次升级而遗憾丢失，希望您能谅解并一贯支持我，谢谢！</string>
     <string name="msg_require_external_storage">请检查SD卡是否已经插入，因为应用需要大存储空间，比方说SD卡或者内置大存储设备，您的空间不够。</string>
     <string name="msg_op">操作中…</string>
-    <string name="lbl_history_empty">无下载记录</string>
     <string name="msg_welcome_2_0">欢迎使用 2.0…</string>
     <string name="msg_welcome_3_0">谢谢…</string>
     <string name="msg_welcome">欢迎…</string>
     <string name="msg_one_book_downloaded">有本书已经下载好了，请检查下。</string>
-     <string name="msg_file_copied">拷贝了文件</string>
+    <string name="msg_file_copied">拷贝了文件</string>
     <string name="msg_file_deleted">删除了文件</string>
     <string name="msg_file_duplicated">目标文件已经存在，终止操作</string>
     <string name="msg_access_driver_failed">无法接触谷歌网盘。</string>
@@ -134,4 +134,8 @@
     <string name="msg_file_delete_success">文件删除， bitte checken.</string>
     <string name="msg_pull_success">文件已经下载，请检查。</string>
     <string name="msg_push_success">文件已经推送，请检查。</string>
+
+    <string name="msg_sync_warning_1">一定现在要同步吗？会消费很多网络流量和电量的。</string>
+    <string name="msg_sync_warning_2">一定现在要同步吗？会消费很多网络流量的。</string>
+    <string name="msg_sync_warning_3">一定现在要同步吗？会消费很多电量的。</string>
 </resources>

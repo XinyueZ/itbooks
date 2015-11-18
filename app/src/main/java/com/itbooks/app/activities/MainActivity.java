@@ -58,6 +58,7 @@ import com.chopping.net.GsonRequestTask;
 import com.chopping.net.TaskHelper;
 import com.chopping.utils.DeviceUtils;
 import com.chopping.utils.DeviceUtils.ScreenSize;
+import com.chopping.utils.NetworkUtils;
 import com.chopping.utils.Utils;
 import com.github.johnpersano.supertoasts.SuperToast;
 import com.google.android.gms.common.ConnectionResult;
@@ -837,8 +838,49 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 	}
 
 	private void startSync(int resultCode) {
+		mDrawerLayout.closeDrawers();
 		if (resultCode == RESULT_OK) {
-			SyncService.startSync(App.Instance);
+			Prefs prefs = Prefs.getInstance(App.Instance);
+			boolean syncWifi = prefs.syncWifi();
+			boolean syncCharging = prefs.syncCharging();
+			int msgRs = 0;
+			if(syncWifi && syncCharging) {
+				boolean isWifiOn = NetworkUtils.getCurrentNetworkType(App.Instance) == NetworkUtils.CONNECTION_WIFI;
+				boolean isPlugged = DeviceUtils.isPlugged(App.Instance);
+				if(!isWifiOn && !isPlugged) {
+					msgRs = R.string.msg_sync_warning_1;
+				}else if(!isWifiOn && isPlugged) {
+					msgRs = R.string.msg_sync_warning_2;
+				}else if( isWifiOn && !isPlugged) {
+					msgRs = R.string.msg_sync_warning_3;
+				} else   {
+					msgRs = 0;
+				}
+			} else if(!syncWifi && syncCharging) {
+				boolean isPlugged = DeviceUtils.isPlugged(App.Instance);
+				if( !isPlugged) {
+					msgRs = R.string.msg_sync_warning_3;
+				} else {
+					msgRs = 0;
+				}
+			}else if(syncWifi && !syncCharging) {
+				boolean isWifiOn = NetworkUtils.getCurrentNetworkType(App.Instance) == NetworkUtils.CONNECTION_WIFI;
+				if( !isWifiOn) {
+					msgRs = R.string.msg_sync_warning_2;
+				} else {
+					msgRs = 0;
+				}
+			}
+			if(msgRs == 0) {
+				SyncService.startSync(App.Instance);
+			} else {
+				Snackbar.make(mRefreshLayout, msgRs, Snackbar.LENGTH_LONG).setAction(R.string.menu_sync, new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						SyncService.startSync(App.Instance);
+					}
+				}).show();
+			}
 		}
 	}
 
@@ -850,6 +892,8 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		prefs.setGoogleId(null);
 		prefs.setGoogleThumbUrl(null);
 		prefs.setGoogleDisplyName(null);
+		prefs.setLastTimeSync(-1);
+
 		mLoginNameTv.setText("");
 		ViewPropertyAnimator.animate(mLoginNameTv).translationY(Utils.convertPixelsToDp(App.Instance, -55)).setDuration(
 				800).start();

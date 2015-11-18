@@ -21,8 +21,8 @@ public final class AppGuardService extends GcmTaskService {
 		if (!TextUtils.isEmpty(Prefs.getInstance(getApplication()).getGoogleId())) {
 			Prefs prefs = Prefs.getInstance(getApplicationContext());
 			boolean syncWifi = prefs.syncWifi();
-			boolean isWifiOn = NetworkUtils.getCurrentNetworkType(App.Instance) == NetworkUtils.CONNECTION_WIFI;
 			if (syncWifi) {
+				boolean isWifiOn = NetworkUtils.getCurrentNetworkType(App.Instance) == NetworkUtils.CONNECTION_WIFI;
 				if (isWifiOn) {
 					notifySync(this);
 					SyncService.startSync(this);

@@ -18,6 +18,7 @@
     <string name="btn_yes">Ja</string>
     <string name="btn_no">Nein</string>
     <string name="btn_app_rating">App bewerten</string>
+    <string name="btn_turn_on">Einschalten</string>
 
     <string name="lbl_about">About</string>
     <string name="lbl_share_app">Teilen</string>
@@ -64,6 +65,8 @@
     <string name="lbl_connect_google">Verbindung an Google…</string>
     <string name="lbl_login_benefit">Mit Google anmelden, damit Du die Merkliste und alle heruntergeladenen Bücher permanent sichern kannst.</string>
 
+    <string name="lbl_bookmark_empty">Merkliste ist leer.</string>
+
     <string name="menu_forward">Vorwärts</string>
     <string name="menu_backward">Rückwärts</string>
     <string name="menu_remove_all_bookmarks">Merkliste leeren</string>
@@ -72,7 +75,6 @@
     <string name="menu_delete_all">Alle Löschen</string>
     <string name="menu_book_copy">Kopieren</string>
 
-    <string name="lbl_bookmark_empty">Merkliste ist leer.</string>
     <string name="menu_setting">Einstellung</string>
 
 
@@ -94,7 +96,6 @@
     <string name="setting_sync_when_charging">Sync bei der Batterieladung</string>
     <string name="setting_sync_when_wifi">Sync bei W-LAN</string>
 
-    <string name="btn_turn_on">Einschalten</string>
 
     <string name="msg_bookmark_the_book">In die Merkliste hinzugefügt</string>
     <string name="msg_unbookmark_the_book">Entfernt von der Merkliste</string>
@@ -111,7 +112,7 @@
     <string name="msg_welcome_3_0">Danke für Deine Aufmerksamkeit…</string>
     <string name="msg_welcome">Willkommen…</string>
     <string name="msg_one_book_downloaded">Ein Buch ist heruntergeladen, bitte durchchecken.</string>
-     <string name="msg_file_copied">Datei ist kopiert worden.</string>
+    <string name="msg_file_copied">Datei ist kopiert worden.</string>
     <string name="msg_file_deleted">Datei entfernt.</string>
     <string name="msg_file_duplicated">Die Operation is anzuhalten, weil die Zieldatei schon vorhanden ist.</string>
     <string name="msg_cell_network_no_image">Alle Bilder(außerhalb Merkliste) werden ausgeblendet, wenn Du nicht an W-LAN verbunden hast.</string>
@@ -125,4 +126,8 @@
     <string name="msg_file_delete_success">Datein gelöscht, bitte checken.</string>
     <string name="msg_pull_success">Datein heruntergeladen, bitte checken.</string>
     <string name="msg_push_success">Datein hochgeladen, bitte checken.</string>
+
+    <string name="msg_sync_warning_1">Bist Du sicher, Sync zu machen? Es wird eine Menge von Netzwerkverkehr und viel Strom verbringen.</string>
+    <string name="msg_sync_warning_2">Bist Du sicher, Sync zu machen? Es wird eine Menge von Netzwerkverkehr verbringen.</string>
+    <string name="msg_sync_warning_3">Bist Du sicher, Sync zu machen? Es wird viel Strom verbrauchen.</string>
 </resources>

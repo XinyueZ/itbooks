@@ -119,7 +119,7 @@
 
     <string name="setting_sync">Sync(with login)</string>
     <string name="setting_sync_when_charging">Sync data at charging only</string>
-    <string name="setting_sync_when_wifi">Sync data only with WIFI</string>
+    <string name="setting_sync_when_wifi">Sync data with WIFI only</string>
 
     <string name="msg_bookmark_the_book">Added to bookmarks</string>
     <string name="msg_unbookmark_the_book">Removed from bookmarks</string>
@@ -151,4 +151,8 @@
     <string name="msg_file_delete_success">Files deleted, please check.</string>
     <string name="msg_pull_success">Files pulled, please check.</string>
     <string name="msg_push_success">Files pushed, please check.</string>
+
+    <string name="msg_sync_warning_1">You must now be synchronize? We will be spending a lot of network traffic and electricity.</string>
+    <string name="msg_sync_warning_2">You must now be synchronize? You will be spending a lot of network traffic.</string>
+    <string name="msg_sync_warning_3">You must now be synchronize? It will consume a lot of electricity.</string>
 </resources>

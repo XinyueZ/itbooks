@@ -77,7 +77,6 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 			getLoaderManager().initLoader(2, null, HistoryFragment.this).forceLoad();
 			if (mToolbar != null) {
 				Menu menu = mToolbar.getMenu();
-				menu.findItem(R.id.action_sync).setEnabled(true);
 				menu.findItem(R.id.action_delete_all).setEnabled(true);
 			}
 		}
@@ -219,7 +218,6 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 		menu.findItem(R.id.action_sync).setOnMenuItemClickListener(new OnMenuItemClickListener() {
 																	   @Override
 																	   public boolean onMenuItemClick(MenuItem item) {
-																		   item.setEnabled(false);
 																		   EventBus.getDefault().post(
 																				   !TextUtils.isEmpty(Prefs.getInstance(
 																						   App.Instance)
@@ -235,7 +233,7 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 			@Override
 			public boolean onMenuItemClick(MenuItem item) {
 				item.setEnabled(false);
-				getLoaderManager().initLoader(1, null, new LoaderCallbacks<List<Download>>() {
+				getLoaderManager().initLoader(3, null, new LoaderCallbacks<List<Download>>() {
 					@Override
 					public Loader<List<Download>> onCreateLoader(int id, Bundle args) {
 						return getAllDownloads();
