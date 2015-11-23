@@ -154,39 +154,7 @@ func download(cxt appengine.Context, keyword string, ch chan []*Book) {
 										book.Publisher,
 										book.CoverUrl,
 										book.Description }
-									tinyQ := fmt.Sprintf("%s%s", "https://tinyurl-wrapper.appspot.com/?q=", ret.Link)
-									if r, e := http.NewRequest("GET", tinyQ, nil); e == nil {
-										if resp, e := client.Do(r); e == nil {
-											if resp != nil {
-												defer resp.Body.Close()
-											}
-											if bytes, e := ioutil.ReadAll(resp.Body); e == nil {
-													pTiny := new(TinyUrl)
-													if e := json.Unmarshal(bytes, pTiny); e == nil {
-														if pTiny.Status   && pTiny.Result != "" {
-															ret.Link = pTiny.Result
-														}
-													}
-											}
-										}
-									}
-
-									tinyQ = fmt.Sprintf("%s%s", "https://tinyurl-wrapper.appspot.com/?q=", ret.CoverUrl)
-									if r, e := http.NewRequest("GET", tinyQ, nil); e == nil {
-										if resp, e := client.Do(r); e == nil {
-											if resp != nil {
-												defer resp.Body.Close()
-											}
-											if bytes, e := ioutil.ReadAll(resp.Body); e == nil {
-													pTiny := new(TinyUrl)
-													if e := json.Unmarshal(bytes, pTiny); e == nil {
-														if pTiny.Status   && pTiny.Result != "" {
-															ret.CoverUrl = pTiny.Result
-														}
-													}
-											}
-										}
-									}
+									
 									ch <- &ret
 							}(b, chh)
 						}
