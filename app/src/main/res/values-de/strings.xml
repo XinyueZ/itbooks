@@ -23,10 +23,10 @@
     <string name="lbl_about">About</string>
     <string name="lbl_share_app">Teilen</string>
     <string name="lbl_share_book">Teile dieses Buch</string>
-    <string name="lbl_share_app_content">Hallo!\n\nsuchen Sie jetzt mehr IT-Bücher?\n\nDownload:
+    <string name="lbl_share_app_content">Hallo!\n\nsuchen Sie jetzt mehr IT-Bücher?\n\nDownload:\n
         http://tinyurl.com/kto2y59</string>
     <string name="lbl_share_book_content">Hallo!\n\nich habe ein gutes IT-Buch
-        gefunden.\n\n\"%1$s\"\n\nAutor:%2$s\n\nHerunterladen: %3$s\n\nApp herunterladen: http://tinyurl.com/kto2y59</string>
+        gefunden.\n\n\"%1$s\"\n\nAutor:%2$s\n\nHerunterladen:\n%3$s\n\nApp herunterladen:\nhttp://tinyurl.com/kto2y59</string>
     <string name="lbl_pull_to_load">Ziehen nachrunter, Daten zu laden.</string>
     <string name="lbl_search">Suche nach einem Begriff, z.B Android</string>
     <string name="lbl_title">Titel</string>

@@ -22,9 +22,9 @@
     <string name="lbl_about">关于</string>
     <string name="lbl_share_app">分享</string>
     <string name="lbl_share_book">分享这本书</string>
-    <string name="lbl_share_app_content">你好！\n\n\u00A0\u00A0\u00A0\u00A0寻找更多IT书籍？\n\n下载: http://tinyurl.com/kto2y59</string>
+    <string name="lbl_share_app_content">你好！\n\n\u00A0\u00A0\u00A0\u00A0寻找更多IT书籍？\n\n下载:\nhttp://tinyurl.com/kto2y59</string>
       <string name="lbl_share_book_content">你好！\n\n\u00A0\u00A0\u00A0\u00A0我找到一本不错的IT书。\n\n《%1$s》\n\n作者：%2$s\n\nDownload:
-        %3$s\n\n下载App:http://tinyurl.com/kto2y59</string>
+        \n%3$s\n\n下载App:\nhttp://tinyurl.com/kto2y59</string>
     <string name="lbl_pull_to_load">下拉，重载数据。</string>
     <string name="lbl_search">查找关键字，比如：Android</string>
     <string name="lbl_title">书名</string>

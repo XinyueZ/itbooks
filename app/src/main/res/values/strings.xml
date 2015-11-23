@@ -26,10 +26,10 @@
     <string name="lbl_about">About</string>
     <string name="lbl_share_app">Share</string>
     <string name="lbl_share_book">Share this book</string>
-    <string name="lbl_share_app_content">Hello!\n\n\u00A0\u00A0\u00A0\u00A0Find more IT-Books?\n\nDownload:
+    <string name="lbl_share_app_content">Hello!\n\n\u00A0\u00A0\u00A0\u00A0Find more IT-Books?\n\nDownload:\n
         http://tinyurl.com/kto2y59</string>
     <string name="lbl_share_book_content">Hello!\n\n00A0\u00A0\u00A0\u00A0I\'ve found a nice IT-Book for
-        you.\n\n"%1$s"\n\nAuthor:%2$s\n\nDownload: %3$s\n\nDownload App: http://tinyurl.com/kto2y59</string>
+        you.\n\n"%1$s"\n\nAuthor:%2$s\n\nDownload:\n%3$s\n\nDownload App:\nhttp://tinyurl.com/kto2y59</string>
     <string name="lbl_pull_to_load">Pull to load data.</string>
     <string name="lbl_search">Search keyword, i.e Android</string>
     <string name="lbl_title">Title</string>

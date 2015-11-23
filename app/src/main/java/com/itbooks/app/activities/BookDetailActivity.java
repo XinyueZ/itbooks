@@ -26,6 +26,8 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.chopping.utils.DeviceUtils;
+import com.chopping.utils.DeviceUtils.ScreenSize;
 import com.chopping.utils.Utils;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -43,8 +45,12 @@ import com.itbooks.net.download.Download;
 import com.itbooks.utils.Prefs;
 import com.itbooks.views.RevealLayout;
 import com.squareup.picasso.Picasso;
+import com.tinyurl4j.data.Response;
 
 import net.steamcrafted.loadtoast.LoadToast;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
 
 /**
  * Details of book.
@@ -178,18 +184,6 @@ public final class BookDetailActivity extends BaseActivity {
 	}
 
 
-	@Override
-	protected void onNewIntent(Intent intent) {
-		super.onNewIntent(intent);
-		setIntent(intent);
-		mBook = (RSBook) intent.getSerializableExtra(EXTRAS_BOOK);
-	}
-
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putSerializable(EXTRAS_BOOK, mBook);
-	}
 
 
 	/**
@@ -224,6 +218,8 @@ public final class BookDetailActivity extends BaseActivity {
 			}
 		});
 
+		ScreenSize sc = DeviceUtils.getScreenSize(App.Instance);
+		findViewById(R.id.appbar).getLayoutParams().height = sc.Height / 2;
 
 		ActivityCompat.invalidateOptionsMenu(this);
 	}
@@ -322,21 +318,47 @@ public final class BookDetailActivity extends BaseActivity {
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		MenuItem mMenuShare = menu.findItem(R.id.action_share_book);
+		final MenuItem mMenuShare = menu.findItem(R.id.action_share_book);
+		mMenuShare.setVisible(false);
 		if (mBook != null) {
-			//Getting the actionprovider associated with the menu item whose id is share.
-			android.support.v7.widget.ShareActionProvider provider =
-					(android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(mMenuShare);
-			//Setting a share intent.
-			if (provider != null) {
-				String subject = getString(R.string.lbl_share_book);
-				String text = getString(R.string.lbl_share_book_content, mBook.getName(), mBook.getAuthor(),
-						mBook.getLink());
-				Intent intent = getDefaultShareIntent(provider, subject, text);
-				if (intent != null) {
-					provider.setShareIntent(intent);
+			com.tinyurl4j.Api.getTinyUrl(mBook.getLink(), new Callback<Response>() {
+				@Override
+				public void success(Response response, retrofit.client.Response response2) {
+					//Getting the actionprovider associated with the menu item whose id is share.
+					android.support.v7.widget.ShareActionProvider provider =
+							(android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(mMenuShare);
+					//Setting a share intent.
+					if (provider != null) {
+						String subject = getString(R.string.lbl_share_book);
+						String text = getString(R.string.lbl_share_book_content, mBook.getName(), mBook.getAuthor(),
+								TextUtils.isEmpty(response.getResult()) ? mBook.getLink() : response.getResult());
+						Intent intent = getDefaultShareIntent(provider, subject, text);
+						if (intent != null) {
+							provider.setShareIntent(intent);
+						}
+					}
+					mMenuShare.setVisible(true);
 				}
-			}
+
+				@Override
+				public void failure(RetrofitError error) {
+					//Getting the actionprovider associated with the menu item whose id is share.
+					android.support.v7.widget.ShareActionProvider provider =
+							(android.support.v7.widget.ShareActionProvider) MenuItemCompat.getActionProvider(mMenuShare);
+					//Setting a share intent.
+					if (provider != null) {
+						String subject = getString(R.string.lbl_share_book);
+						String text = getString(R.string.lbl_share_book_content, mBook.getName(), mBook.getAuthor(),
+								mBook.getLink());
+						Intent intent = getDefaultShareIntent(provider, subject, text);
+						if (intent != null) {
+							provider.setShareIntent(intent);
+						}
+					}
+					mMenuShare.setVisible(true);
+				}
+			});
+
 		}
 		return super.onPrepareOptionsMenu(menu);
 	}
@@ -351,6 +373,8 @@ public final class BookDetailActivity extends BaseActivity {
 	public void onBackPressed() {
 		ActivityCompat.finishAfterTransition(this);
 	}
+
+
 
 	public void hiddenDownloadButton() {
 		CoordinatorLayout.LayoutParams p = (CoordinatorLayout.LayoutParams) mDownloadBtn.getLayoutParams();
@@ -379,6 +403,21 @@ public final class BookDetailActivity extends BaseActivity {
 		mDownloadBtn.setImageResource(R.drawable.ic_read);
 		mDownloadBtn.setBackgroundTintList(ColorStateList.valueOf(ActivityCompat.getColor(App.Instance,
 				R.color.common_red)));
+	}
+
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		setIntent(intent);
+		mBook = (RSBook) intent.getSerializableExtra(EXTRAS_BOOK);
+	}
+
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putSerializable(EXTRAS_BOOK, mBook);
 	}
 
 	@Override
