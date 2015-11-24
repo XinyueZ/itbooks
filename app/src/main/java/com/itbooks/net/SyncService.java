@@ -73,7 +73,8 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 	private static final String BOOK_AUTHOR = "book_author";
 	private static final String BOOK_SIZE = "book_size";
 	private static final String BOOK_PAGES = "book_pages";
-	private static final String BOOK_LINK = "book_link";
+	private static final String BOOK_LINK_1 = "book_link_1";
+	private static final String BOOK_LINK_2 = "book_link_2";
 	private static final String BOOK_ISBN = "book_isbn";
 	private static final String BOOK_YEAR = "book_year";
 	private static final String BOOK_PUBLISHER = "book_publisher";
@@ -205,7 +206,13 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 								CustomPropertyKey bookSize = new CustomPropertyKey(BOOK_SIZE, CustomPropertyKey.PUBLIC);
 								CustomPropertyKey bookPages = new CustomPropertyKey(BOOK_PAGES,
 										CustomPropertyKey.PUBLIC);
-								CustomPropertyKey bookLink = new CustomPropertyKey(BOOK_LINK, CustomPropertyKey.PUBLIC);
+								CustomPropertyKey bookLink1 = new CustomPropertyKey(BOOK_LINK_1, CustomPropertyKey.PUBLIC);
+								CustomPropertyKey bookLink2 = new CustomPropertyKey(BOOK_LINK_2, CustomPropertyKey.PUBLIC);
+								String link = download.getLink();
+								int len = link.length();
+								String link1 = link.substring(0, len / 2);
+								String link2 = link.substring(len / 2);
+
 								CustomPropertyKey bookISBN = new CustomPropertyKey(BOOK_ISBN, CustomPropertyKey.PUBLIC);
 								CustomPropertyKey bookYear = new CustomPropertyKey(BOOK_YEAR, CustomPropertyKey.PUBLIC);
 								CustomPropertyKey bookPublisher = new CustomPropertyKey(BOOK_PUBLISHER,
@@ -215,7 +222,7 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 								CustomPropertyKey bookCover2 = new CustomPropertyKey(BOOK_COVER_2,
 										CustomPropertyKey.PUBLIC);
 								String coverUrl =  download.getCoverUrl();
-								int len = coverUrl.length();
+								len = coverUrl.length();
 								String s1 = coverUrl.substring(0, len / 2);
 								String s2 = coverUrl.substring(len / 2);
 
@@ -223,7 +230,7 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 										MIME_TYPE).setTitle(download.getTargetName()).setCustomProperty(bookName,
 										download.getName()).setCustomProperty(bookAuthor, download.getAuthor())
 										.setCustomProperty(bookSize, download.getSize()).setCustomProperty(bookPages,
-												download.getPages()).setCustomProperty(bookLink, download.getLink())
+												download.getPages()).setCustomProperty(bookLink1, link1).setCustomProperty(bookLink2, link2)
 										.setCustomProperty(bookISBN, download.getISBN()).setCustomProperty(bookYear,
 												download.getYear()).setCustomProperty(bookPublisher,
 												download.getPublisher()).setCustomProperty(bookCover1,
@@ -309,19 +316,21 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 					CustomPropertyKey bookAuthor = new CustomPropertyKey(BOOK_AUTHOR, CustomPropertyKey.PUBLIC);
 					CustomPropertyKey bookSize = new CustomPropertyKey(BOOK_SIZE, CustomPropertyKey.PUBLIC);
 					CustomPropertyKey bookPages = new CustomPropertyKey(BOOK_PAGES, CustomPropertyKey.PUBLIC);
-					CustomPropertyKey bookLink = new CustomPropertyKey(BOOK_LINK, CustomPropertyKey.PUBLIC);
+					CustomPropertyKey bookLink1 = new CustomPropertyKey(BOOK_LINK_1, CustomPropertyKey.PUBLIC);
+					CustomPropertyKey bookLink2 = new CustomPropertyKey(BOOK_LINK_2, CustomPropertyKey.PUBLIC);
 					CustomPropertyKey bookISBN = new CustomPropertyKey(BOOK_ISBN, CustomPropertyKey.PUBLIC);
 					CustomPropertyKey bookYear = new CustomPropertyKey(BOOK_YEAR, CustomPropertyKey.PUBLIC);
 					CustomPropertyKey bookPublisher = new CustomPropertyKey(BOOK_PUBLISHER, CustomPropertyKey.PUBLIC);
 					CustomPropertyKey bookCover1 = new CustomPropertyKey(BOOK_COVER_1, CustomPropertyKey.PUBLIC);
 					CustomPropertyKey bookCover2 = new CustomPropertyKey(BOOK_COVER_2, CustomPropertyKey.PUBLIC);
 
+					String linkUrl = propertyKeyStringMap.get(bookLink1) + propertyKeyStringMap.get(bookLink2);
 					String coverUrl = propertyKeyStringMap.get(bookCover1) + propertyKeyStringMap.get(bookCover2);
 					//					String name, String author, String size, String pages, String link, String ISBN, String year,
 					//							String publisher, String description, String coverUrl
 					RSBook book = new RSBook(propertyKeyStringMap.get(bookName), propertyKeyStringMap.get(bookAuthor),
 							propertyKeyStringMap.get(bookSize), propertyKeyStringMap.get(bookPages),
-							propertyKeyStringMap.get(bookLink), propertyKeyStringMap.get(bookISBN),
+							linkUrl, propertyKeyStringMap.get(bookISBN),
 							propertyKeyStringMap.get(bookYear), propertyKeyStringMap.get(bookPublisher), description,
 							coverUrl);
 					DB db = DB.getInstance(App.Instance);
