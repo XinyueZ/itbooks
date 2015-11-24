@@ -77,7 +77,8 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 	private static final String BOOK_ISBN = "book_isbn";
 	private static final String BOOK_YEAR = "book_year";
 	private static final String BOOK_PUBLISHER = "book_publisher";
-	private static final String BOOK_COVER = "book_cover";
+	private static final String BOOK_COVER_1 = "book_cover_1";
+	private static final String BOOK_COVER_2 = "book_cover_2";
 
 	private static final int NOTIFY_ERROR_DEL_ID = 0x06;
 	private static final int NOTIFY_ERROR_PUSH_ID = 0x16;
@@ -209,8 +210,15 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 								CustomPropertyKey bookYear = new CustomPropertyKey(BOOK_YEAR, CustomPropertyKey.PUBLIC);
 								CustomPropertyKey bookPublisher = new CustomPropertyKey(BOOK_PUBLISHER,
 										CustomPropertyKey.PUBLIC);
-								CustomPropertyKey bookCover = new CustomPropertyKey(BOOK_COVER,
+								CustomPropertyKey bookCover1 = new CustomPropertyKey(BOOK_COVER_1,
 										CustomPropertyKey.PUBLIC);
+								CustomPropertyKey bookCover2 = new CustomPropertyKey(BOOK_COVER_2,
+										CustomPropertyKey.PUBLIC);
+								String coverUrl =  download.getCoverUrl();
+								int len = coverUrl.length();
+								String s1 = coverUrl.substring(0, len / 2);
+								String s2 = coverUrl.substring(len / 2);
+
 								MetadataChangeSet createdFileMeta = new MetadataChangeSet.Builder().setMimeType(
 										MIME_TYPE).setTitle(download.getTargetName()).setCustomProperty(bookName,
 										download.getName()).setCustomProperty(bookAuthor, download.getAuthor())
@@ -218,8 +226,9 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 												download.getPages()).setCustomProperty(bookLink, download.getLink())
 										.setCustomProperty(bookISBN, download.getISBN()).setCustomProperty(bookYear,
 												download.getYear()).setCustomProperty(bookPublisher,
-												download.getPublisher()).setCustomProperty(bookCover,
-												download.getCoverUrl()).setDescription(download.getDescription())
+												download.getPublisher()).setCustomProperty(bookCover1,
+												s1).setCustomProperty(bookCover2,
+												s2).setDescription(download.getDescription())
 										.build();
 								DriveFileResult fileResult = itBooksFolder.createFile(client, createdFileMeta, contents)
 										.await();
@@ -304,14 +313,17 @@ public class SyncService extends Service implements ConnectionCallbacks, OnConne
 					CustomPropertyKey bookISBN = new CustomPropertyKey(BOOK_ISBN, CustomPropertyKey.PUBLIC);
 					CustomPropertyKey bookYear = new CustomPropertyKey(BOOK_YEAR, CustomPropertyKey.PUBLIC);
 					CustomPropertyKey bookPublisher = new CustomPropertyKey(BOOK_PUBLISHER, CustomPropertyKey.PUBLIC);
-					CustomPropertyKey bookCover = new CustomPropertyKey(BOOK_COVER, CustomPropertyKey.PUBLIC);
+					CustomPropertyKey bookCover1 = new CustomPropertyKey(BOOK_COVER_1, CustomPropertyKey.PUBLIC);
+					CustomPropertyKey bookCover2 = new CustomPropertyKey(BOOK_COVER_2, CustomPropertyKey.PUBLIC);
+
+					String coverUrl = propertyKeyStringMap.get(bookCover1) + propertyKeyStringMap.get(bookCover2);
 					//					String name, String author, String size, String pages, String link, String ISBN, String year,
 					//							String publisher, String description, String coverUrl
 					RSBook book = new RSBook(propertyKeyStringMap.get(bookName), propertyKeyStringMap.get(bookAuthor),
 							propertyKeyStringMap.get(bookSize), propertyKeyStringMap.get(bookPages),
 							propertyKeyStringMap.get(bookLink), propertyKeyStringMap.get(bookISBN),
 							propertyKeyStringMap.get(bookYear), propertyKeyStringMap.get(bookPublisher), description,
-							propertyKeyStringMap.get(bookCover));
+							coverUrl);
 					DB db = DB.getInstance(App.Instance);
 					List<Download> downloads = db.getDownloads(book);
 					if (downloads.size() == 0) {
