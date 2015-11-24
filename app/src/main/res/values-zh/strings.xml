@@ -141,4 +141,6 @@
     <string name="msg_sync_warning_3">一定现在要同步吗？会消费很多电量的。</string>
 
     <string name="msg_sync_need_login">无法同步，你现在必须重新登录谷歌。</string>
+    <string name="msg_permission_prompt">没有－读取电话状态，写入存储－的权限，应用无法运行…</string>
+
 </resources>

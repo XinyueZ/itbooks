@@ -3,6 +3,7 @@ package com.itbooks.app.activities;
 import java.io.File;
 import java.util.List;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
@@ -107,6 +108,9 @@ import de.greenrobot.event.EventBus;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
+import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 
 
 public class MainActivity extends BaseActivity implements OnQueryTextListener {
@@ -392,6 +396,17 @@ public class MainActivity extends BaseActivity implements OnQueryTextListener {
 		startSync(RESULT_OK);
 	}
 	//------------------------------------------------
+	/**
+	 * Show single instance of {@link}
+	 *
+	 * @param cxt
+	 * 		{@link Activity}.
+	 */
+	public static void showInstance(Activity cxt) {
+		Intent intent = new Intent(cxt, MainActivity.class);
+		intent.setFlags(FLAG_ACTIVITY_SINGLE_TOP | FLAG_ACTIVITY_CLEAR_TOP);
+		ActivityCompat.startActivity(cxt, intent, null);
+	}
 
 
 	/**

@@ -132,4 +132,6 @@
     <string name="msg_sync_warning_3">Bist Du sicher, Sync zu machen? Es wird viel Strom verbrauchen.</string>
 
     <string name="msg_sync_need_login">Sync findet nicht statt, weil Du mit Google erneut anmelden musst.</string>
+    <string name="msg_permission_prompt">Ohne Berechtigung von "Read Phone State" und "Write External Storage" kann die App nicht weiter gehen…</string>
+
 </resources>

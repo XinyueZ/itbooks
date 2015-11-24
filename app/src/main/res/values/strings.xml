@@ -157,4 +157,6 @@
     <string name="msg_sync_warning_3">You must now be synchronize? It will consume a lot of electricity.</string>
 
     <string name="msg_sync_need_login">Sync can not be started, you should have to login with Google again.</string>
+    <string name="msg_permission_prompt">Without "Read Phone State" and "Write External Storage" the App can\'t work…</string>
+
 </resources>
