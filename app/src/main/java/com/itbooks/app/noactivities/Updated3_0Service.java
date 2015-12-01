@@ -1,4 +1,4 @@
-package com.itbooks.app;
+package com.itbooks.app.noactivities;
 
 import java.io.File;
 import java.util.List;
@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Environment;
 
+import com.itbooks.app.App;
 import com.itbooks.db.DB;
 import com.itbooks.net.download.Download;
 

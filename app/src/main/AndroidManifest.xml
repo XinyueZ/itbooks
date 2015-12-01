@@ -129,7 +129,7 @@
             android:enabled="true"
             android:exported="false" />
         <service
-            android:name=".app.AppGuardService"
+            android:name=".app.noactivities.AppGuardService"
             android:enabled="true"
             android:exported="true"
             android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
@@ -139,7 +139,7 @@
         </service>
 
         <receiver
-            android:name=".app.BootReceiver"
+            android:name=".app.noactivities.BootReceiver"
             android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -147,7 +147,7 @@
         </receiver>
 
         <service
-            android:name=".app.Updated3_0Service"
+            android:name=".app.noactivities.Updated3_0Service"
             android:exported="false"/>
     </application>
 

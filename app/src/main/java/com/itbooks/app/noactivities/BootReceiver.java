@@ -1,4 +1,4 @@
-package com.itbooks.app;
+package com.itbooks.app.noactivities;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

@@ -1,4 +1,4 @@
-package com.itbooks.app;
+package com.itbooks.app.noactivities;
 
 
 import android.content.Context;
@@ -9,6 +9,7 @@ import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.GcmTaskService;
 import com.google.android.gms.gcm.TaskParams;
 import com.itbooks.R;
+import com.itbooks.app.App;
 import com.itbooks.net.SyncService;
 import com.itbooks.utils.NotifyUtils;
 import com.itbooks.utils.Prefs;

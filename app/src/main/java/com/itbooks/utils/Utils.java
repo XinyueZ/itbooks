@@ -7,7 +7,7 @@ import com.chopping.utils.NetworkUtils;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.PeriodicTask;
 import com.itbooks.app.App;
-import com.itbooks.app.AppGuardService;
+import com.itbooks.app.noactivities.AppGuardService;
 import com.itbooks.bus.CellNetworkNoImageWarningEvent;
 
 import de.greenrobot.event.EventBus;

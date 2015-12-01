@@ -67,7 +67,7 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.itbooks.R;
 import com.itbooks.app.App;
 import com.itbooks.app.SearchSuggestionProvider;
-import com.itbooks.app.Updated3_0Service;
+import com.itbooks.app.noactivities.Updated3_0Service;
 import com.itbooks.app.adapters.AbstractBookViewAdapter;
 import com.itbooks.app.adapters.BookGridAdapter;
 import com.itbooks.app.adapters.BookListAdapter;
