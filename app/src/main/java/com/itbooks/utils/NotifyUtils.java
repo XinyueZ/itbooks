@@ -62,7 +62,7 @@ public final class NotifyUtils {
 				"https://play.google.com/store/apps/details?id=" + cxt.getPackageName()));
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		return PendingIntent.getActivity(cxt, com.chopping.utils.Utils.randInt(1, 9999), intent,
-				PendingIntent.FLAG_ONE_SHOT);
+				PendingIntent.FLAG_UPDATE_CURRENT);
 	}
 
 	public static PendingIntent getAppHome(Context cxt) {
