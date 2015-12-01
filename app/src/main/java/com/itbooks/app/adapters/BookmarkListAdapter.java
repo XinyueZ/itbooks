@@ -30,53 +30,53 @@ public final class BookmarkListAdapter extends AbstractBookViewAdapter<BookmarkL
 	 * Main layout for this component.
 	 */
 	private static final int ITEM_LAYOUT = R.layout.item_bookmark_list;
-	public BookmarkListAdapter(List<DSBookmark> bookmarkList) {
-		setData(bookmarkList);
+	public BookmarkListAdapter( List<DSBookmark> bookmarkList ) {
+		setData( bookmarkList );
 	}
 
 
 	@Override
-	public BookmarkListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-		View convertView = LayoutInflater.from(parent.getContext()).inflate(ITEM_LAYOUT, null);
-		BookmarkListAdapter.ViewHolder viewHolder = new BookmarkListAdapter.ViewHolder(convertView);
+	public BookmarkListAdapter.ViewHolder onCreateViewHolder( ViewGroup parent, int viewType ) {
+		View                           convertView = LayoutInflater.from( parent.getContext() ).inflate( ITEM_LAYOUT, null );
+		BookmarkListAdapter.ViewHolder viewHolder  = new BookmarkListAdapter.ViewHolder( convertView );
 		return viewHolder;
 	}
 
 	@Override
-	public void onBindViewHolder(final ViewHolder viewHolder, int position) {
-		final DSBookmark bookmark = getData().get(position);
-		RSBook book = bookmark.getBook();
+	public void onBindViewHolder( final ViewHolder viewHolder, int position ) {
+		final DSBookmark bookmark = getData().get( position );
+		RSBook           book     = bookmark.getBook();
 		try {
-			Picasso picasso = Picasso.with(viewHolder.itemView.getContext());
-			picasso.load(Utils.uriStr2URI(book.getCoverUrl()).toASCIIString()).placeholder(R.drawable.ic_launcher).tag(
-					viewHolder.itemView.getContext()).into(viewHolder.mBookCoverIv);
-		} catch (NullPointerException e ) {
-			viewHolder.mBookCoverIv.setImageResource(R.drawable.ic_launcher);
+			Picasso picasso = Picasso.with( viewHolder.itemView.getContext() );
+			picasso.load( Utils.uriStr2URI( book.getCoverUrl() ).toASCIIString() ).placeholder( R.drawable.ic_launcher ).tag(
+					viewHolder.itemView.getContext() ).into( viewHolder.mBookCoverIv );
+		} catch( NullPointerException e ) {
+			viewHolder.mBookCoverIv.setImageResource( R.drawable.ic_launcher );
 		}
-		viewHolder.mBookCoverIv.setOnClickListener(new OnViewAnimatedClickedListener() {
+		viewHolder.mBookCoverIv.setOnClickListener( new OnViewAnimatedClickedListener() {
 			@Override
 			public void onClick() {
-				EventBus.getDefault().post(new OpenBookmarkEvent(bookmark ));
+				EventBus.getDefault().post( new OpenBookmarkEvent( bookmark ) );
 			}
-		});
-		viewHolder.mDeleteBtn.setOnClickListener(new OnViewAnimatedClickedListener() {
+		} );
+		viewHolder.mDeleteBtn.setOnClickListener( new OnViewAnimatedClickedListener() {
 			@Override
 			public void onClick() {
-				EventBus.getDefault().post(new DeleteBookmarkEvent(bookmark));
+				EventBus.getDefault().post( new DeleteBookmarkEvent( bookmark ) );
 			}
-		});
+		} );
 	}
 
 
 	static class ViewHolder extends RecyclerView.ViewHolder {
 
 		private ImageView mBookCoverIv;
-		private Button mDeleteBtn;
+		private Button    mDeleteBtn;
 
-		ViewHolder(View convertView) {
-			super(convertView);
-			mBookCoverIv = (ImageView) convertView.findViewById(R.id.bookmarked_book_cover_iv);
-			mDeleteBtn = (Button) convertView.findViewById(R.id.delete_bookmark_btn);
+		ViewHolder( View convertView ) {
+			super( convertView );
+			mBookCoverIv = (ImageView) convertView.findViewById( R.id.bookmarked_book_cover_iv );
+			mDeleteBtn = (Button) convertView.findViewById( R.id.delete_bookmark_btn );
 		}
 	}
 }

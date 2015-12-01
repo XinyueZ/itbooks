@@ -10,7 +10,7 @@ import com.google.gson.annotations.SerializedName;
 
 import cn.bmob.v3.BmobObject;
 
-public   class RSBook extends BmobObject implements Serializable {
+public class RSBook extends BmobObject implements Serializable {
 	@SerializedName("Name")
 	private String mName;
 	@SerializedName("Author")
@@ -36,8 +36,9 @@ public   class RSBook extends BmobObject implements Serializable {
 
 	}
 
-	public RSBook(String name, String author, String size, String pages, String link, String ISBN, String year,
-			String publisher, String description, String coverUrl) {
+	public RSBook( String name, String author, String size, String pages, String link, String ISBN, String year, String publisher, String description,
+				   String coverUrl
+	) {
 		mName = name;
 		mAuthor = author;
 		mSize = size;
@@ -91,49 +92,43 @@ public   class RSBook extends BmobObject implements Serializable {
 	}
 
 	public String[] toArray() {
-		String[] array = new String[8];
-		array[0] = mName;
-		array[1] = mAuthor;
-		array[2] = mSize;
-		array[3] = mPages;
-		array[4] = mISBN;
-		array[5] = mYear;
-		array[6] = mPublisher;
-		array[7] = mDescription;
+		String[] array = new String[ 8 ];
+		array[ 0 ] = mName;
+		array[ 1 ] = mAuthor;
+		array[ 2 ] = mSize;
+		array[ 3 ] = mPages;
+		array[ 4 ] = mISBN;
+		array[ 5 ] = mYear;
+		array[ 6 ] = mPublisher;
+		array[ 7 ] = mDescription;
 		return array;
 	}
 
 	/**
-	 * RSBook(String name, String author, String size, String pages, String link, String ISBN, String year,
-	 String publisher, String description, String coverUrl)
+	 * RSBook(String name, String author, String size, String pages, String link, String ISBN, String year, String publisher, String description,
+	 * String coverUrl)
+	 *
 	 * @param bundle
+	 *
 	 * @return
 	 */
-	public static RSBook newInstance(Bundle bundle) {
-		return new RSBook(
-				bundle.getString("Name"),
-				bundle.getString("Author"),
-				bundle.getString("Size"),
-				bundle.getString("Pages"),
-				bundle.getString("Link"),
-				bundle.getString("ISBN"),
-				bundle.getString("Year"),
-				bundle.getString("Publisher"),
-				bundle.getString("Description"),
-				bundle.getString("CoverUrl")
+	public static RSBook newInstance( Bundle bundle ) {
+		return new RSBook( bundle.getString( "Name" ), bundle.getString( "Author" ), bundle.getString( "Size" ), bundle.getString( "Pages" ),
+						   bundle.getString( "Link" ), bundle.getString( "ISBN" ), bundle.getString( "Year" ), bundle.getString( "Publisher" ),
+						   bundle.getString( "Description" ), bundle.getString( "CoverUrl" )
 		);
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals( Object o ) {
 		RSBook other = (RSBook) o;
-		return TextUtils.equals(mName, other.mName) &&
-				TextUtils.equals(mAuthor, other.mAuthor) &&
-				TextUtils.equals(mSize, other.mSize) &&
-				TextUtils.equals(mPages, other.mPages)&&
-				TextUtils.equals(mISBN, other.mISBN) &&
-				TextUtils.equals(mYear, other.mYear) &&
-				TextUtils.equals(mPublisher, other.mPublisher) &&
-				TextUtils.equals(mDescription, other.mDescription) ;
+		return TextUtils.equals( mName, other.mName ) &&
+			   TextUtils.equals( mAuthor, other.mAuthor ) &&
+			   TextUtils.equals( mSize, other.mSize ) &&
+			   TextUtils.equals( mPages, other.mPages ) &&
+			   TextUtils.equals( mISBN, other.mISBN ) &&
+			   TextUtils.equals( mYear, other.mYear ) &&
+			   TextUtils.equals( mPublisher, other.mPublisher ) &&
+			   TextUtils.equals( mDescription, other.mDescription );
 	}
 }

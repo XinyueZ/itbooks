@@ -60,25 +60,25 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 	 * Main layout for this component.
 	 */
 	private static final int LAYOUT = R.layout.fragment_history;
-	private RecyclerView mHistoryRv;
+	private RecyclerView   mHistoryRv;
 	private HistoryAdapter mHistoryAdapter;
-	private View mEmptyV;
-	private Toolbar mToolbar;
+	private View           mEmptyV;
+	private Toolbar        mToolbar;
 
 	/**
 	 * Handler filter end sync.
 	 */
-	private IntentFilter mSyncEndHandlerFilter = new IntentFilter(SyncService.ACTION_SYNC_END);
+	private IntentFilter      mSyncEndHandlerFilter = new IntentFilter( SyncService.ACTION_SYNC_END );
 	/**
 	 * Handler   end sync.
 	 */
-	private BroadcastReceiver mSyncEndHandler = new BroadcastReceiver() {
+	private BroadcastReceiver mSyncEndHandler       = new BroadcastReceiver() {
 		@Override
-		public void onReceive(Context context, Intent intent) {
-			getLoaderManager().initLoader(2, null, HistoryFragment.this).forceLoad();
-			if (mToolbar != null) {
+		public void onReceive( Context context, Intent intent ) {
+			getLoaderManager().initLoader( 2, null, HistoryFragment.this ).forceLoad();
+			if( mToolbar != null ) {
 				Menu menu = mToolbar.getMenu();
-				menu.findItem(R.id.action_delete_all).setEnabled(true);
+				menu.findItem( R.id.action_delete_all ).setEnabled( true );
 			}
 		}
 	};
@@ -93,8 +93,8 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 	 * @param e
 	 * 		Event {@link com.itbooks.bus.DownloadCompleteEvent}.
 	 */
-	public void onEventMainThread(DownloadCompleteEvent e) {
-		getLoaderManager().initLoader(0, null, this).forceLoad();
+	public void onEventMainThread( DownloadCompleteEvent e ) {
+		getLoaderManager().initLoader( 0, null, this ).forceLoad();
 	}
 
 
@@ -104,42 +104,40 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 	 * @param e
 	 * 		Event {@link DownloadDeleteEvent}.
 	 */
-	public void onEvent(final DownloadDeleteEvent e) {
-		File from = new File(App.Instance.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
-				e.getDownload().getTargetName());
-		if (from.exists()) {
-			if (!TextUtils.isEmpty(Prefs.getInstance(App.Instance).getGoogleId())) {
+	public void onEvent( final DownloadDeleteEvent e ) {
+		File from = new File( App.Instance.getExternalFilesDir( Environment.DIRECTORY_DOWNLOADS ), e.getDownload().getTargetName() );
+		if( from.exists() ) {
+			if( !TextUtils.isEmpty( Prefs.getInstance( App.Instance ).getGoogleId() ) ) {
 				//Login is on
-				AsyncTaskCompat.executeParallel(new AsyncTask<Download, Void, IOException>() {
+				AsyncTaskCompat.executeParallel( new AsyncTask<Download, Void, IOException>() {
 					@Override
-					protected IOException doInBackground(Download... params) {
+					protected IOException doInBackground( Download... params ) {
 						List<Download> downloadsList = new ArrayList<>();
-						downloadsList.add(params[0]);
-						SyncService.startSyncDel(App.Instance, downloadsList);
+						downloadsList.add( params[ 0 ] );
+						SyncService.startSyncDel( App.Instance, downloadsList );
 						return null;
 					}
-				}, e.getDownload());
+				}, e.getDownload() );
 			} else {
 				//Login is off
-				AsyncTaskCompat.executeParallel(new AsyncTask<Download, Void, IOException>() {
+				AsyncTaskCompat.executeParallel( new AsyncTask<Download, Void, IOException>() {
 					@Override
-					protected IOException doInBackground(Download... params) {
-						File from = new File(App.Instance.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
-								e.getDownload().getTargetName());
-						if (from.exists()) {
+					protected IOException doInBackground( Download... params ) {
+						File from = new File( App.Instance.getExternalFilesDir( Environment.DIRECTORY_DOWNLOADS ), e.getDownload().getTargetName() );
+						if( from.exists() ) {
 							from.delete();
-							DB db = DB.getInstance(App.Instance);
-							db.deleteDownload(params[0].getDownloadId());
+							DB db = DB.getInstance( App.Instance );
+							db.deleteDownload( params[ 0 ].getDownloadId() );
 						}
 						return null;
 					}
 
 					@Override
-					protected void onPostExecute(IOException e) {
-						super.onPostExecute(e);
-						getLoaderManager().initLoader(4, null, HistoryFragment.this).forceLoad();
+					protected void onPostExecute( IOException e ) {
+						super.onPostExecute( e );
+						getLoaderManager().initLoader( 4, null, HistoryFragment.this ).forceLoad();
 					}
-				}, e.getDownload());
+				}, e.getDownload() );
 			}
 		}
 	}
@@ -151,8 +149,8 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 	 * 		Event {@link com.itbooks.bus.DownloadCopyEvent}.
 	 */
 
-	public void onEvent(DownloadCopyEvent e) {
-		showDirChooser(DownloadDirChooserDialogFragment.COPY, e.getDownload());
+	public void onEvent( DownloadCopyEvent e ) {
+		showDirChooser( DownloadDirChooserDialogFragment.COPY, e.getDownload() );
 	}
 
 
@@ -160,25 +158,25 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 
 
 	@Override
-	public Loader<List<Download>> onCreateLoader(int id, Bundle args) {
+	public Loader<List<Download>> onCreateLoader( int id, Bundle args ) {
 		return getAllDownloads();
 	}
 
 	@Override
-	public void onLoadFinished(Loader<List<Download>> loader, List<Download> data) {
-		showData(data);
+	public void onLoadFinished( Loader<List<Download>> loader, List<Download> data ) {
+		showData( data );
 	}
 
 
 	@Override
-	public void onLoaderReset(Loader<List<Download>> loader) {
+	public void onLoaderReset( Loader<List<Download>> loader ) {
 
 	}
 
 
 	@Override
 	protected BasicPrefs getPrefs() {
-		return Prefs.getInstance(getActivity().getApplication());
+		return Prefs.getInstance( getActivity().getApplication() );
 	}
 
 	/**
@@ -187,17 +185,17 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 	 * @param data
 	 * 		List of all downloads.
 	 */
-	private void showData(List<Download> data) {
-		if (data.size() > 0) {
-			mHistoryAdapter.setData(data);
+	private void showData( List<Download> data ) {
+		if( data.size() > 0 ) {
+			mHistoryAdapter.setData( data );
 			mHistoryAdapter.notifyDataSetChanged();
-			mHistoryRv.setVisibility(View.VISIBLE);
-			mToolbar.setVisibility(View.VISIBLE);
-			mEmptyV.setVisibility(View.INVISIBLE);
+			mHistoryRv.setVisibility( View.VISIBLE );
+			mToolbar.setVisibility( View.VISIBLE );
+			mEmptyV.setVisibility( View.INVISIBLE );
 		} else {
-			mHistoryRv.setVisibility(View.INVISIBLE);
-			mToolbar.setVisibility(View.INVISIBLE);
-			mEmptyV.setVisibility(View.VISIBLE);
+			mHistoryRv.setVisibility( View.INVISIBLE );
+			mToolbar.setVisibility( View.INVISIBLE );
+			mEmptyV.setVisibility( View.VISIBLE );
 		}
 	}
 
@@ -205,114 +203,110 @@ public final class HistoryFragment extends BaseFragment implements LoaderCallbac
 	/**
 	 * Open a dialog to choose directory.
 	 */
-	private void showDirChooser(int type, Download download) {
+	private void showDirChooser( int type, Download download ) {
 		DownloadDirChooserDialogFragment directoryChooserFragment = DownloadDirChooserDialogFragment.newInstance(
-				App.Instance, type, download, Environment.getExternalStorageDirectory());
+				App.Instance, type, download, Environment.getExternalStorageDirectory() );
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
-		directoryChooserFragment.show(transaction, "RDC");
+		directoryChooserFragment.show( transaction, "RDC" );
 	}
 
 
 	@NonNull
 	public AsyncTaskLoader<List<Download>> getAllDownloads() {
-		return new AsyncTaskLoader<List<Download>>(App.Instance) {
+		return new AsyncTaskLoader<List<Download>>( App.Instance ) {
 			@Override
 			public List<Download> loadInBackground() {
-				return DB.getInstance(App.Instance).getDownloads();
+				return DB.getInstance( App.Instance ).getDownloads();
 			}
 		};
 	}
 
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(LAYOUT, container, false);
+	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
+		return inflater.inflate( LAYOUT, container, false );
 	}
 
 	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
-		LocalBroadcastManager.getInstance(App.Instance).registerReceiver(mSyncEndHandler, mSyncEndHandlerFilter);
-		mHistoryRv = (RecyclerView) view.findViewById(R.id.history_rv);
-		mHistoryRv.setLayoutManager(new LinearLayoutManager(getActivity()));
-		mHistoryRv.setAdapter(mHistoryAdapter = new HistoryAdapter(null));
-		mEmptyV = view.findViewById(R.id.empty_ll);
-		mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
-		mToolbar.inflateMenu(R.menu.history_list_menu);
+	public void onViewCreated( View view, Bundle savedInstanceState ) {
+		super.onViewCreated( view, savedInstanceState );
+		LocalBroadcastManager.getInstance( App.Instance ).registerReceiver( mSyncEndHandler, mSyncEndHandlerFilter );
+		mHistoryRv = (RecyclerView) view.findViewById( R.id.history_rv );
+		mHistoryRv.setLayoutManager( new LinearLayoutManager( getActivity() ) );
+		mHistoryRv.setAdapter( mHistoryAdapter = new HistoryAdapter( null ) );
+		mEmptyV = view.findViewById( R.id.empty_ll );
+		mToolbar = (Toolbar) view.findViewById( R.id.toolbar );
+		mToolbar.inflateMenu( R.menu.history_list_menu );
 		Menu menu = mToolbar.getMenu();
-		menu.findItem(R.id.action_sync).setOnMenuItemClickListener(new OnMenuItemClickListener() {
-																	   @Override
-																	   public boolean onMenuItemClick(MenuItem item) {
-																		   EventBus.getDefault().post(
-																				   !TextUtils.isEmpty(Prefs.getInstance(
-																						   App.Instance)
-																						   .getGoogleId()) ?
-																						   new SyncEvent() :
-																						   new LoginRequestEvent());
-																		   return true;
-																	   }
-																   }
+		menu.findItem( R.id.action_sync ).setOnMenuItemClickListener( new OnMenuItemClickListener() {
+																		  @Override
+																		  public boolean onMenuItemClick( MenuItem item ) {
+																			  EventBus.getDefault().post(
+																					  !TextUtils.isEmpty( Prefs.getInstance( App.Instance ).getGoogleId() )                   ? new SyncEvent() : new LoginRequestEvent() );
+																			  return true;
+																		  }
+																	  }
 
 		);
-		menu.findItem(R.id.action_delete_all).setOnMenuItemClickListener(new OnMenuItemClickListener() {
+		menu.findItem( R.id.action_delete_all ).setOnMenuItemClickListener( new OnMenuItemClickListener() {
 			@Override
-			public boolean onMenuItemClick(MenuItem item) {
-				item.setEnabled(false);
-				if (!TextUtils.isEmpty(Prefs.getInstance(App.Instance).getGoogleId())) {
+			public boolean onMenuItemClick( MenuItem item ) {
+				item.setEnabled( false );
+				if( !TextUtils.isEmpty( Prefs.getInstance( App.Instance ).getGoogleId() ) ) {
 					//Login is on
-					getLoaderManager().initLoader(3, null, new LoaderCallbacks<List<Download>>() {
+					getLoaderManager().initLoader( 3, null, new LoaderCallbacks<List<Download>>() {
 						@Override
-						public Loader<List<Download>> onCreateLoader(int id, Bundle args) {
+						public Loader<List<Download>> onCreateLoader( int id, Bundle args ) {
 							return getAllDownloads();
 						}
 
 						@Override
-						public void onLoadFinished(Loader<List<Download>> loader, List<Download> downloadsList) {
-							SyncService.startSyncDel(App.Instance, downloadsList);
+						public void onLoadFinished( Loader<List<Download>> loader, List<Download> downloadsList ) {
+							SyncService.startSyncDel( App.Instance, downloadsList );
 						}
 
 						@Override
-						public void onLoaderReset(Loader<List<Download>> loader) {
+						public void onLoaderReset( Loader<List<Download>> loader ) {
 
 						}
-					}).forceLoad();
+					} ).forceLoad();
 				} else {
 					//Login is off
-					AsyncTaskCompat.executeParallel(new AsyncTask<Download, Void, IOException>() {
+					AsyncTaskCompat.executeParallel( new AsyncTask<Download, Void, IOException>() {
 						@Override
-						protected IOException doInBackground(Download... params) {
+						protected IOException doInBackground( Download... params ) {
 							try {
-								File dir = App.Instance.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
-								if (dir != null) {
-									FileUtils.cleanDirectory(dir);
-									DB.getInstance(App.Instance).deleteDownload(-1);
+								File dir = App.Instance.getExternalFilesDir( Environment.DIRECTORY_DOWNLOADS );
+								if( dir != null ) {
+									FileUtils.cleanDirectory( dir );
+									DB.getInstance( App.Instance ).deleteDownload( -1 );
 								}
-							} catch (IOException e) {
+							} catch( IOException e ) {
 								return e;
 							}
 							return null;
 						}
 						@Override
-						protected void onPostExecute(IOException e) {
-							super.onPostExecute(e);
-							if (e == null) {
-								getLoaderManager().initLoader(5, null, HistoryFragment.this).forceLoad();
+						protected void onPostExecute( IOException e ) {
+							super.onPostExecute( e );
+							if( e == null ) {
+								getLoaderManager().initLoader( 5, null, HistoryFragment.this ).forceLoad();
 							}
 						}
-					});
+					} );
 				}
 				return true;
 			}
-		});
+		} );
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		getLoaderManager().initLoader(1, null, this).forceLoad();
+		getLoaderManager().initLoader( 1, null, this ).forceLoad();
 	}
 
 	@Override
 	public void onDestroyView() {
-		LocalBroadcastManager.getInstance(App.Instance).unregisterReceiver(mSyncEndHandler);
+		LocalBroadcastManager.getInstance( App.Instance ).unregisterReceiver( mSyncEndHandler );
 		super.onDestroyView();
 	}
 }

@@ -6,7 +6,7 @@ import com.itbooks.net.download.Download;
 public final class DownloadStartEvent {
 	private Download mDownload;
 
-	public DownloadStartEvent(Download download) {
+	public DownloadStartEvent( Download download ) {
 		mDownload = download;
 	}
 

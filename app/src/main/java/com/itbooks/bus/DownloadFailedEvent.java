@@ -6,7 +6,7 @@ import com.itbooks.net.download.Download;
 public final class DownloadFailedEvent {
 	private Download mDownload;
 
-	public DownloadFailedEvent(Download download) {
+	public DownloadFailedEvent( Download download ) {
 		mDownload = download;
 	}
 

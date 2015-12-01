@@ -24,35 +24,34 @@ public final class BookmarkInfoDialogFragment extends DialogFragment implements 
 	private static final int LAYOUT = R.layout.dialog_fragment_bookmark_info;
 
 
-	public static BookmarkInfoDialogFragment newInstance(Context context) {
-		return (BookmarkInfoDialogFragment) BookmarkInfoDialogFragment.instantiate(context,
-				BookmarkInfoDialogFragment.class.getName());
+	public static BookmarkInfoDialogFragment newInstance( Context context ) {
+		return (BookmarkInfoDialogFragment) BookmarkInfoDialogFragment.instantiate( context, BookmarkInfoDialogFragment.class.getName() );
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setCancelable(false);
-		setStyle(DialogFragment.STYLE_NO_TITLE, R.style.Theme_AppCompat_Light_Dialog);
+	public void onCreate( Bundle savedInstanceState ) {
+		super.onCreate( savedInstanceState );
+		setCancelable( false );
+		setStyle( DialogFragment.STYLE_NO_TITLE, R.style.Theme_AppCompat_Light_Dialog );
 	}
 
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(LAYOUT, container, false);
-	}
-
-	@Override
-	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
-		view.findViewById(R.id.close_confirm_btn).setOnClickListener(this);
-		view.findViewById(R.id.close_i_know_btn).setOnClickListener(this);
+	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
+		return inflater.inflate( LAYOUT, container, false );
 	}
 
 	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.close_i_know_btn:
-			Prefs.getInstance(getActivity().getApplication()).setKnownBookmark(true);
-			break;
+	public void onViewCreated( View view, @Nullable Bundle savedInstanceState ) {
+		super.onViewCreated( view, savedInstanceState );
+		view.findViewById( R.id.close_confirm_btn ).setOnClickListener( this );
+		view.findViewById( R.id.close_i_know_btn ).setOnClickListener( this );
+	}
+
+	@Override
+	public void onClick( View v ) {
+		switch( v.getId() ) {
+			case R.id.close_i_know_btn:
+				Prefs.getInstance( getActivity().getApplication() ).setKnownBookmark( true );
+				break;
 		}
 		dismiss();
 	}

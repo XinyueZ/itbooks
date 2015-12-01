@@ -39,11 +39,11 @@ public final class ConnectGoogleActivity extends BaseActivity {
 	/**
 	 * Main layout for this component.
 	 */
-	private static final int LAYOUT = R.layout.activity_connect_google;
+	private static final int LAYOUT     = R.layout.activity_connect_google;
 	/**
 	 * Request-id of this  {@link Activity}.
 	 */
-	public static final int REQ = 0x91;
+	public static final  int REQ        = 0x91;
 	/**
 	 * SignIn request-code.
 	 */
@@ -55,7 +55,7 @@ public final class ConnectGoogleActivity extends BaseActivity {
 	/**
 	 * The Google-API.
 	 */
-	private GoogleApiClient mGoogleApiClient;
+	private GoogleApiClient              mGoogleApiClient;
 
 
 	/**
@@ -64,45 +64,46 @@ public final class ConnectGoogleActivity extends BaseActivity {
 	 * @param cxt
 	 * 		{@link Context}.
 	 */
-	public static void showInstance(Activity cxt) {
-		Intent intent = new Intent(cxt, ConnectGoogleActivity.class);
-		intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		ActivityCompat.startActivityForResult(cxt, intent, REQ, null);
+	public static void showInstance( Activity cxt ) {
+		Intent intent = new Intent( cxt, ConnectGoogleActivity.class );
+		intent.setFlags( Intent.FLAG_ACTIVITY_SINGLE_TOP|Intent.FLAG_ACTIVITY_CLEAR_TOP );
+		ActivityCompat.startActivityForResult( cxt, intent, REQ, null );
 	}
 
 
-	private void handleGoogleLogin(GoogleSignInResult result) {
-		if (result.isSuccess() && alive()) {
-			Prefs prefs = Prefs.getInstance(App.Instance);
-			GoogleSignInAccount acct = result.getSignInAccount();
-			if (acct != null) {
-				prefs.setGoogleId(acct.getId());
-				prefs.setGoogleDisplyName(acct.getDisplayName());
+	private void handleGoogleLogin( GoogleSignInResult result ) {
+		if( result.isSuccess() && alive() ) {
+			Prefs               prefs = Prefs.getInstance( App.Instance );
+			GoogleSignInAccount acct  = result.getSignInAccount();
+			if( acct != null ) {
+				prefs.setGoogleId( acct.getId() );
+				prefs.setGoogleDisplyName( acct.getDisplayName() );
 
-				Picasso picasso = Picasso.with(App.Instance);
-				Uri imageLoc = acct.getPhotoUrl();
-				if (imageLoc != null) {
+				Picasso picasso  = Picasso.with( App.Instance );
+				Uri     imageLoc = acct.getPhotoUrl();
+				if( imageLoc != null ) {
 					String s = imageLoc.toString();
-					picasso.load(s).into(mBinding.thumbIv);
-					prefs.setGoogleThumbUrl(s);
+					picasso.load( s ).into( mBinding.thumbIv );
+					prefs.setGoogleThumbUrl( s );
 				}
-				ViewPropertyAnimator.animate(mBinding.thumbIv).cancel();
-				ViewPropertyAnimator.animate(mBinding.thumbIv).alpha(1).setDuration(500).start();
-				mBinding.helloTv.setText(getString(R.string.lbl_hello, acct.getDisplayName()));
-				mBinding.loginPb.setVisibility(View.GONE);
-				mBinding.closeBtn.setVisibility(View.VISIBLE);
-				Animation shake = AnimationUtils.loadAnimation(App.Instance, R.anim.shake);
-				mBinding.closeBtn.startAnimation(shake);
+				ViewPropertyAnimator.animate( mBinding.thumbIv ).cancel();
+				ViewPropertyAnimator.animate( mBinding.thumbIv ).alpha( 1 ).setDuration( 500 ).start();
+				mBinding.helloTv.setText( getString( R.string.lbl_hello, acct.getDisplayName() ) );
+				mBinding.loginPb.setVisibility( View.GONE );
+				mBinding.closeBtn.setVisibility( View.VISIBLE );
+				Animation shake = AnimationUtils.loadAnimation( App.Instance, R.anim.shake );
+				mBinding.closeBtn.startAnimation( shake );
 			}
 		} else {
-			if (alive()) {
-				Snackbar.make(mBinding.loginContentLl, R.string.meta_load_error, Snackbar.LENGTH_LONG).setAction(
+			if( alive() ) {
+				Snackbar.make( mBinding.loginContentLl, R.string.meta_load_error, Snackbar.LENGTH_LONG ).setAction(
 						R.string.btn_close, new OnClickListener() {
 							@Override
-							public void onClick(View v) {
-								ActivityCompat.finishAffinity(ConnectGoogleActivity.this);
+							public void onClick( View v
+							) {
+								ActivityCompat.finishAffinity( ConnectGoogleActivity.this );
 							}
-						}).show();
+						} ).show();
 			}
 		}
 	}
@@ -110,7 +111,7 @@ public final class ConnectGoogleActivity extends BaseActivity {
 
 	@Override
 	public void onBackPressed() {
-		setResult(RESULT_CANCELED);
+		setResult( RESULT_CANCELED );
 		super.onBackPressed();
 	}
 
@@ -118,8 +119,8 @@ public final class ConnectGoogleActivity extends BaseActivity {
 	 * Login Google+
 	 */
 	private void loginGoogle() {
-		Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-		startActivityForResult(signInIntent, RC_SIGN_IN);
+		Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent( mGoogleApiClient );
+		startActivityForResult( signInIntent, RC_SIGN_IN );
 	}
 
 
@@ -130,55 +131,54 @@ public final class ConnectGoogleActivity extends BaseActivity {
 
 
 	@Override
-	protected void onActivityResult(int requestCode, int responseCode, Intent intent) {
-		if (requestCode == RC_SIGN_IN && alive()) {
-			GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(intent);
-			handleGoogleLogin(result);
+	protected void onActivityResult( int requestCode, int responseCode, Intent intent ) {
+		if( requestCode == RC_SIGN_IN && alive() ) {
+			GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent( intent );
+			handleGoogleLogin( result );
 		}
 	}
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		NotificationManager mgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		mgr.cancel(SyncService.NOTIFY_REQ_LOGIN);
+	protected void onCreate( Bundle savedInstanceState ) {
+		super.onCreate( savedInstanceState );
+		NotificationManager mgr = (NotificationManager) getSystemService( Context.NOTIFICATION_SERVICE );
+		mgr.cancel( SyncService.NOTIFY_REQ_LOGIN );
 
-		mBinding = DataBindingUtil.setContentView(this, LAYOUT);
-		setUpErrorHandling((ViewGroup) findViewById(R.id.error_content));
+		mBinding = DataBindingUtil.setContentView( this, LAYOUT );
+		setUpErrorHandling( (ViewGroup) findViewById( R.id.error_content ) );
 
-		mBinding.googleLoginBtn.setSize(SignInButton.SIZE_WIDE);
-		mBinding.helloTv.setText(getString(R.string.lbl_welcome, getString(R.string.application_name)));
-		ViewCompat.setElevation(mBinding.sloganVg, getResources().getDimension(R.dimen.common_elevation));
-		GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail()
-				.build();
-		mGoogleApiClient = new GoogleApiClient.Builder(App.Instance).addApi(Auth.GOOGLE_SIGN_IN_API, gso).build();
-		mBinding.googleLoginBtn.setOnClickListener(new OnClickListener() {
+		mBinding.googleLoginBtn.setSize( SignInButton.SIZE_WIDE );
+		mBinding.helloTv.setText( getString( R.string.lbl_welcome, getString( R.string.application_name ) ) );
+		ViewCompat.setElevation( mBinding.sloganVg, getResources().getDimension( R.dimen.common_elevation ) );
+		GoogleSignInOptions gso = new GoogleSignInOptions.Builder( GoogleSignInOptions.DEFAULT_SIGN_IN ).requestEmail().build();
+		mGoogleApiClient = new GoogleApiClient.Builder( App.Instance ).addApi( Auth.GOOGLE_SIGN_IN_API, gso ).build();
+		mBinding.googleLoginBtn.setOnClickListener( new OnClickListener() {
 			@Override
-			public void onClick(View v) {
-				mBinding.googleLoginBtn.setVisibility(View.GONE);
-				mBinding.loginPb.setVisibility(View.VISIBLE);
-				mBinding.helloTv.setText(R.string.lbl_connect_google);
-				ViewPropertyAnimator.animate(mBinding.thumbIv).cancel();
-				ViewPropertyAnimator.animate(mBinding.thumbIv).alpha(0.3f).setDuration(500).start();
+			public void onClick( View v ) {
+				mBinding.googleLoginBtn.setVisibility( View.GONE );
+				mBinding.loginPb.setVisibility( View.VISIBLE );
+				mBinding.helloTv.setText( R.string.lbl_connect_google );
+				ViewPropertyAnimator.animate( mBinding.thumbIv ).cancel();
+				ViewPropertyAnimator.animate( mBinding.thumbIv ).alpha( 0.3f ).setDuration( 500 ).start();
 				loginGoogle();
 			}
-		});
+		} );
 
 
-		mBinding.closeBtn.setOnClickListener(new OnClickListener() {
+		mBinding.closeBtn.setOnClickListener( new OnClickListener() {
 			@Override
-			public void onClick(View v) {
-				setResult(RESULT_OK);
-				ActivityCompat.finishAfterTransition(ConnectGoogleActivity.this);
+			public void onClick( View v ) {
+				setResult( RESULT_OK );
+				ActivityCompat.finishAfterTransition( ConnectGoogleActivity.this );
 			}
-		});
+		} );
 
-		setALive(true);
+		setALive( true );
 	}
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		setALive(false);
+		setALive( false );
 	}
 }

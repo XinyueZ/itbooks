@@ -12,7 +12,7 @@ public final class DeleteBookmarkEvent {
 	private DSBookmark mBookmark;
 
 
-	public DeleteBookmarkEvent(DSBookmark bookmark) {
+	public DeleteBookmarkEvent( DSBookmark bookmark ) {
 		mBookmark = bookmark;
 	}
 

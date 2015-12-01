@@ -14,28 +14,30 @@ import com.nineoldandroids.view.ViewHelper;
  *
  * @author Xinyue Zhao
  */
-public   abstract class OnViewAnimatedClickedListener implements OnClickListener {
+public abstract class OnViewAnimatedClickedListener implements OnClickListener {
 	/**
 	 * Impl. Event what user clicks.
 	 */
 	public abstract void onClick();
 
 	@Override
-	public final void onClick(final View v) {
-		v.setEnabled(false);
-		final float initX = ViewHelper.getScaleX(v);
-		final float initY = ViewHelper.getScaleY(v);
+	public final void onClick( final View v ) {
+		v.setEnabled( false );
+		final float initX       = ViewHelper.getScaleX( v );
+		final float initY       = ViewHelper.getScaleY( v );
 		AnimatorSet animatorSet = new AnimatorSet();
-		animatorSet.playTogether(ObjectAnimator.ofFloat(v, "scaleX", initX, 0.5f, initX).setDuration(100),
-				ObjectAnimator.ofFloat(v, "scaleY", initY, 0.5f, initY).setDuration(100));
-		animatorSet.addListener(new AnimatorListenerAdapter() {
+		animatorSet.playTogether(
+				ObjectAnimator.ofFloat( v, "scaleX", initX, 0.5f, initX ).setDuration( 100 ),
+				ObjectAnimator.ofFloat( v, "scaleY", initY, 0.5f, initY ).setDuration( 100 )
+		);
+		animatorSet.addListener( new AnimatorListenerAdapter() {
 			@Override
-			public void onAnimationEnd(Animator animation) {
-				super.onAnimationEnd(animation);
+			public void onAnimationEnd( Animator animation ) {
+				super.onAnimationEnd( animation );
 				onClick();
-				v.setEnabled(true);
+				v.setEnabled( true );
 			}
-		});
+		} );
 		animatorSet.start();
 	}
 }

@@ -40,10 +40,10 @@ public final class BookmarkManger {
 	 */
 	private Application mContext;
 
-	private   static  BookmarkManger sInstance;
+	private static BookmarkManger sInstance;
 
-	public static final void createInstance(Application context) {
-		sInstance = new BookmarkManger(context);
+	public static final void createInstance( Application context ) {
+		sInstance = new BookmarkManger( context );
 	}
 
 	public static final BookmarkManger getInstance() {
@@ -52,22 +52,13 @@ public final class BookmarkManger {
 
 	/**
 	 * Constructor of {@link BookmarkManger}
-	 * @param context The application context.
+	 *
+	 * @param context
+	 * 		The application context.
 	 */
-	private BookmarkManger(Application context) {
+	private BookmarkManger( Application context ) {
 		mContext = context;
 	}
-
-	/**
-	 * Initialize the bookmarks in cache.
-	 *
-	 * @param bookmarks
-	 * 		The bookmarks remote.
-	 */
-	private void setBookmarksInCache(List<DSBookmark> bookmarks) {
-		mBookmarksInCache = bookmarks;
-	}
-
 	/**
 	 * To test whether the book has been added as bookmark, and get the instance of the object.
 	 *
@@ -76,54 +67,58 @@ public final class BookmarkManger {
 	 *
 	 * @return The object found in list, it might be {@code null}.
 	 */
-	public @Nullable
-	DSBookmark getBookmarked(RSBook book) {
-		for (DSBookmark bookmark : mBookmarksInCache) {
-			if (bookmark.getBook().equals(book)) {
+	public
+	@Nullable
+	DSBookmark getBookmarked( RSBook book ) {
+		for( DSBookmark bookmark : mBookmarksInCache ) {
+			if( bookmark.getBook().equals( book ) ) {
 				return bookmark;
 			}
 		}
 		return null;
 	}
-
 	/**
 	 * Bookmark.
 	 *
 	 * @param newBookmark
 	 * 		{@link DSBookmark}, the book to add.
 	 */
-	private void addBookmark(DSBookmark newBookmark) {
-		mBookmarksInCache.add(newBookmark);
+	private void addBookmark( DSBookmark newBookmark ) {
+		mBookmarksInCache.add( newBookmark );
 	}
-
 	/**
 	 * Remove from bookmark.
 	 *
 	 * @param book
 	 * 		{@link RSBook}, the book to remove.
 	 */
-	private void removeFromBookmark(RSBook book) {
-		for (DSBookmark bookmark : mBookmarksInCache) {
-			if (bookmark.getBook().equals(book)) {
-				mBookmarksInCache.remove(bookmark);
+	private void removeFromBookmark( RSBook book ) {
+		for( DSBookmark bookmark : mBookmarksInCache ) {
+			if( bookmark.getBook().equals( book ) ) {
+				mBookmarksInCache.remove( bookmark );
 				return;
 			}
 		}
 	}
-
 	/**
-	 *
-	 * @return  All cached bookmarks.
+	 * @return All cached bookmarks.
 	 */
 	public List<DSBookmark> getBookmarksInCache() {
 		return mBookmarksInCache;
 	}
-
 	/**
+	 * Initialize the bookmarks in cache.
 	 *
+	 * @param bookmarks
+	 * 		The bookmarks remote.
+	 */
+	private void setBookmarksInCache( List<DSBookmark> bookmarks ) {
+		mBookmarksInCache = bookmarks;
+	}
+	/**
 	 * @return Count of all bookmarks in cache.
 	 */
-	public int getCount(){
+	public int getCount() {
 		return getBookmarksInCache().size();
 	}
 
@@ -135,50 +130,50 @@ public final class BookmarkManger {
 		try {
 			BmobQuery<DSBookmark> mainQuery = buildMainQueryToSelectAll();
 
-			EventBus.getDefault().post(new OpenProgressDialogEvent());
-			mainQuery.findObjects(mContext, new FindListener<DSBookmark>() {
+			EventBus.getDefault().post( new OpenProgressDialogEvent() );
+			mainQuery.findObjects( mContext, new FindListener<DSBookmark>() {
 				@Override
-				public void onSuccess(List<DSBookmark> list) {
-					for(DSBookmark b : list) {
-						DSBookmark delBookmark = new DSBookmark(b.getBook());
-						delBookmark.setObjectId(b.getObjectId());
-						delBookmark.delete(mContext);
+				public void onSuccess( List<DSBookmark> list ) {
+					for( DSBookmark b : list ) {
+						DSBookmark delBookmark = new DSBookmark( b.getBook() );
+						delBookmark.setObjectId( b.getObjectId() );
+						delBookmark.delete( mContext );
 					}
-					EventBus.getDefault().post(new CloseProgressDialogEvent());
+					EventBus.getDefault().post( new CloseProgressDialogEvent() );
 				}
 
 				@Override
-				public void onError(int i, String s) {
-					EventBus.getDefault().post(new CloseProgressDialogEvent());
+				public void onError( int i, String s ) {
+					EventBus.getDefault().post( new CloseProgressDialogEvent() );
 					removeAllRemoteBookmarks();
 				}
-			});
-		} catch (NoSuchAlgorithmException e) {
+			} );
+		} catch( NoSuchAlgorithmException e ) {
 			//TODO Error when can not get device id.
 		}
 	}
 
 	@NonNull
 	private BmobQuery<DSBookmark> buildMainQueryToSelectAll() throws NoSuchAlgorithmException {
-		BmobQuery<DSBookmark> mainQuery = new BmobQuery<>();
+		BmobQuery<DSBookmark> mainQuery     = new BmobQuery<>();
 		List<BmobQuery<DSBookmark>> queries = new ArrayList<>();
 
 		BmobQuery<DSBookmark> qUID = new BmobQuery<>();
-		qUID.addWhereEqualTo("mUID", DeviceUniqueUtil.getDeviceIdent(mContext));
-		queries.add(qUID);
-		String userId = Prefs.getInstance(App.Instance).getGoogleId();
-		if(!TextUtils.isEmpty(userId)) {
+		qUID.addWhereEqualTo( "mUID", DeviceUniqueUtil.getDeviceIdent( mContext ) );
+		queries.add( qUID );
+		String userId = Prefs.getInstance( App.Instance ).getGoogleId();
+		if( !TextUtils.isEmpty( userId ) ) {
 			//Have login
 			BmobQuery<DSBookmark> qUser = new BmobQuery<>();
-			qUser.addWhereEqualTo("mUserId", userId);
-			queries.add(qUser);
-			mainQuery.or(queries);
+			qUser.addWhereEqualTo( "mUserId", userId );
+			queries.add( qUser );
+			mainQuery.or( queries );
 		} else {
 			//No login
 			BmobQuery<DSBookmark> qUser = new BmobQuery<>();
-			qUser.addWhereDoesNotExists("mUserId");
-			queries.add(qUser);
-			mainQuery.and(queries);
+			qUser.addWhereDoesNotExists( "mUserId" );
+			queries.add( qUser );
+			mainQuery.and( queries );
 		}
 
 		return mainQuery;
@@ -187,45 +182,47 @@ public final class BookmarkManger {
 	/**
 	 * Add bookmark in net.
 	 *
-	 * @param bookmark The bookmark to add.
+	 * @param bookmark
+	 * 		The bookmark to add.
 	 */
-	private void addRemoteBookmark( final DSBookmark bookmark) {
-		EventBus.getDefault().post(new OpenProgressDialogEvent());
-		bookmark.save(mContext, new SaveListener() {
+	private void addRemoteBookmark( final DSBookmark bookmark ) {
+		EventBus.getDefault().post( new OpenProgressDialogEvent() );
+		bookmark.save( mContext, new SaveListener() {
 			@Override
 			public void onSuccess() {
-				EventBus.getDefault().post(new CloseProgressDialogEvent());
+				EventBus.getDefault().post( new CloseProgressDialogEvent() );
 			}
 
 			@Override
-			public void onFailure(int i, String s) {
-				EventBus.getDefault().post(new CloseProgressDialogEvent());
-				addRemoteBookmark(  bookmark);
+			public void onFailure( int i, String s ) {
+				EventBus.getDefault().post( new CloseProgressDialogEvent() );
+				addRemoteBookmark( bookmark );
 			}
-		});
+		} );
 	}
 
 	/**
 	 * Remove bookmark in net.
 	 *
-	 * @param bookmark The bookmark to remove.
+	 * @param bookmark
+	 * 		The bookmark to remove.
 	 */
-	private void removeRemoteBookmark( final DSBookmark bookmark) {
-		final DSBookmark delBookmark = new DSBookmark(bookmark.getBook());
-		delBookmark.setObjectId(bookmark.getObjectId());
-		EventBus.getDefault().post(new OpenProgressDialogEvent());
-		delBookmark.delete(mContext, new DeleteListener() {
+	private void removeRemoteBookmark( final DSBookmark bookmark ) {
+		final DSBookmark delBookmark = new DSBookmark( bookmark.getBook() );
+		delBookmark.setObjectId( bookmark.getObjectId() );
+		EventBus.getDefault().post( new OpenProgressDialogEvent() );
+		delBookmark.delete( mContext, new DeleteListener() {
 			@Override
 			public void onSuccess() {
-				EventBus.getDefault().post(new CloseProgressDialogEvent());
+				EventBus.getDefault().post( new CloseProgressDialogEvent() );
 			}
 
 			@Override
-			public void onFailure(int i, String s) {
-				EventBus.getDefault().post(new CloseProgressDialogEvent());
-				removeRemoteBookmark(bookmark);
+			public void onFailure( int i, String s ) {
+				EventBus.getDefault().post( new CloseProgressDialogEvent() );
+				removeRemoteBookmark( bookmark );
 			}
-		});
+		} );
 	}
 
 	/**
@@ -234,19 +231,19 @@ public final class BookmarkManger {
 	public void loadAllBookmarks() {
 		try {
 			BmobQuery<DSBookmark> mainQuery = buildMainQueryToSelectAll();
-			mainQuery.findObjects(mContext, new FindListener<DSBookmark>() {
+			mainQuery.findObjects( mContext, new FindListener<DSBookmark>() {
 				@Override
-				public void onSuccess(List<DSBookmark> list) {
-					getInstance().setBookmarksInCache(list);
-					EventBus.getDefault().post(new BookmarksLoadedEvent());
+				public void onSuccess( List<DSBookmark> list ) {
+					getInstance().setBookmarksInCache( list );
+					EventBus.getDefault().post( new BookmarksLoadedEvent() );
 				}
 
 				@Override
-				public void onError(int i, String s) {
-					EventBus.getDefault().post(new BookmarksLoadedEvent());
+				public void onError( int i, String s ) {
+					EventBus.getDefault().post( new BookmarksLoadedEvent() );
 				}
-			});
-		} catch (NoSuchAlgorithmException e) {
+			} );
+		} catch( NoSuchAlgorithmException e ) {
 			//TODO Error when can not get device id.
 		}
 	}
@@ -254,25 +251,29 @@ public final class BookmarkManger {
 
 	/**
 	 * The bookmark of the {@code book} will be removed.
-	 * @param book The book whose bookmark will be removed.
+	 *
+	 * @param book
+	 * 		The book whose bookmark will be removed.
 	 */
-	public void removeBookmark(RSBook book) {
-		DSBookmark foundBookmark = BookmarkManger.getInstance().getBookmarked(book);
-		BookmarkManger.getInstance().removeFromBookmark(book);
-		BookmarkManger.getInstance().removeRemoteBookmark(foundBookmark);
+	public void removeBookmark( RSBook book ) {
+		DSBookmark foundBookmark = BookmarkManger.getInstance().getBookmarked( book );
+		BookmarkManger.getInstance().removeFromBookmark( book );
+		BookmarkManger.getInstance().removeRemoteBookmark( foundBookmark );
 	}
 
 	/**
 	 * Create bookmark of the {@code book}.
-	 * @param book The book whose bookmark will be created..
+	 *
+	 * @param book
+	 * 		The book whose bookmark will be created..
 	 */
-	public void addBookmark(RSBook book) {
+	public void addBookmark( RSBook book ) {
 		try {
-			DSBookmark bookmark = new DSBookmark(book, DeviceUniqueUtil.getDeviceIdent(
-					mContext), Prefs.getInstance(App.Instance).getGoogleId());
-			BookmarkManger.getInstance().addBookmark(bookmark);
-			BookmarkManger.getInstance().addRemoteBookmark(bookmark);
-		} catch (NoSuchAlgorithmException e) {
+			DSBookmark bookmark = new DSBookmark(
+					book, DeviceUniqueUtil.getDeviceIdent( mContext ), Prefs.getInstance( App.Instance ).getGoogleId() );
+			BookmarkManger.getInstance().addBookmark( bookmark );
+			BookmarkManger.getInstance().addRemoteBookmark( bookmark );
+		} catch( NoSuchAlgorithmException e ) {
 			//TODO Error when can not get device id.
 		}
 	}

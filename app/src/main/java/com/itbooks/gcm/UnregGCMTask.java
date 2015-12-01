@@ -23,28 +23,28 @@ import retrofit.RetrofitError;
  *
  * @author Xinyue Zhao
  */
-public   class UnregGCMTask extends AsyncTask<Void, Void, String> {
+public class UnregGCMTask extends AsyncTask<Void, Void, String> {
 	private GoogleCloudMessaging mGCM;
-	private Prefs mPrefs;
-	private String mDeviceId;
+	private Prefs                mPrefs;
+	private String               mDeviceId;
 
-	public UnregGCMTask(Context context) {
-		mGCM = GoogleCloudMessaging.getInstance(context);
-		mPrefs = Prefs.getInstance(context.getApplicationContext());
+	public UnregGCMTask( Context context ) {
+		mGCM = GoogleCloudMessaging.getInstance( context );
+		mPrefs = Prefs.getInstance( context.getApplicationContext() );
 		try {
-			mDeviceId = DeviceUniqueUtil.getDeviceIdent(context);
-		} catch (NoSuchAlgorithmException e) {
+			mDeviceId = DeviceUniqueUtil.getDeviceIdent( context );
+		} catch( NoSuchAlgorithmException e ) {
 			//TODO Error when can not get device id.
 		}
 	}
 
 	@Override
-	protected String doInBackground(Void... params) {
+	protected String doInBackground( Void... params ) {
 		String regId;
 		try {
 			mGCM.unregister();
 			regId = null;
-		} catch (IOException ex) {
+		} catch( IOException ex ) {
 			ex.printStackTrace();
 			regId = mPrefs.getPushRegId();
 		}
@@ -52,35 +52,37 @@ public   class UnregGCMTask extends AsyncTask<Void, Void, String> {
 	}
 
 	@Override
-	protected void onPostExecute(final String regId) {
-		if (TextUtils.isEmpty(regId)) {
-			unregOnRemote(regId);
+	protected void onPostExecute( final String regId ) {
+		if( TextUtils.isEmpty( regId ) ) {
+			unregOnRemote( regId );
 		} else {
 			//Keep going
-			mPrefs.setPushRegId(regId);
+			mPrefs.setPushRegId( regId );
 			mPrefs.turnOnPush();
 		}
 	}
 
 	/**
 	 * Refresh on server.
-	 * @param regId The registered-id.
+	 *
+	 * @param regId
+	 * 		The registered-id.
 	 */
-	private void unregOnRemote(final String regId) {
+	private void unregOnRemote( final String regId ) {
 		try {
-			Api.unregPush(new RSPushClient(mDeviceId, regId), new Callback<RSResult>() {
+			Api.unregPush( new RSPushClient( mDeviceId, regId ), new Callback<RSResult>() {
 				@Override
-				public void success(RSResult rsBookList, retrofit.client.Response response) {
-					mPrefs.setPushRegId(null);
+				public void success( RSResult rsBookList, retrofit.client.Response response ) {
+					mPrefs.setPushRegId( null );
 					mPrefs.turnOffPush();
 				}
 
 				@Override
-				public void failure(RetrofitError error) {
-					unregOnRemote(regId);
+				public void failure( RetrofitError error ) {
+					unregOnRemote( regId );
 				}
-			});
-		} catch (ApiNotInitializedException e) {
+			} );
+		} catch( ApiNotInitializedException e ) {
 			//Ignore.
 		}
 	}

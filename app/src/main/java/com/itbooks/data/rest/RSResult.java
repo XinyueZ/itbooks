@@ -7,7 +7,7 @@ public final class RSResult {
 	@SerializedName("status")
 	private int mStatus;
 
-	public RSResult(int status) {
+	public RSResult( int status ) {
 		mStatus = status;
 	}
 

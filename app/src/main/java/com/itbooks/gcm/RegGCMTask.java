@@ -23,27 +23,27 @@ import retrofit.RetrofitError;
  *
  * @author Xinyue Zhao
  */
-public   class RegGCMTask extends AsyncTask<Void, Void, String> {
+public class RegGCMTask extends AsyncTask<Void, Void, String> {
 	private GoogleCloudMessaging mGCM;
-	private Prefs mPrefs;
-	private String mDeviceId;
+	private Prefs                mPrefs;
+	private String               mDeviceId;
 
-	public RegGCMTask(Context context) {
-		mGCM = GoogleCloudMessaging.getInstance(context);
-		mPrefs = Prefs.getInstance(context.getApplicationContext());
+	public RegGCMTask( Context context ) {
+		mGCM = GoogleCloudMessaging.getInstance( context );
+		mPrefs = Prefs.getInstance( context.getApplicationContext() );
 		try {
-			mDeviceId = DeviceUniqueUtil.getDeviceIdent(context);
-		} catch (NoSuchAlgorithmException e) {
+			mDeviceId = DeviceUniqueUtil.getDeviceIdent( context );
+		} catch( NoSuchAlgorithmException e ) {
 			//TODO Error when can not get device id.
 		}
 	}
 
 	@Override
-	protected String doInBackground(Void... params) {
+	protected String doInBackground( Void... params ) {
 		String regId;
 		try {
-			regId = mGCM.register(mPrefs.getPushSenderId() + "");
-		} catch (IOException ex) {
+			regId = mGCM.register( mPrefs.getPushSenderId() + "" );
+		} catch( IOException ex ) {
 			ex.printStackTrace();
 			regId = null;
 		}
@@ -51,35 +51,37 @@ public   class RegGCMTask extends AsyncTask<Void, Void, String> {
 	}
 
 	@Override
-	protected void onPostExecute(final String regId) {
-		mPrefs.setKnownPush(true);
-		if (!TextUtils.isEmpty(regId)) {
-			regOnRemote(regId);
+	protected void onPostExecute( final String regId ) {
+		mPrefs.setKnownPush( true );
+		if( !TextUtils.isEmpty( regId ) ) {
+			regOnRemote( regId );
 		} else {
 			//Keep going
-			mPrefs.setPushRegId(null);
+			mPrefs.setPushRegId( null );
 			mPrefs.turnOffPush();
 		}
 	}
 	/**
 	 * Refresh on server.
-	 * @param regId The registered-id.
+	 *
+	 * @param regId
+	 * 		The registered-id.
 	 */
-	private void regOnRemote(final String regId) {
+	private void regOnRemote( final String regId ) {
 		try {
-			Api.regPush(new RSPushClient(mDeviceId, regId), new Callback<RSResult>() {
+			Api.regPush( new RSPushClient( mDeviceId, regId ), new Callback<RSResult>() {
 				@Override
-				public void success(RSResult rsBookList, retrofit.client.Response response) {
-					mPrefs.setPushRegId(regId);
+				public void success( RSResult rsBookList, retrofit.client.Response response ) {
+					mPrefs.setPushRegId( regId );
 					mPrefs.turnOnPush();
 				}
 
 				@Override
-				public void failure(RetrofitError error) {
-					regOnRemote(regId);
+				public void failure( RetrofitError error ) {
+					regOnRemote( regId );
 				}
-			});
-		} catch (ApiNotInitializedException e) {
+			} );
+		} catch( ApiNotInitializedException e ) {
 			//Ignore.
 		}
 	}

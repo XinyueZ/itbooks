@@ -70,24 +70,24 @@ public final class App extends MultiDexApplication {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		setShow3GWarning(false);
+		setShow3GWarning( false );
 
-		Fabric.with(this, new Crashlytics());
-		Stetho.initialize(Stetho.newInitializerBuilder(this).enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
-				.enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this)).build());
+		Fabric.with( this, new Crashlytics() );
+		Stetho.initialize( Stetho.newInitializerBuilder( this ).enableDumpapp( Stetho.defaultDumperPluginsProvider( this ) )
+								   .enableWebKitInspector( Stetho.defaultInspectorModulesProvider( this ) ).build() );
 
-		BookmarkManger.createInstance(this);
+		BookmarkManger.createInstance( this );
 		Properties prop = new Properties();
 		try {
-			prop.load(getClassLoader().getResourceAsStream("app.properties"));
-			Bmob.initialize(this, prop.getProperty("bmob_app"));
-		} catch (IOException e) {
+			prop.load( getClassLoader().getResourceAsStream( "app.properties" ) );
+			Bmob.initialize( this, prop.getProperty( "bmob_app" ) );
+		} catch( IOException e ) {
 			e.printStackTrace();
 		}
-		TaskHelper.init(getApplicationContext());
-		DB.getInstance(this).open();
+		TaskHelper.init( getApplicationContext() );
+		DB.getInstance( this ).open();
 
-		Utils.startAppGuardService(App.Instance);
+		Utils.startAppGuardService( App.Instance );
 	}
 
 
@@ -95,7 +95,7 @@ public final class App extends MultiDexApplication {
 		return mShow3GWarning;
 	}
 
-	public void setShow3GWarning(boolean show3GWarning) {
+	public void setShow3GWarning( boolean show3GWarning ) {
 		mShow3GWarning = show3GWarning;
 	}
 }

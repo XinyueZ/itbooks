@@ -43,7 +43,7 @@ public final class Download extends RSBook {
 	/**
 	 * Time that loaded file. {@link com.itbooks.db.DownloadsTbl#EDIT_TIME}.
 	 */
-	private long mTimeStamp;
+	private long   mTimeStamp;
 	/**
 	 * The unique name when file saved.
 	 */
@@ -51,11 +51,11 @@ public final class Download extends RSBook {
 	/**
 	 * Equivalent to   {@link DownloadManager}STATUS_*
 	 */
-	private int mStatus;
+	private int    mStatus;
 	/**
 	 * The ident given by android when start downloading.
 	 */
-	private long mDownloadId;
+	private long   mDownloadId;
 
 	/**
 	 * Constructor of {@link Download}.
@@ -63,7 +63,7 @@ public final class Download extends RSBook {
 	 * @param book
 	 * 		A book to download.
 	 */
-	public Download(RSBook book) {
+	public Download( RSBook book ) {
 		mBook = book;
 		mTargetName = App.PREFIX + mBook.getName() + ".pdf";
 	}
@@ -76,27 +76,27 @@ public final class Download extends RSBook {
 	 * @param cxt
 	 * 		{@link Context}.
 	 */
-	public void start(Context cxt) {
+	public void start( Context cxt ) {
 		//To check whether we've loaded.
-		File to = new File(cxt.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), mTargetName);
-		if (to.exists()) {
-			EventBus.getDefault().post(new DownloadOpenEvent(to));
+		File to = new File( cxt.getExternalFilesDir( Environment.DIRECTORY_DOWNLOADS ), mTargetName );
+		if( to.exists() ) {
+			EventBus.getDefault().post( new DownloadOpenEvent( to ) );
 		} else {
-			if (TextUtils.equals(Environment.getExternalStorageState(), Environment.MEDIA_REMOVED)) {
-				EventBus.getDefault().post(new DownloadUnavailableEvent());
+			if( TextUtils.equals( Environment.getExternalStorageState(), Environment.MEDIA_REMOVED ) ) {
+				EventBus.getDefault().post( new DownloadUnavailableEvent() );
 			} else {
-				DownloadManager downloadManager = (DownloadManager) cxt.getSystemService(Context.DOWNLOAD_SERVICE);
-				setTimeStamp(System.currentTimeMillis());
+				DownloadManager downloadManager = (DownloadManager) cxt.getSystemService( Context.DOWNLOAD_SERVICE );
+				setTimeStamp( System.currentTimeMillis() );
 				try {
-					DownloadManager.Request request = new DownloadManager.Request(Uri.parse(Utils.uriStr2URI(mBook.getLink()).toASCIIString()));
-					request.setDestinationInExternalFilesDir(cxt, Environment.DIRECTORY_DOWNLOADS, mTargetName);
-					request.setVisibleInDownloadsUi(false);//Can see the downloaded file in "download" app.
-					setStatus(DownloadManager.STATUS_PENDING);
-					setDownloadId(downloadManager.enqueue(request));
-					setStatus(DownloadManager.STATUS_RUNNING);
-					DB.getInstance(cxt).insertNewDownload(this);
-					EventBus.getDefault().post(new DownloadStartEvent(this));
-				} catch (Exception e){
+					DownloadManager.Request request = new DownloadManager.Request( Uri.parse( Utils.uriStr2URI( mBook.getLink() ).toASCIIString() ) );
+					request.setDestinationInExternalFilesDir( cxt, Environment.DIRECTORY_DOWNLOADS, mTargetName );
+					request.setVisibleInDownloadsUi( false );//Can see the downloaded file in "download" app.
+					setStatus( DownloadManager.STATUS_PENDING );
+					setDownloadId( downloadManager.enqueue( request ) );
+					setStatus( DownloadManager.STATUS_RUNNING );
+					DB.getInstance( cxt ).insertNewDownload( this );
+					EventBus.getDefault().post( new DownloadStartEvent( this ) );
+				} catch( Exception e ) {
 					//Ignore....
 				}
 			}
@@ -113,19 +113,20 @@ public final class Download extends RSBook {
 	 *
 	 * @return {@code true} if already exist to read.
 	 */
-	public static boolean exists(Context cxt, RSBook book) {
-		Download download = new Download(book);
-		File to = new File(cxt.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), download.getTargetName());
+	public static boolean exists( Context cxt, RSBook book ) {
+		Download download = new Download( book );
+		File     to       = new File( cxt.getExternalFilesDir( Environment.DIRECTORY_DOWNLOADS ), download.getTargetName() );
 		return to.exists();
 	}
 
 	/**
 	 * Get downloaded object status.
+	 *
 	 * @return {@link DownloadManager#STATUS_*}
 	 */
-	public static int getDownloadStatus(Context cxt, RSBook book)  {
-		List<Download> downloads = DB.getInstance(cxt).getDownloads(book);
-		for (Download download : downloads) {
+	public static int getDownloadStatus( Context cxt, RSBook book ) {
+		List<Download> downloads = DB.getInstance( cxt ).getDownloads( book );
+		for( Download download : downloads ) {
 			return download.getStatus();
 		}
 		return DownloadManager.STATUS_FAILED;
@@ -138,17 +139,16 @@ public final class Download extends RSBook {
 	 * @param cxt
 	 * 		{@link Context}.
 	 */
-	public void end(Context cxt) {
-		EventBus.getDefault().post(new DownloadEndEvent(this));
+	public void end( Context cxt ) {
+		EventBus.getDefault().post( new DownloadEndEvent( this ) );
 
 	}
 
 	/**
 	 * Fail on downloading.
-	 *
 	 */
 	public void failed() {
-		EventBus.getDefault().post(new DownloadFailedEvent(this));
+		EventBus.getDefault().post( new DownloadFailedEvent( this ) );
 
 	}
 
@@ -169,7 +169,7 @@ public final class Download extends RSBook {
 	/**
 	 * Set ident given by android when start downloading.
 	 */
-	public void setDownloadId(long downloadId) {
+	public void setDownloadId( long downloadId ) {
 		mDownloadId = downloadId;
 	}
 
@@ -179,49 +179,50 @@ public final class Download extends RSBook {
 	public long getTimeStamp() {
 		return mTimeStamp;
 	}
-
+	/**
+	 * Set the  time that loaded file. {@link com.itbooks.db.DownloadsTbl#EDIT_TIME}.
+	 *
+	 * @param timeStamp
+	 * 		Time that loaded file. {@link com.itbooks.db.DownloadsTbl#EDIT_TIME}.
+	 */
+	public void setTimeStamp( long timeStamp ) {
+		mTimeStamp = timeStamp;
+	}
 	/**
 	 * @return The file to load.
 	 */
 	public RSBook getBook() {
 		return mBook;
 	}
-
 	/**
 	 * Get status of download, equivalent to   {@link DownloadManager}STATUS_*
+	 *
 	 * @return The status of download.
 	 */
 	public int getStatus() {
 		return mStatus;
 	}
-
-	/**
-	 * Set status of downloading, update database.
-	 * @param cxt {@link Context}.
-	 * @param status The status that equivalents to   {@link DownloadManager}STATUS_*
-	 */
-	public void setStatus(Context cxt, int status) {
-		mStatus = status;
-		DB.getInstance(cxt.getApplicationContext()).updateDownload(this);
-	}
-
 	/**
 	 * Set status of downloading. Do not update database.
-	 * @param status The status that equivalents to   {@link DownloadManager}STATUS_*
+	 *
+	 * @param status
+	 * 		The status that equivalents to   {@link DownloadManager}STATUS_*
 	 */
-	public void setStatus(  int status) {
+	public void setStatus( int status ) {
 		mStatus = status;
 	}
-
 	/**
-	 * Set the  time that loaded file. {@link com.itbooks.db.DownloadsTbl#EDIT_TIME}.
-	 * @param timeStamp  Time that loaded file. {@link com.itbooks.db.DownloadsTbl#EDIT_TIME}.
+	 * Set status of downloading, update database.
+	 *
+	 * @param cxt
+	 * 		{@link Context}.
+	 * @param status
+	 * 		The status that equivalents to   {@link DownloadManager}STATUS_*
 	 */
-	public void setTimeStamp(long timeStamp) {
-		mTimeStamp = timeStamp;
+	public void setStatus( Context cxt, int status ) {
+		mStatus = status;
+		DB.getInstance( cxt.getApplicationContext() ).updateDownload( this );
 	}
-
-
 	@Override
 	public String getName() {
 		return mBook.getName();
@@ -278,7 +279,7 @@ public final class Download extends RSBook {
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		return mBook.equals(o);
+	public boolean equals( Object o ) {
+		return mBook.equals( o );
 	}
 }

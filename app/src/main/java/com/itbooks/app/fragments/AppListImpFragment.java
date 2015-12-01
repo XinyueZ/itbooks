@@ -12,16 +12,18 @@ import com.itbooks.utils.Prefs;
  *
  * @author Xinyue Zhao
  */
-public final class AppListImpFragment extends AppListFragment{
+public final class AppListImpFragment extends AppListFragment {
 
 	/**
 	 * New an instance of {@link AppListImpFragment}.
 	 *
-	 * @param context {@link android.content.Context}.
+	 * @param context
+	 * 		{@link android.content.Context}.
+	 *
 	 * @return An instance of {@link AppListImpFragment}.
 	 */
-	public static Fragment newInstance(Context context ) {
-		return  AppListImpFragment.instantiate(context, AppListImpFragment.class.getName()  );
+	public static Fragment newInstance( Context context ) {
+		return AppListImpFragment.instantiate( context, AppListImpFragment.class.getName() );
 	}
 	/**
 	 * App that use this Chopping should know the preference-storage.
@@ -30,6 +32,6 @@ public final class AppListImpFragment extends AppListFragment{
 	 */
 	@Override
 	protected BasicPrefs getPrefs() {
-		return Prefs.getInstance(getActivity().getApplication());
+		return Prefs.getInstance( getActivity().getApplication() );
 	}
 }

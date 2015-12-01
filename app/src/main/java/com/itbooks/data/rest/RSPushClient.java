@@ -12,7 +12,7 @@ public final class RSPushClient implements Serializable {
 	private String mRegId;
 
 
-	public RSPushClient(String UID, String regId) {
+	public RSPushClient( String UID, String regId ) {
 		mUID = UID;
 		mRegId = regId;
 	}

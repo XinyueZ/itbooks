@@ -6,7 +6,7 @@ import com.itbooks.data.rest.RSBook;
 public final class OpenBookDetailEvent {
 	private RSBook mBook;
 
-	public OpenBookDetailEvent(RSBook book) {
+	public OpenBookDetailEvent( RSBook book ) {
 		mBook = book;
 	}
 

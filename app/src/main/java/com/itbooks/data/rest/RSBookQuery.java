@@ -9,7 +9,7 @@ public final class RSBookQuery implements Serializable {
 	private String mQuery;
 
 
-	public RSBookQuery(String query) {
+	public RSBookQuery( String query ) {
 		mQuery = query;
 	}
 

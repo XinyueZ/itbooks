@@ -12,7 +12,7 @@ public final class OpenBookmarkEvent {
 	private DSBookmark mBookmark;
 
 
-	public OpenBookmarkEvent(DSBookmark bookmark   ) {
+	public OpenBookmarkEvent( DSBookmark bookmark ) {
 		mBookmark = bookmark;
 	}
 

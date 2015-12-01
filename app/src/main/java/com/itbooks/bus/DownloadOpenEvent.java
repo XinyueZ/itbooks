@@ -6,7 +6,7 @@ import java.io.File;
 public final class DownloadOpenEvent {
 	private File mFile;
 
-	public DownloadOpenEvent(File file) {
+	public DownloadOpenEvent( File file ) {
 		mFile = file;
 	}
 

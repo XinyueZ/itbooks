@@ -32,65 +32,67 @@ import de.greenrobot.event.EventBus;
  */
 public final class DownloadReceiver extends BroadcastReceiver {
 	@Override
-	public void onReceive(Context context, Intent intent) {
-		long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
-		Download download = DB.getInstance(context).getDownload(downloadId);
-		if (download != null) {
-			DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-			DownloadManager.Query query = new DownloadManager.Query();
-			query.setFilterById(downloadId);
-			Cursor cursor = downloadManager.query(query);
-			if (cursor.moveToFirst()) {
-				int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
-				int status = cursor.getInt(columnIndex);
-				download.setStatus(context, status);
-				switch (status) {
-				case DownloadManager.STATUS_SUCCESSFUL:
-					download.end(context);
-					AsyncTaskCompat.executeParallel(new AsyncTask<Download, Void, Bitmap>() {
-						private Download mDownload;
+	public void onReceive( Context context, Intent intent ) {
+		long     downloadId = intent.getLongExtra( DownloadManager.EXTRA_DOWNLOAD_ID, -1 );
+		Download download   = DB.getInstance( context ).getDownload( downloadId );
+		if( download != null ) {
+			DownloadManager       downloadManager = (DownloadManager) context.getSystemService( Context.DOWNLOAD_SERVICE );
+			DownloadManager.Query query           = new DownloadManager.Query();
+			query.setFilterById( downloadId );
+			Cursor cursor = downloadManager.query( query );
+			if( cursor.moveToFirst() ) {
+				int columnIndex = cursor.getColumnIndex( DownloadManager.COLUMN_STATUS );
+				int status      = cursor.getInt( columnIndex );
+				download.setStatus( context, status );
+				switch( status ) {
+					case DownloadManager.STATUS_SUCCESSFUL:
+						download.end( context );
+						AsyncTaskCompat.executeParallel( new AsyncTask<Download, Void, Bitmap>() {
+							private Download mDownload;
 
-						@Override
-						protected Bitmap doInBackground(Download... params) {
-							mDownload = params[0];
-							Picasso picasso = Picasso.with(App.Instance);
-							try {
-								return picasso.load(Utils.uriStr2URI(mDownload.getCoverUrl()).toASCIIString()).get();
-							} catch (IOException e) {
-								return null;
-							}
-						}
-
-						@Override
-						protected void onPostExecute(Bitmap image) {
-							super.onPostExecute(image);
-							File to = new File(App.Instance.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS),
-									mDownload.getTargetName());
-							if (to.exists()) {
-								PendingIntent pi = NotifyUtils.getPDFReader(App.Instance, to);
-								if (image != null) {
-									NotifyUtils.notifyWithBigImage(App.Instance, (int)System.currentTimeMillis(),
-											App.Instance.getString(R.string.application_name), App.Instance.getString(
-											R.string.msg_one_book_downloaded), R.drawable.ic_download_notify, image, pi);
-								} else {
-									NotifyUtils.notifyWithoutBigImage(App.Instance, (int) System.currentTimeMillis(),
-											App.Instance.getString(R.string.application_name), App.Instance.getString(
-													R.string.msg_one_book_downloaded), R.drawable.ic_download_notify,
-											pi);
+							@Override
+							protected Bitmap doInBackground( Download... params ) {
+								mDownload = params[ 0 ];
+								Picasso picasso = Picasso.with( App.Instance );
+								try {
+									return picasso.load( Utils.uriStr2URI( mDownload.getCoverUrl() ).toASCIIString() ).get();
+								} catch( IOException e ) {
+									return null;
 								}
 							}
-						}
-					}, download);
+
+							@Override
+							protected void onPostExecute( Bitmap image ) {
+								super.onPostExecute( image );
+								File to = new File( App.Instance.getExternalFilesDir( Environment.DIRECTORY_DOWNLOADS ), mDownload.getTargetName() );
+								if( to.exists() ) {
+									PendingIntent pi = NotifyUtils.getPDFReader( App.Instance, to );
+									if( image != null ) {
+										NotifyUtils.notifyWithBigImage( App.Instance, (int) System.currentTimeMillis(),
+																		App.Instance.getString( R.string.application_name ),
+																		App.Instance.getString( R.string.msg_one_book_downloaded ),
+																		R.drawable.ic_download_notify, image, pi
+										);
+									} else {
+										NotifyUtils.notifyWithoutBigImage( App.Instance, (int) System.currentTimeMillis(),
+																		   App.Instance.getString( R.string.application_name ),
+																		   App.Instance.getString( R.string.msg_one_book_downloaded ),
+																		   R.drawable.ic_download_notify, pi
+										);
+									}
+								}
+							}
+						}, download );
 
 
-					break;
-				case DownloadManager.STATUS_FAILED:
-					download.failed();
-					break;
+						break;
+					case DownloadManager.STATUS_FAILED:
+						download.failed();
+						break;
 				}
 			}
 		}
-		EventBus.getDefault().post(new DownloadCompleteEvent(download));
+		EventBus.getDefault().post( new DownloadCompleteEvent( download ) );
 	}
 
 

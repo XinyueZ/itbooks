@@ -18,27 +18,28 @@ public final class AppGuardService extends GcmTaskService {
 	private static final int NOTIFY_ID = 0x07;
 
 	@Override
-	public int onRunTask(TaskParams taskParams) {
-		if (!TextUtils.isEmpty(Prefs.getInstance(getApplication()).getGoogleId())) {
-			Prefs prefs = Prefs.getInstance(getApplicationContext());
+	public int onRunTask( TaskParams taskParams ) {
+		if( !TextUtils.isEmpty( Prefs.getInstance( getApplication() ).getGoogleId() ) ) {
+			Prefs   prefs    = Prefs.getInstance( getApplicationContext() );
 			boolean syncWifi = prefs.syncWifi();
-			if (syncWifi) {
-				boolean isWifiOn = NetworkUtils.getCurrentNetworkType(App.Instance) == NetworkUtils.CONNECTION_WIFI;
-				if (isWifiOn) {
-					notifySync(this);
-					SyncService.startSync(this);
+			if( syncWifi ) {
+				boolean isWifiOn = NetworkUtils.getCurrentNetworkType( App.Instance ) == NetworkUtils.CONNECTION_WIFI;
+				if( isWifiOn ) {
+					notifySync( this );
+					SyncService.startSync( this );
 				}
 			} else {
-				notifySync(this);
-				SyncService.startSync(this);
+				notifySync( this );
+				SyncService.startSync( this );
 			}
 		}
 		return GcmNetworkManager.RESULT_SUCCESS;
 	}
 
-	private static void notifySync(Context cxt) {
-		NotifyUtils.notifyWithoutBigImage(cxt, NOTIFY_ID, cxt.getString(R.string.application_name), cxt.getString(
-				R.string.msg_scheduled_sync_done), android.R.drawable.stat_notify_sync,
-				com.itbooks.utils.NotifyUtils.getAppHome(cxt));
+	private static void notifySync( Context cxt ) {
+		NotifyUtils.notifyWithoutBigImage( cxt, NOTIFY_ID, cxt.getString( R.string.application_name ),
+										   cxt.getString( R.string.msg_scheduled_sync_done ), android.R.drawable.stat_notify_sync,
+										   com.itbooks.utils.NotifyUtils.getAppHome( cxt )
+		);
 	}
 }

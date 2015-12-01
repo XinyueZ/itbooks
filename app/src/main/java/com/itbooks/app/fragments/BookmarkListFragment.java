@@ -34,10 +34,10 @@ public final class BookmarkListFragment extends BaseFragment {
 	 * Main layout for this component.
 	 */
 	private static final int LAYOUT = R.layout.fragment_bookmark_list;
-	private RecyclerView mBookmarksRv;
+	private RecyclerView        mBookmarksRv;
 	private BookmarkListAdapter mAdp;
-	private View mEmptyV;
-	private View mRefreshV;
+	private View                mEmptyV;
+	private View                mRefreshV;
 
 	//------------------------------------------------
 	//Subscribes, event-handlers
@@ -49,11 +49,11 @@ public final class BookmarkListFragment extends BaseFragment {
 	 * @param e
 	 * 		Event {@link}.
 	 */
-	public void onEvent(DeleteBookmarkEvent e) {
+	public void onEvent( DeleteBookmarkEvent e ) {
 		DSBookmark bookmark = e.getBookmark();
-		BookmarkManger.getInstance().removeBookmark(bookmark.getBook());
+		BookmarkManger.getInstance().removeBookmark( bookmark.getBook() );
 		mAdp.notifyDataSetChanged();
-		mEmptyV.setVisibility(BookmarkManger.getInstance().getBookmarksInCache().size() <= 0 ? View.VISIBLE : View.GONE);
+		mEmptyV.setVisibility( BookmarkManger.getInstance().getBookmarksInCache().size() <= 0 ? View.VISIBLE : View.GONE );
 	}
 
 	/**
@@ -62,10 +62,10 @@ public final class BookmarkListFragment extends BaseFragment {
 	 * @param e
 	 * 		Event {@link com.itbooks.bus.CleanBookmarkEvent}.
 	 */
-	public void onEvent(com.itbooks.bus.CleanBookmarkEvent e) {
-		mAdp.setData(null);
+	public void onEvent( com.itbooks.bus.CleanBookmarkEvent e ) {
+		mAdp.setData( null );
 		mAdp.notifyDataSetChanged();
-		mEmptyV.setVisibility(View.VISIBLE);
+		mEmptyV.setVisibility( View.VISIBLE );
 	}
 
 	/**
@@ -74,44 +74,44 @@ public final class BookmarkListFragment extends BaseFragment {
 	 * @param e
 	 * 		Event {@link com.itbooks.bus.BookmarksLoadedEvent}.
 	 */
-	public void onEvent(BookmarksLoadedEvent e) {
-		if(mObjectAnimator != null) {
+	public void onEvent( BookmarksLoadedEvent e ) {
+		if( mObjectAnimator != null ) {
 			mObjectAnimator.cancel();
 		}
 	}
 	//------------------------------------------------
 
-	public static Fragment newInstance(Context context) {
-		return BookmarkListFragment.instantiate(context, BookmarkListFragment.class.getName());
+	public static Fragment newInstance( Context context ) {
+		return BookmarkListFragment.instantiate( context, BookmarkListFragment.class.getName() );
 	}
 
 
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(LAYOUT, container, false);
+	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
+		return inflater.inflate( LAYOUT, container, false );
 	}
 
 	private ObjectAnimator mObjectAnimator;
 
 	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
-		setErrorHandlerAvailable(false);
-		mBookmarksRv = (RecyclerView) view.findViewById(R.id.bookmarks_rv);
-		StaggeredGridLayoutManager llmgr = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-		mBookmarksRv.setLayoutManager(llmgr);
-		mEmptyV = view.findViewById(R.id.empty_ll);
+	public void onViewCreated( View view, Bundle savedInstanceState ) {
+		super.onViewCreated( view, savedInstanceState );
+		setErrorHandlerAvailable( false );
+		mBookmarksRv = (RecyclerView) view.findViewById( R.id.bookmarks_rv );
+		StaggeredGridLayoutManager llmgr = new StaggeredGridLayoutManager( 2, StaggeredGridLayoutManager.VERTICAL );
+		mBookmarksRv.setLayoutManager( llmgr );
+		mEmptyV = view.findViewById( R.id.empty_ll );
 
-		mRefreshV = view.findViewById(R.id.refresh_btn);
-		mRefreshV.setOnClickListener(new OnClickListener() {
+		mRefreshV = view.findViewById( R.id.refresh_btn );
+		mRefreshV.setOnClickListener( new OnClickListener() {
 			@Override
-			public void onClick(View v) {
-				mObjectAnimator = ObjectAnimator.ofFloat(mRefreshV, "rotation", 0, 360f);
-				mObjectAnimator.setDuration(800);
-				mObjectAnimator.setRepeatCount(ObjectAnimator.INFINITE);
+			public void onClick( View v ) {
+				mObjectAnimator = ObjectAnimator.ofFloat( mRefreshV, "rotation", 0, 360f );
+				mObjectAnimator.setDuration( 800 );
+				mObjectAnimator.setRepeatCount( ObjectAnimator.INFINITE );
 				mObjectAnimator.start();
-				EventBus.getDefault().post(new RefreshBookmarksEvent());
+				EventBus.getDefault().post( new RefreshBookmarksEvent() );
 			}
-		});
+		} );
 	}
 
 	@Override
@@ -124,22 +124,20 @@ public final class BookmarkListFragment extends BaseFragment {
 	 * Get all bookmarks to show.
 	 */
 	private void loadBookmarks() {
-		if (mAdp == null) {
-			mAdp = new BookmarkListAdapter(BookmarkManger.getInstance().getBookmarksInCache());
-			mBookmarksRv.setAdapter(mAdp);
+		if( mAdp == null ) {
+			mAdp = new BookmarkListAdapter( BookmarkManger.getInstance().getBookmarksInCache() );
+			mBookmarksRv.setAdapter( mAdp );
 		} else {
-			mAdp.setData(BookmarkManger.getInstance().getBookmarksInCache());
+			mAdp.setData( BookmarkManger.getInstance().getBookmarksInCache() );
 			mAdp.notifyDataSetChanged();
 		}
-		mEmptyV.setVisibility(
-				BookmarkManger.getInstance().getCount() <= 0 ? View.VISIBLE : View.GONE);
+		mEmptyV.setVisibility( BookmarkManger.getInstance().getCount() <= 0 ? View.VISIBLE : View.GONE );
 	}
-
 
 
 	@Override
 	protected BasicPrefs getPrefs() {
-		return Prefs.getInstance(getActivity().getApplication());
+		return Prefs.getInstance( getActivity().getApplication() );
 	}
 
 

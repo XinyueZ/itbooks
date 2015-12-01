@@ -22,16 +22,16 @@ public final class AdFragment extends Fragment {
 	private static final int LAYOUT = R.layout.fragment_ad;
 	private AdView mAdView;
 
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(LAYOUT, container, false);
+	public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
+		return inflater.inflate( LAYOUT, container, false );
 	}
 
 	@Override
-	public void onActivityCreated(Bundle bundle) {
-		super.onActivityCreated(bundle);
-		mAdView = (AdView) getView().findViewById(R.id.adView);
+	public void onActivityCreated( Bundle bundle ) {
+		super.onActivityCreated( bundle );
+		mAdView = (AdView) getView().findViewById( R.id.adView );
 		AdRequest adRequest = new AdRequest.Builder().build();
-		mAdView.loadAd(adRequest);
+		mAdView.loadAd( adRequest );
 	}
 
 
@@ -40,7 +40,7 @@ public final class AdFragment extends Fragment {
 	 */
 	@Override
 	public void onPause() {
-		if (mAdView != null) {
+		if( mAdView != null ) {
 			mAdView.pause();
 		}
 		super.onPause();
@@ -52,7 +52,7 @@ public final class AdFragment extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		if (mAdView != null) {
+		if( mAdView != null ) {
 			mAdView.resume();
 		}
 	}
@@ -62,7 +62,7 @@ public final class AdFragment extends Fragment {
 	 */
 	@Override
 	public void onDestroy() {
-		if (mAdView != null) {
+		if( mAdView != null ) {
 			mAdView.destroy();
 		}
 		super.onDestroy();
