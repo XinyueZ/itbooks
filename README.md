@@ -3,6 +3,8 @@ IT-Books
 
 [![https://play.google.com/store/apps/details?id=com.itbooks](https://dl.dropbox.com/s/phrg0387osr3riz/images.jpeg)](https://play.google.com/store/apps/details?id=com.itbooks)
 
+Checkout under project [API](https://github.com/XinyueZ/itbooks-searchAndDownload)
+
 License
 ======
 ```json
